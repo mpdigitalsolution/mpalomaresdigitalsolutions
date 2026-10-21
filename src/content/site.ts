@@ -29,9 +29,9 @@ export const site = {
   /** Your clock, shown live at the top of the sidebar. Any IANA zone, e.g. 'America/New_York'. */
   timeZone: 'UTC',
   timePlace: 'in Your City',
-  avatar: { src: '/images/profile/avatar.webp', alt: 'Your Name', width: 400, height: 400 },
+  avatar: { src: '/images/profile/me.png', alt: 'Profile photo', width: 400, height: 400 },
   /** The sidebar picture (112px, 44px on the rail). */
-  avatarSmall: '/images/profile/avatar-224.webp',
+  avatarSmall: '/images/profile/me.png',
 } as const
 
 /** A credential shown in About and the sidebar check. Delete the `image` to show it without a badge. */
