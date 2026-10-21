@@ -17,7 +17,7 @@ export const servicesSection = {
   titleBold: 'or stack a few.',
   explore: 'Explore',
   /** The Work chapter each card opens, by service id (a chapter id from home.ts). */
-  work: { 'service-1': 'screens', 'service-2': 'process', 'service-3': 'websites', 'service-4': 'websites', 'service-5': 'featured' } as Record<string, string>,
+  work: { 'service-1': 'screens', 'service-2': 'process', 'service-3': 'websites', 'service-4': 'case-studies', 'service-5': 'featured' } as Record<string, string>,
 }
 
 export const services: Service[] = [
@@ -59,15 +59,15 @@ export const services: Service[] = [
   },
   {
     id: 'service-4',
-    title: 'Multi-Channel Speed-to-Lead & Drip Sequences',
-    summary: 'Instant missed-call text back and multi-step SMS/Email nurturing cadences with conditional branch routing that turn cold inquiries into appointments.',
-    outcome: '60-Second Lead Response',
+    title: 'Google Ads & Performance Search Marketing',
+    summary: 'Full-funnel search campaign architecture, high-intent keyword harvesting, and bulletproof Google Tag Manager (GTM) conversion telemetry engineering.',
+    outcome: '14.00% CTR · Scaled ROAS',
     bullets: [
-      'Automated missed call text-back (MCTB) to immediately engage callers before competitors',
-      'Multi-branch dynamic conditional nurturing based on customer interest and reply sentiment',
-      'Automated appointment reminder sequences that cut no-show rates across client calendars',
+      'Rescue low-performing and policy-restricted Google Ad Grants accounts to exceed the strict 5.00% CTR compliance floor',
+      'Rebuild broken booking and revenue telemetry via GTM custom data layers for 100% conversion attribution',
+      'Eliminate budget waste through negative keyword clash audits and Maximize Conversions Smart Bidding scaling',
     ],
-    tools: [tools.toolB, tools.toolI, tools.toolE],
+    tools: [tools.toolGoogleAds, tools.toolGTM, tools.toolAnalytics],
   },
   {
     id: 'service-5',

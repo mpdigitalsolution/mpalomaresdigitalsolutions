@@ -21,6 +21,9 @@ export const tools = {
   toolJ: mark('Stripe', 'tool-10.svg'),
   toolK: mark('RapidAPI', 'tool-11.svg'),
   toolL: mark('OpenAI', 'tool-12.svg'),
+  toolGoogleAds: mark('Google Ads', 'tool-gads.png'),
+  toolGTM: mark('Tag Manager', 'tool-gtm.png'),
+  toolAnalytics: mark('GA4 Analytics', 'tool-analytics.jpg'),
 } satisfies Record<string, ToolMark>
 
 /** The daily drivers, in the order you want them shown. */
