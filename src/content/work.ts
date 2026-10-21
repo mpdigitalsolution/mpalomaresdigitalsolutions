@@ -15,18 +15,25 @@ const shot = (file: string, alt: string, width: number, height: number): Image =
   height,
 })
 
+const n8nShot = (file: string, alt: string): Image => ({
+  src: `/images/n8n/${file}`,
+  alt,
+  width: 1600,
+  height: 900,
+})
+
 export const featuredProject = {
-  kicker: 'Featured project',
-  title: 'Featured Project',
-  summary: 'PLACEHOLDER - tell me what to put here: two sentences on the project you are proudest of and the result it got.',
-  link: { label: 'Open the live project', href: '#', external: true } satisfies LinkRef,
+  kicker: 'Flagship n8n Pipeline',
+  title: 'AI Job Scraper & ATS Resume Optimizer',
+  summary: 'A 22-node autonomous workflow orchestrated in n8n. Ingests queries via Slack, validates intent with Gemini 3 Flash, pulls real-time listings from RapidAPI with a 1,000-job memory cache, optimizes resumes for ATS algorithms via DeepSeek AI, and clones Google Docs templates with Gmail drafting.',
+  link: { label: 'Explore All n8n Workflows', href: '/work/screens', external: false } satisfies LinkRef,
   gallery: [
-    shot('gallery-1.webp', 'Featured project, screen 1', 1600, 900),
-    shot('gallery-2.webp', 'Featured project, screen 2', 1600, 900),
-    shot('gallery-3.webp', 'Featured project, screen 3', 1600, 900),
-    shot('gallery-4.webp', 'Featured project, screen 4', 1600, 900),
-    shot('gallery-5.webp', 'Featured project, screen 5', 1600, 900),
-    shot('gallery-6.webp', 'Featured project, screen 6', 1600, 900),
+    n8nShot('job-scraper-canvas.png', 'AI Job Scraper + AI Optimizer 22-node n8n canvas'),
+    n8nShot('job-scraper-output.png', 'RapidAPI JSearch query results and Slack payload'),
+    n8nShot('cv-optimizer.png', 'Dynamically generated ATS-tailored Google Doc resume'),
+    n8nShot('slack-alerts.png', 'Slack notification card with document links and proposals'),
+    n8nShot('gmail-triage-canvas.png', 'Autonomous Gmail draft creation and verification'),
+    n8nShot('pipeline-overview.png', 'End-to-end multi-stage architecture flow'),
   ],
 }
 
@@ -35,33 +42,75 @@ export const featuredProject = {
 export const caseStudies: { id: string; title: string; summary: string; link: LinkRef }[] = [
   {
     id: 'case-study-1',
-    title: 'Case Study 1',
-    summary: 'PLACEHOLDER - tell me what to put here: two sentences on the problem, what you built and the result.',
-    link: { label: 'Read the case study', href: '#', external: true },
+    title: '24/7 Autonomous Gmail Operations Hub & Sheets CRM',
+    summary: 'Solved inbox overload by triaging incoming emails across 5 categories, drafting context-aware replies via a LangChain memory agent, and syncing records to Google Sheets with 5x retry logic.',
+    link: { label: 'View Operations Workflow', href: '/work/screens', external: false },
   },
   {
     id: 'case-study-2',
-    title: 'Case Study 2',
-    summary: 'PLACEHOLDER - tell me what to put here: two sentences on the problem, what you built and the result.',
-    link: { label: 'Read the case study', href: '#', external: true },
+    title: 'Airbnb RAG Guest Concierge (FiFi) & Supabase Vector Engine',
+    summary: 'Eliminated manual guest inquiries by syncing property docs to Supabase pgvector hourly, answering guest questions with property-grounded accuracy and zero hallucinations.',
+    link: { label: 'View RAG Concierge Workflow', href: '/work/screens', external: false },
   },
 ]
 
 export const processDoc = {
   title: 'Process Doc',
-  summary: 'PLACEHOLDER - tell me what to put here: two sentences on the document you show, such as a plan or a spec, and why it earns trust.',
+  summary: 'A clear technical architecture spec and node mapping document, ensuring reliable production deployment and zero API downtime.',
   link: { label: 'Open the sample doc', href: '/demos/plans/sample-plan.html', external: true } satisfies LinkRef,
 }
 
 /* ---------- Screens ---------- */
 
-export const screens: { id: string; name: string; kicker: string; summary: string }[] = [
-  { id: 'screen-1', name: 'Screen One', kicker: 'Screen', summary: 'PLACEHOLDER - tell me what to put here: one sentence on what this screen shows.' },
-  { id: 'screen-2', name: 'Screen Two', kicker: 'Screen', summary: 'PLACEHOLDER - tell me what to put here: one sentence on what this screen shows.' },
-  { id: 'screen-3', name: 'Screen Three', kicker: 'Screen', summary: 'PLACEHOLDER - tell me what to put here: one sentence on what this screen shows.' },
-  { id: 'screen-4', name: 'Screen Four', kicker: 'Screen', summary: 'PLACEHOLDER - tell me what to put here: one sentence on what this screen shows.' },
-  { id: 'screen-5', name: 'Screen Five', kicker: 'Screen', summary: 'PLACEHOLDER - tell me what to put here: one sentence on what this screen shows.' },
-  { id: 'screen-6', name: 'Screen Six', kicker: 'Screen', summary: 'PLACEHOLDER - tell me what to put here: one sentence on what this screen shows.' },
+export const screens: { id: string; name: string; kicker: string; summary: string; status?: 'Live' | 'Beta'; image?: Image }[] = [
+  {
+    id: 'n8n-job-scraper',
+    name: 'AI Job Scraper & ATS Resume Optimizer',
+    kicker: '22-Node n8n Pipeline',
+    status: 'Live',
+    summary: 'Slack trigger -> Gemini 3 Flash intent gate -> RapidAPI JSearch scraping -> 1000-job memory deduplication -> DeepSeek ATS keyword rewriting -> Google Drive template cloning -> Gmail drafting -> Slack card dispatch.',
+    image: n8nShot('job-scraper-canvas.png', 'AI Job Scraper n8n Canvas'),
+  },
+  {
+    id: 'n8n-gmail-triage',
+    name: 'Autonomous Gmail AI Triage & Responder',
+    kicker: 'Operations Automation',
+    status: 'Live',
+    summary: 'Polls unread inbox every 5 minutes, tags across 5 categories (Work, Personal, Marketing, Google, Spam), auto-archives newsletters, drafts tailored responses via LangChain memory agent, and sends instant Telegram VIP push alerts.',
+    image: n8nShot('gmail-triage-canvas.png', 'Gmail AI Triage Canvas'),
+  },
+  {
+    id: 'n8n-sheets-crm',
+    name: 'Zero-Maintenance Google Sheets CRM & Telegram Alerts',
+    kicker: 'CRM Integration',
+    status: 'Live',
+    summary: 'Automatic structured customer database logging sender, category, message ID, and timestamp with exponential backoff (5x retry) for zero data loss, paired with real-time Telegram mobile push notifications.',
+    image: n8nShot('sheets-crm.png', 'Google Sheets CRM Log'),
+  },
+  {
+    id: 'n8n-airbnb-rag',
+    name: 'Airbnb RAG Guest Concierge & Vector Engine (FiFi)',
+    kicker: 'RAG Knowledge Engine',
+    status: 'Live',
+    summary: 'Hourly Google Drive to Supabase pgvector embedding synchronization (500-char chunks, 50-char overlap) paired with a property-grounded conversational agent featuring strict safety and amenity guardrails.',
+    image: n8nShot('airbnb-rag-canvas.png', 'Airbnb RAG Workflow Canvas'),
+  },
+  {
+    id: 'n8n-lead-strategy',
+    name: 'Multi-Turn Strategy AI & Lead Intake Funnel',
+    kicker: 'Conversational AI',
+    status: 'Live',
+    summary: 'Dual-entry Telegram and webhook normalization driving a 3-turn DeepSeek qualification consultant that outputs structured JSON decision handshakes for sales handoff and team alerting.',
+    image: n8nShot('lead-strategy-canvas.png', 'Lead Strategy Canvas'),
+  },
+  {
+    id: 'n8n-syndication-hygiene',
+    name: 'Omnichannel Social Syndication & NeverBounce Hygiene',
+    kicker: 'Distribution & Deliverability',
+    status: 'Live',
+    summary: 'Automated YouTube RSS listener with AI thread summarization publishing to X, paired with NeverBounce API deliverability filtering to protect sender domain reputation.',
+    image: n8nShot('youtube-to-x-canvas.png', 'Social Syndication Canvas'),
+  },
 ]
 
 /* ---------- Websites (self-contained demo pages in public/demos) ---------- */

@@ -26,10 +26,14 @@ const BULLET = 'PLACEHOLDER - tell me what to put here: one short benefit'
 export const services: Service[] = [
   {
     id: 'service-1',
-    title: 'Service One',
-    summary: SUMMARY,
-    outcome: 'Outcome One',
-    bullets: [BULLET, BULLET, BULLET],
+    title: 'n8n & AI Operations Automation',
+    summary: 'Production-grade n8n workflow systems, custom multi-turn AI agents, autonomous email triage, and cross-platform integrations.',
+    outcome: '24/7 Autonomous Pipelines',
+    bullets: [
+      'Sub-5-minute autonomous lead triage with instant Telegram and Slack alerts',
+      'Multi-channel CRM synchronization with exponential backoff and zero data loss',
+      'RAG knowledge engines and automated ATS resume optimization pipelines',
+    ],
     tools: [tools.toolA, tools.toolB, tools.toolC],
   },
   {
