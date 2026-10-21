@@ -11,8 +11,8 @@ export const aboutSection = {
   titleThin: "Hi, I'm",
   titleBold: `${site.name}.`,
   lede: 'Google Ads Specialist, Certified Performance Marketer, and Automation Systems Architect.',
-  lead: "Most businesses don't have a traffic problem—they have a lead leakage problem. I help founders, agencies, and non-profits stop burning ad budget by engineering precision Google search campaigns connected to sub-60-second GoHighLevel and n8n intake automations.",
-  leadQuiet: 'Every system is anchored in verified conversion tracking, real-time CRM deal stages, and verifiable ROAS—ensuring zero inquiries slip through the cracks.',
+  lead: "Most businesses aren't hurting for clicks—they're just losing people before they even get a reply. I help founders and teams run focused Google Ads and hook them up to instant GoHighLevel & n8n follow-ups.",
+  leadQuiet: 'Clean tracking, real numbers, and zero leads slipping through the cracks.',
   note: {
     company: `${site.brand} is my consultancy`,
     product: { label: 'Verified Certifications Suite', href: '/demos/credentials/certificates.html' },
