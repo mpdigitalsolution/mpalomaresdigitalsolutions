@@ -2,6 +2,7 @@ import { ArrowUpRight, MapPin } from '@phosphor-icons/react'
 import { aboutSection, capabilities, credentials, type AboutCredential } from '@/content/about'
 import { certification, externalLinks, socials } from '@/content/site'
 import { personJsonLd } from '@/lib/seo'
+import { AboutVideo } from './AboutVideo'
 import './about.css'
 
 const pad2 = (n: number) => String(n).padStart(2, '0')
@@ -60,18 +61,7 @@ export function AboutSection() {
         <p className="ab__lead">
           {s.lead} <span>{s.leadQuiet}</span>
         </p>
-        <div className="ab__pic">
-          <img
-            src={s.picture.src}
-            srcSet={s.picture.srcSet}
-            sizes="auto, (min-width: 1024px) 46vw, 92vw"
-            alt={s.picture.alt}
-            width={s.picture.width}
-            height={s.picture.height}
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
+        <AboutVideo />
       </div>
 
       <div className="ab__below">
