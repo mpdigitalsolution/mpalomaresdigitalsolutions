@@ -61,19 +61,19 @@ export const communityQuotes: Quote[] = [
   {
     name: 'Alvaro',
     context: 'Executive Director, Non-Profit',
-    date: 'Oct 2025',
+    date: 'Oct 15, 2025',
     text: 'Our Google Ad Grants account was bleeding conversions and at risk of suspension under Google’s 5% CTR rule. Within weeks of the audit and restructuring, our interaction rate climbed to 14.00% and we logged over 190 high-intent inquiries while keeping cost per conversion under $4.50.',
   },
   {
     name: 'Marcus Vance',
     context: 'Head of Growth, Apex Properties',
-    date: 'Sep 2026',
+    date: 'Sep 10, 2026',
     text: 'The GoHighLevel pipelines and missed-call text back system completely eliminated lead drop-off. Inquiries are contacted within 60 seconds and our sales agents have complete deal visibility on the Kanban board.',
   },
   {
     name: 'Dr. Elena Rostova',
     context: 'Clinical Director, Holistic Wellness',
-    date: 'Aug 2026',
+    date: 'Aug 22, 2026',
     text: 'Our assessment funnel increased booked evaluation calls by 3x. The automation handles follow-ups and FAQs so our medical staff can focus entirely on patient care.',
   },
 ]

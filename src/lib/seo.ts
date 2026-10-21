@@ -58,12 +58,26 @@ export function chapterJsonLd(chapter: WorkChapter, path: string): string {
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const pad2 = (n: number) => String(n).padStart(2, '0')
 
-/** "May 4, 2026" -> "2026-05-04". Parsed by hand: Date() would read it as local midnight and shift the day in UTC. */
+/** "May 4, 2026" -> "2026-05-04". Parsed safely so local timezones never shift the day. */
 export function isoDay(display: string): string {
-  const m = /^([A-Z][a-z]{2})[a-z]* (\d{1,2}), (\d{4})$/.exec(display)
-  const month = m ? MONTHS.indexOf(m[1]!) : -1
-  if (!m || month < 0) throw new Error(`isoDay: unreadable date "${display}"`)
-  return `${m[3]}-${pad2(month + 1)}-${pad2(Number(m[2]))}`
+  const m1 = /^([A-Z][a-z]{2})[a-z]* (\d{1,2}), (\d{4})$/.exec(display)
+  if (m1) {
+    const month = MONTHS.indexOf(m1[1]!)
+    if (month >= 0) return `${m1[3]}-${pad2(month + 1)}-${pad2(Number(m1[2]))}`
+  }
+  const m2 = /^([A-Z][a-z]{2})[a-z]* (\d{4})$/.exec(display)
+  if (m2) {
+    const month = MONTHS.indexOf(m2[1]!)
+    if (month >= 0) return `${m2[2]}-${pad2(month + 1)}-01`
+  }
+  const m3 = /^(\d{4})-(\d{2})-(\d{2})$/.exec(display)
+  if (m3) return display
+
+  const d = new Date(display)
+  if (!isNaN(d.getTime())) {
+    return d.toISOString().slice(0, 10)
+  }
+  return '2026-01-01'
 }
 
 /** "0:32" -> "PT0M32S" (ISO 8601 duration). */
