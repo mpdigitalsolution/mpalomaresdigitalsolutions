@@ -41,6 +41,13 @@ export const featuredProject = {
 
 export const caseStudies: { id: string; title: string; summary: string; link: LinkRef; image?: Image }[] = [
   {
+    id: 'case-study-resilience-therapy',
+    title: 'Google Ads & Telemetry Turnaround for Resilience Therapy',
+    summary: 'Audited broken appointment telemetry, deployed a full-stack Google Tag Manager container (GTM-WCCSC24W) with dual GA4 streams, and scaled high-intent EMDR search campaigns to 40.00% peak CTR and $2.97 average CPC.',
+    image: { src: '/images/case-studies/resilience-therapy/resilience-campaign-scale.png', alt: 'Resilience Therapy Google Ads Performance', width: 1280, height: 640 },
+    link: { label: 'View Case Study & GTM Telemetry Evidence', href: '/demos/case-studies/resilience-therapy.html', external: true },
+  },
+  {
     id: 'case-study-google-ads-nonprofit',
     title: 'Google Ad Grants Optimization for Non-Profit (Alvaro)',
     summary: 'Rescued a declining non-profit Ad Grants account: resolved negative keyword conflicts, pruned 27 redundant keywords, and boosted interaction rate to 14.00% with 193+ monthly conversions at $4.34/conv.',

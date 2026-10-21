@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Case Study: Resilience Therapy — Google Ads & GTM Conversion Architecture | Marlon Palomares</title>
+  <meta name="description" content="How Marlon Palomares fixed broken appointment tracking, deployed enterprise Google Tag Manager telemetry, and scaled high-intent EMDR search campaigns to 40% CTR at $2.97 CPC.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d14;
+      --surface: #0f1622;
+      --card: #141d2c;
+      --card-hover: #19263a;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(56, 189, 248, 0.35);
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.2);
+      --accent: #2dd4bf;
+      --danger: #ef4444;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+      --font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 100px;
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(56, 189, 248, 0.12), transparent),
+        radial-gradient(circle at 80% 60%, rgba(45, 212, 191, 0.05), transparent);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* Top Navigation */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(9, 13, 20, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(20px, 4vw, 48px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 15.5px;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #000;
+      font-size: 13.5px;
+    }
+
+    .btn-back {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-back:hover {
+      color: #fff;
+      border-color: var(--primary);
+      background: var(--card);
+      transform: translateX(-2px);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 44px 24px 0;
+    }
+
+    /* Hero */
+    .hero {
+      margin-bottom: 52px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 999px;
+      color: var(--primary);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .badge-pill::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 10px var(--primary);
+    }
+
+    .title {
+      font-size: clamp(32px, 4.5vw, 48px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+
+    .title span {
+      background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 50%, #2dd4bf 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .lead {
+      color: var(--text-muted);
+      font-size: clamp(16px, 1.8vw, 19px);
+      max-width: 860px;
+      line-height: 1.65;
+      margin-bottom: 32px;
+    }
+
+    /* Metrics Grid */
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 56px;
+    }
+
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 22px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary);
+    }
+
+    .metric-card.accent::before { background: var(--accent); }
+    .metric-card.success::before { background: var(--success); }
+    .metric-card.warning::before { background: var(--warning); }
+
+    .metric-label {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .metric-val {
+      font-size: 32px;
+      font-weight: 800;
+      color: #fff;
+      font-family: var(--mono);
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .metric-note {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Narrative sections */
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title svg {
+      color: var(--primary);
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 15.5px;
+      line-height: 1.6;
+      max-width: 820px;
+      margin-bottom: 28px;
+    }
+
+    /* Visual Comparison Stage */
+    .stage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 28px;
+      margin-bottom: 64px;
+    }
+
+    .stage-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stage-card-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.02);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .stage-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tag-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+
+    .tag-success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+    }
+
+    .tag-primary {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #7dd3fc;
+    }
+
+    .stage-img-wrap {
+      background: #000;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stage-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      transition: transform 0.3s ease;
+    }
+
+    .stage-img-wrap:hover img {
+      transform: scale(1.02);
+    }
+
+    .stage-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(9, 13, 20, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+
+    .stage-img-wrap:hover .stage-overlay {
+      opacity: 1;
+    }
+
+    .stage-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .stage-body h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .stage-body p {
+      color: var(--text-muted);
+      font-size: 14.5px;
+      line-height: 1.55;
+      margin-bottom: 16px;
+    }
+
+    .tech-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .tech-pill {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    /* Keyword Telemetry Table */
+    .kw-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      margin-bottom: 64px;
+      overflow-x: auto;
+    }
+
+    .kw-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13.5px;
+    }
+
+    .kw-table th {
+      padding: 12px 16px;
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .kw-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+    }
+
+    .kw-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: #fff;
+    }
+
+    .kw-table .kw-name {
+      color: #fff;
+      font-weight: 600;
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    .kw-table .ctr-highlight {
+      color: #34d399;
+      font-weight: 700;
+      font-family: var(--mono);
+    }
+
+    .kw-table .qs-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+    }
+
+    /* Lightbox Modal */
+    .lightbox-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 13, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .lightbox-modal.open {
+      display: flex;
+    }
+
+    .lightbox-content {
+      background: var(--surface);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      max-width: 1100px;
+      width: 100%;
+      max-height: 92vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+
+    .lightbox-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .lightbox-header h4 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .close-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+
+    .close-btn:hover {
+      color: #fff;
+      background: var(--card-hover);
+    }
+
+    .lightbox-img-box {
+      background: #000;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-height: 70vh;
+      overflow: hidden;
+    }
+
+    .lightbox-img-box img {
+      max-width: 100%;
+      max-height: 66vh;
+      object-fit: contain;
+      border-radius: var(--radius-sm);
+    }
+
+    .lightbox-footer {
+      padding: 18px 24px;
+      border-top: 1px solid var(--border);
+      background: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .lightbox-caption {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      max-width: 700px;
+    }
+
+    .lightbox-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .lb-btn {
+      padding: 6px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .lb-btn:hover {
+      background: var(--card-hover);
+    }
+
+    @media (max-width: 640px) {
+      .stage-grid {
+        grid-template-columns: 1fr;
+      }
+      .kw-card {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="nav">
+    <div class="brand">
+      <div class="brand-mark">MP</div>
+      <span>Marlon Palomares · Portfolio</span>
+    </div>
+    <a href="/" class="btn-back">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Return to Portfolio
+    </a>
+  </nav>
+
+  <main class="container">
+    <!-- Header -->
+    <header class="hero">
+      <div class="badge-pill">Healthcare PPC & Conversion Architecture</div>
+      <h1 class="title">Resilience Therapy: <span>Google Ads & Telemetry Turnaround</span></h1>
+      <p class="lead">
+        How an audit of broken booking actions led to a full-stack Google Tag Manager rebuild, eliminating data loss and driving 142 qualified EMDR patient clicks at $2.97 average CPC with search CTRs peaking at 40.00%.
+      </p>
+    </header>
+
+    <!-- Key Metrics -->
+    <div class="metrics">
+      <div class="metric-card">
+        <div class="metric-label">Average Cost Per Click</div>
+        <div class="metric-val">$2.97</div>
+        <div class="metric-note">vs. $8.50+ mental health industry benchmark</div>
+      </div>
+      <div class="metric-card accent">
+        <div class="metric-label">Peak Search CTR</div>
+        <div class="metric-val">40.00%</div>
+        <div class="metric-note">Achieved on high-intent local EMDR keywords</div>
+      </div>
+      <div class="metric-card success">
+        <div class="metric-label">Qualified Patient Clicks</div>
+        <div class="metric-val">142</div>
+        <div class="metric-note">From 3,566 impressions in 14 days</div>
+      </div>
+      <div class="metric-card warning">
+        <div class="metric-label">Tracking Accuracy</div>
+        <div class="metric-val">100%</div>
+        <div class="metric-note">GTM dual-stream: Google Ads + GA4 events</div>
+      </div>
+    </div>
+
+    <!-- Phase 1 & 2: The Audit and The Fix -->
+    <section>
+      <h2 class="section-title">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Phase 1 & 2: Telemetry Audit & Full-Stack GTM Rebuild
+      </h2>
+      <p class="section-desc">
+        Before launching campaigns, an audit revealed that the primary conversion goal (appointment booking page load) had recorded zero recent conversions. Without accurate conversion signals, Google's smart bidding algorithms bid blindly. We deployed an enterprise Google Tag Manager container with dual Google Ads and GA4 event streams.
+      </p>
+
+      <div class="stage-grid">
+        <!-- Stage 1 -->
+        <div class="stage-card">
+          <div class="stage-card-header">
+            <span style="font-weight: 700; font-size: 14px;">Conversion Telemetry Audit</span>
+            <span class="stage-tag tag-danger">Critical Leak Detected</span>
+          </div>
+          <div class="stage-img-wrap" onclick="openLightbox(0)">
+            <img src="/images/case-studies/resilience-therapy/resilience-broken-conversion.png" alt="Broken Conversion Action Audit">
+            <div class="stage-overlay">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              Inspect Screenshot Evidence
+            </div>
+          </div>
+          <div class="stage-body">
+            <h3>Initial State: Zero Recorded Conversions</h3>
+            <p>
+              The primary conversion action for <em>resiliencetherapy.net/booking-confirmed/</em> registered zero conversions with an inactive status warning. Any ad budget spent without this fix would burn without algorithm optimization.
+            </p>
+            <ul class="tech-list">
+              <li class="tech-pill">Primary Goal Audit</li>
+              <li class="tech-pill">No Recent Conversions</li>
+              <li class="tech-pill">Attribution Leak</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Stage 2 -->
+        <div class="stage-card">
+          <div class="stage-card-header">
+            <span style="font-weight: 700; font-size: 14px;">Google Tag Manager Container (GTM-WCCSC24W)</span>
+            <span class="stage-tag tag-success">Full Architecture Deployed</span>
+          </div>
+          <div class="stage-img-wrap" onclick="openLightbox(2)">
+            <img src="/images/case-studies/resilience-therapy/resilience-gtm-container.png" alt="Google Tag Manager Event Infrastructure">
+            <div class="stage-overlay">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              Inspect GTM Container Evidence
+            </div>
+          </div>
+          <div class="stage-body">
+            <h3>The Solution: Multi-Touchpoint Telemetry</h3>
+            <p>
+              Architected complete GTM event suite: Google Ads Calls from Website, Conversion Linker, Form Submit, Phone Number Click, and Mail Click—mirrored into GA4 event parameters for airtight cross-platform attribution.
+            </p>
+            <ul class="tech-list">
+              <li class="tech-pill">GTM-WCCSC24W</li>
+              <li class="tech-pill">Google Tag G-B4Y9STVLRW</li>
+              <li class="tech-pill">Conversion Linker</li>
+              <li class="tech-pill">Calls & Form Submit</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Phase 3 & 4: Keyword Architecture & Performance -->
+    <section>
+      <h2 class="section-title">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+        Phase 3 & 4: High-Intent Keyword Matrix & Search Execution
+      </h2>
+      <p class="section-desc">
+        We segmented search intent into specialized ad groups (<em>EMDR Intensive – Professionals</em> and <em>Trauma Therapy Intensive (Executives)</em>), filtering out non-commercial queries and locking in top Quality Scores.
+      </p>
+
+      <!-- Telemetry Data Table -->
+      <div class="kw-card">
+        <h3 style="font-size: 16px; margin-bottom: 16px; font-weight: 700;">Verified Search Keyword Performance (Nov 13 – 26, 2025)</h3>
+        <table class="kw-table">
+          <thead>
+            <tr>
+              <th>Search Keyword</th>
+              <th>Match Type</th>
+              <th>Ad Group</th>
+              <th>CTR</th>
+              <th>Clicks</th>
+              <th>Cost</th>
+              <th>Quality Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="kw-name">"emdr grand rapids"</td>
+              <td>Phrase match</td>
+              <td>EMDR Intensive – Professionals</td>
+              <td class="ctr-highlight">40.00%</td>
+              <td>4</td>
+              <td>$11.63</td>
+              <td><span class="qs-badge">5/10</span></td>
+            </tr>
+            <tr>
+              <td class="kw-name">"emdr therapy detroit"</td>
+              <td>Phrase match</td>
+              <td>EMDR Intensive – Professionals</td>
+              <td class="ctr-highlight">33.33%</td>
+              <td>2</td>
+              <td>$5.87</td>
+              <td><span class="qs-badge">3/10</span></td>
+            </tr>
+            <tr>
+              <td class="kw-name">"EMDR intensive"</td>
+              <td>Phrase match</td>
+              <td>EMDR Intensive – Professionals</td>
+              <td class="ctr-highlight">14.29%</td>
+              <td>1</td>
+              <td>$2.37</td>
+              <td><span class="qs-badge">7/10</span></td>
+            </tr>
+            <tr>
+              <td class="kw-name">EMDR intensive retreat</td>
+              <td>Broad match</td>
+              <td>EMDR Intensive – Professionals</td>
+              <td>4.49%</td>
+              <td>64</td>
+              <td>$191.75</td>
+              <td><span class="qs-badge">Eligible</span></td>
+            </tr>
+            <tr>
+              <td class="kw-name">EMDR intensive therapy</td>
+              <td>Broad match</td>
+              <td>EMDR Intensive – Professionals</td>
+              <td>3.44%</td>
+              <td>58</td>
+              <td>$170.49</td>
+              <td><span class="qs-badge">8/10</span></td>
+            </tr>
+            <tr>
+              <td class="kw-name">"emdr treatment"</td>
+              <td>Phrase match</td>
+              <td>EMDR Intensive – Professionals</td>
+              <td>4.71%</td>
+              <td>8</td>
+              <td>$25.77</td>
+              <td><span class="qs-badge">4/10</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="stage-grid">
+        <!-- Keyword screenshot -->
+        <div class="stage-card">
+          <div class="stage-card-header">
+            <span style="font-weight: 700; font-size: 14px;">Search Term CTR Evidence</span>
+            <span class="stage-tag tag-primary">Quality Score 8/10</span>
+          </div>
+          <div class="stage-img-wrap" onclick="openLightbox(3)">
+            <img src="/images/case-studies/resilience-therapy/resilience-keywords-ctr.png" alt="Search Term Performance and CTRs">
+            <div class="stage-overlay">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              Inspect Keyword Breakdown
+            </div>
+          </div>
+          <div class="stage-body">
+            <h3>Hyper-Focused Localized Query Capture</h3>
+            <p>
+              Local intent targeting generated unprecedented CTRs (33% to 40%), while high-volume national terms secured Quality Scores up to 8/10, slashing cost per click significantly below industry medians.
+            </p>
+          </div>
+        </div>
+
+        <!-- Scale Overview screenshot -->
+        <div class="stage-card">
+          <div class="stage-card-header">
+            <span style="font-weight: 700; font-size: 14px;">14-Day Performance Overview</span>
+            <span class="stage-tag tag-success">142 Patient Clicks</span>
+          </div>
+          <div class="stage-img-wrap" onclick="openLightbox(4)">
+            <img src="/images/case-studies/resilience-therapy/resilience-campaign-scale.png" alt="Campaign Scale and Efficiency Overview">
+            <div class="stage-overlay">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              Inspect Campaign Overview
+            </div>
+          </div>
+          <div class="stage-body">
+            <h3>Predictable $40/Day Acquisition Rhythm</h3>
+            <p>
+              Generated 3,566 impressions and 142 clicks for $422.17 total spend ($2.97 avg CPC), creating a steady stream of incoming consultation inquiries for the clinical team.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Lightbox Modal -->
+  <div class="lightbox-modal" id="lbModal" onclick="handleLbClick(event)">
+    <div class="lightbox-content">
+      <div class="lightbox-header">
+        <h4 id="lbTitle">Evidence Preview</h4>
+        <button class="close-btn" onclick="closeLightbox()" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="lightbox-img-box">
+        <img id="lbImg" src="" alt="Evidence View">
+      </div>
+      <div class="lightbox-footer">
+        <p class="lightbox-caption" id="lbCap">Caption</p>
+        <div class="lightbox-actions">
+          <button class="lb-btn" onclick="prevSlide()">Previous</button>
+          <button class="lb-btn" onclick="nextSlide()">Next</button>
+          <a class="lb-btn" id="lbOpen" href="" target="_blank">Open Full Image</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const slides = [
+      {
+        title: "Initial Conversion Audit: Inactive Booking Goal",
+        src: "/images/case-studies/resilience-therapy/resilience-broken-conversion.png",
+        caption: "Audit showing the clinic's primary conversion action (resiliencetherapy.net/booking-confirmed/) with zero recent conversions and inactive tracking."
+      },
+      {
+        title: "Secondary Conversion Goal Inspection",
+        src: "/images/case-studies/resilience-therapy/resilience-audit-detail.png",
+        caption: "Verification of missing conversion signals across 14 running campaigns prior to technical restructuring."
+      },
+      {
+        title: "Google Tag Manager Telemetry Container (GTM-WCCSC24W)",
+        src: "/images/case-studies/resilience-therapy/resilience-gtm-container.png",
+        caption: "Full GTM deployment with Conversion Linker, Calls From Website, Form Submit, Phone Clicks, and dual GA4 event parameters."
+      },
+      {
+        title: "High-Intent Keyword Matrix & Search CTRs",
+        src: "/images/case-studies/resilience-therapy/resilience-keywords-ctr.png",
+        caption: "Detailed search telemetry showing 40.00% CTR on 'emdr grand rapids' and 8/10 Quality Score on core EMDR therapy keywords."
+      },
+      {
+        title: "14-Day Campaign Performance Overview ($2.97 Avg CPC)",
+        src: "/images/case-studies/resilience-therapy/resilience-campaign-scale.png",
+        caption: "14-day overview logging 3,566 impressions, 142 clicks, and $422.17 spend on a steady $40/day budget."
+      }
+    ];
+
+    let currentSlide = 0;
+
+    function openLightbox(index) {
+      currentSlide = index;
+      const s = slides[index];
+      document.getElementById('lbTitle').textContent = s.title;
+      document.getElementById('lbImg').src = s.src;
+      document.getElementById('lbCap').textContent = s.caption;
+      document.getElementById('lbOpen').href = s.src;
+      document.getElementById('lbModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      document.getElementById('lbModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function handleLbClick(e) {
+      if (e.target.id === 'lbModal') closeLightbox();
+    }
+
+    function prevSlide() {
+      currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+      openLightbox(currentSlide);
+    }
+
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % slides.length;
+      openLightbox(currentSlide);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const modal = document.getElementById('lbModal');
+      if (modal.classList.contains('open')) {
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') prevSlide();
+        if (e.key === 'ArrowRight') nextSlide();
+      }
+    });
+  </script>
+</body>
+</html>

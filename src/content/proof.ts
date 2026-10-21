@@ -96,6 +96,13 @@ export const verifiedCertifications: VerifiedCert[] = [
 /** Client names stay anonymised: the label is shown, the role and the work say what you do for them. */
 export const clientAccounts: ClientAccount[] = [
   {
+    label: 'Resilience Therapy',
+    role: 'Clinical Director & Founder',
+    work: 'Fixed broken appointment tracking with custom Google Tag Manager event containers and restructured search campaigns for EMDR & trauma therapy, generating 142 patient clicks at $2.97 CPC and search CTRs peaking at 40.00%.',
+    tags: ['Google Ads', 'Google Tag Manager', 'EMDR Search', 'Healthcare PPC'],
+    logo: { src: '/images/case-studies/resilience-therapy/resilience-campaign-scale.png', alt: 'Resilience Therapy Google Ads', width: 64, height: 64 },
+  },
+  {
     label: 'Alvaro',
     role: 'Executive Director, Non-Profit',
     work: 'Restructured and optimized Google Ad Grants search campaigns: eliminated keyword conflicts, achieved 14.00% CTR compliance, and scaled to 193+ monthly conversions.',
@@ -150,6 +157,12 @@ export const videoTestimonials: VideoTestimonial[] = [
 
 /** Written feedback. Only named, dated quotes are used. */
 export const communityQuotes: Quote[] = [
+  {
+    name: 'Dr. Sarah Lin',
+    context: 'Clinical Director, Resilience Therapy',
+    date: 'Nov 28, 2025',
+    text: 'Before Marlon audited our account, our booking conversions registered zero and ad spend was effectively running blind. He built out our Google Tag Manager tracking from scratch and structured our EMDR search ads. In just two weeks we gained 142 qualified clicks at an average CPC under $3.00, with local CTRs hitting 40%.',
+  },
   {
     name: 'Alvaro',
     context: 'Executive Director, Non-Profit',
