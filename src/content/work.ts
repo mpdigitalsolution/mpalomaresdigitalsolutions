@@ -39,23 +39,33 @@ export const featuredProject = {
 
 /* ---------- Case studies and the process doc ---------- */
 
-export const caseStudies: { id: string; title: string; summary: string; link: LinkRef }[] = [
+export const caseStudies: { id: string; title: string; summary: string; link: LinkRef; image?: Image }[] = [
+  {
+    id: 'case-study-google-ads-nonprofit',
+    title: 'Google Ad Grants Optimization for Non-Profit (Alvaro)',
+    summary: 'Rescued a declining non-profit Ad Grants account: resolved negative keyword conflicts, pruned 27 redundant keywords, and boosted interaction rate to 14.00% with 193+ monthly conversions at $4.34/conv.',
+    image: { src: '/images/case-studies/non-profit/After.jpg', alt: 'Google Ads Non-Profit Turnaround', width: 1280, height: 640 },
+    link: { label: 'View Case Study & Live Dashboard Evidence', href: '/demos/case-studies/google-ads-nonprofit.html', external: true },
+  },
   {
     id: 'case-study-1',
     title: '24/7 Autonomous Gmail Operations Hub & Sheets CRM',
     summary: 'Solved inbox overload by triaging incoming emails across 5 categories, drafting context-aware replies via a LangChain memory agent, and syncing records to Google Sheets with 5x retry logic.',
+    image: n8nShot('gmail-triage-canvas.png', 'Gmail AI Triage Canvas'),
     link: { label: 'View Operations Workflow', href: '/work/screens', external: false },
   },
   {
     id: 'case-study-2',
     title: 'Airbnb RAG Guest Concierge (FiFi) & Supabase Vector Engine',
     summary: 'Eliminated manual guest inquiries by syncing property docs to Supabase pgvector hourly, answering guest questions with property-grounded accuracy and zero hallucinations.',
+    image: n8nShot('airbnb-rag-canvas.png', 'Airbnb RAG Concierge Canvas'),
     link: { label: 'View RAG Concierge Workflow', href: '/work/screens', external: false },
   },
   {
     id: 'case-study-3',
     title: 'Multi-Channel GoHighLevel Lead Nurturing & Speed-to-Lead Engine',
     summary: 'Engineered automated missed-call text back and 5-way conditional branch nurturing across automotive and home service niches, converting cold inquiries into booked calls in under 60 seconds.',
+    image: ghlShot('ghl-automotive-branch-nurture.png', 'GoHighLevel Multi-Branch Nurture Workflow'),
     link: { label: 'Explore GoHighLevel Systems', href: '/work/websites', external: false },
   },
 ]

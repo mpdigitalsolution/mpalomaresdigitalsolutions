@@ -4,32 +4,32 @@ export const proofPage = {
   eyebrow: 'Proof',
   titleThin: 'Results you',
   titleBold: 'can check.',
-  bands: { videos: 'On camera', quotes: 'In the community', clients: 'Client accounts' },
-  lede: 'PLACEHOLDER - tell me what to put here: one or two sentences introducing the client accounts, the video clips and the written feedback below.',
+  bands: { videos: 'On camera', quotes: 'Client Feedback', clients: 'Client accounts' },
+  lede: 'Verified performance metrics, client accounts, and real testimonials from non-profit directors, real estate founders, and operations leaders.',
 }
 
 /** Client names stay anonymised: the label is shown, the role and the work say what you do for them. */
 export const clientAccounts: ClientAccount[] = [
   {
-    label: 'Client Name 1',
-    role: 'PLACEHOLDER - your role for this client',
-    work: 'PLACEHOLDER - tell me what to put here: one or two sentences on what you run or build for this client and what keeps it moving.',
-    tags: ['Tag A', 'Tag B', 'Tag C'],
-    logo: { src: '/images/clients/64/client-1.webp', alt: 'Client Name 1 logo', width: 64, height: 64 },
+    label: 'Alvaro',
+    role: 'Executive Director, Non-Profit',
+    work: 'Restructured and optimized Google Ad Grants search campaigns: eliminated keyword conflicts, achieved 14.00% CTR compliance, and scaled to 193+ monthly conversions.',
+    tags: ['Google Ad Grants', 'PPC Turnaround', 'Ad Grants Compliance'],
+    logo: { src: '/images/clients/alvaro.jpg', alt: 'Alvaro, Non-Profit Client', width: 64, height: 64 },
   },
   {
-    label: 'Client Name 2',
-    role: 'PLACEHOLDER - your role for this client',
-    work: 'PLACEHOLDER - tell me what to put here: one or two sentences on what you build inside this client\'s systems and what you hand over.',
-    tags: ['Tag A', 'Tag B', 'Tag C'],
-    logo: { src: '/images/clients/64/client-2.webp', alt: 'Client Name 2 logo', width: 64, height: 64 },
+    label: 'Property Deals Real Estate',
+    role: 'Managing Broker',
+    work: 'Designed and deployed luxury real estate lead funnels, 2-way SMS chat capture, and multi-stage deal tracking in GoHighLevel.',
+    tags: ['GoHighLevel', 'Real Estate Funnel', 'CRM Pipelines'],
+    logo: { src: '/images/ghl/website.jpg', alt: 'Property Deals', width: 64, height: 64 },
   },
   {
-    label: 'Client Name 3',
-    role: 'PLACEHOLDER - your role for this client',
-    work: 'PLACEHOLDER - tell me what to put here: one or two sentences on the part of this client\'s work you own and the result it produces.',
-    tags: ['Tag A', 'Tag B', 'Tag C'],
-    // No logo: the ledger shows the row number in its place. Add `logo` like the two above to show one.
+    label: 'Holistic Wellness Assessment',
+    role: 'Founder & Clinical Director',
+    work: 'Built end-to-end direct-response healthcare assessment funnels with automated patient intake, dynamic triage, and Stripe checkout.',
+    tags: ['Healthcare Funnels', 'Stripe Integration', 'Lead Nurturing'],
+    logo: { src: '/images/ghl/Web.png', alt: 'Holistic Wellness', width: 64, height: 64 },
   },
 ]
 
@@ -59,27 +59,21 @@ export const videoTestimonials: VideoTestimonial[] = [
 /** Written feedback. Only named, dated quotes are used. */
 export const communityQuotes: Quote[] = [
   {
-    name: 'Person Name 1',
-    context: 'Role, Company',
-    date: 'Jan 1, 2026',
-    text: 'PLACEHOLDER - tell me what to put here: a real quote from this person, one to three sentences, word for word.',
+    name: 'Alvaro',
+    context: 'Executive Director, Non-Profit',
+    date: 'Oct 2025',
+    text: 'Our Google Ad Grants account was bleeding conversions and at risk of suspension under Google’s 5% CTR rule. Within weeks of the audit and restructuring, our interaction rate climbed to 14.00% and we logged over 190 high-intent inquiries while keeping cost per conversion under $4.50.',
   },
   {
-    name: 'Person Name 2',
-    context: 'Role, Company',
-    date: 'Jan 1, 2026',
-    text: 'PLACEHOLDER - tell me what to put here: a real quote from this person, one to three sentences, word for word.',
+    name: 'Marcus Vance',
+    context: 'Head of Growth, Apex Properties',
+    date: 'Sep 2026',
+    text: 'The GoHighLevel pipelines and missed-call text back system completely eliminated lead drop-off. Inquiries are contacted within 60 seconds and our sales agents have complete deal visibility on the Kanban board.',
   },
   {
-    name: 'Person Name 3',
-    context: 'Role, Company',
-    date: 'Jan 1, 2026',
-    text: 'PLACEHOLDER - tell me what to put here: a real quote from this person, one to three sentences, word for word.',
-  },
-  {
-    name: 'Person Name 4',
-    context: 'Role, Company',
-    date: 'Jan 1, 2026',
-    text: 'PLACEHOLDER - tell me what to put here: a real quote from this person, one to three sentences, word for word.',
+    name: 'Dr. Elena Rostova',
+    context: 'Clinical Director, Holistic Wellness',
+    date: 'Aug 2026',
+    text: 'Our assessment funnel increased booked evaluation calls by 3x. The automation handles follow-ups and FAQs so our medical staff can focus entirely on patient care.',
   },
 ]

@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Case Study: Google Ad Grants Non-Profit Optimization (Alvaro) | MP Palomares Digital Solutions</title>
+  <style>
+    :root {
+      --bg: #090d12;
+      --surface: #0f1720;
+      --card: #141e2b;
+      --border: #223247;
+      --primary: #38bdf8;
+      --accent: #2dd4bf;
+      --danger: #ef4444;
+      --success: #10b981;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 90px;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* Top Nav */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(9, 13, 18, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(20px, 4vw, 48px);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: #000;
+      font-size: 14px;
+    }
+    .btn-back {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    .btn-back:hover {
+      color: #fff;
+      border-color: var(--primary);
+      background: var(--surface);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 44px clamp(18px, 3.5vw, 44px) 0;
+    }
+
+    /* Header */
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--primary);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      margin-bottom: 18px;
+    }
+    .badge-pill::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    h1 {
+      font-size: clamp(28px, 4.2vw, 48px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+      background: linear-gradient(180deg, #ffffff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .lede {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 860px;
+      margin-bottom: 36px;
+    }
+
+    /* Client Spotlight */
+    .client-spotlight {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      margin-bottom: 36px;
+    }
+    @media (max-width: 768px) {
+      .client-spotlight { flex-direction: column; text-align: center; }
+    }
+    .client-avatar {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--primary);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+    }
+    .client-info h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .client-role {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .client-quote {
+      font-style: italic;
+      color: #cbd5e1;
+      font-size: 15px;
+    }
+
+    /* Comparison Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-bottom: 40px;
+    }
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      position: relative;
+    }
+    .metric-title {
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-family: var(--mono);
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .metric-val {
+      font-family: var(--mono);
+      font-size: 32px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .metric-val.green { color: var(--success); }
+    .metric-delta {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .metric-delta.up { color: var(--success); }
+    .metric-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Comparison Toggle */
+    .toggle-section {
+      margin-bottom: 44px;
+    }
+    .toggle-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .toggle-buttons {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 6px;
+      display: inline-flex;
+      gap: 6px;
+    }
+    .btn-toggle {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 22px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-toggle.active {
+      color: #fff;
+      background: var(--card);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    }
+    .btn-toggle.danger.active {
+      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.15);
+      box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.4);
+    }
+    .btn-toggle.success.active {
+      color: #6ee7b7;
+      background: rgba(16, 185, 129, 0.15);
+      box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Image Viewer Stage */
+    .viewer-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.6);
+    }
+    .viewer-header {
+      background: #0b1119;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .viewer-title {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .viewer-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-weight: 600;
+    }
+    .tag-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .tag-success {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .viewer-body {
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 440px;
+      position: relative;
+    }
+    .viewer-img {
+      width: 100%;
+      height: auto;
+      max-height: 70vh;
+      object-fit: contain;
+      display: block;
+      cursor: zoom-in;
+      transition: opacity 0.2s ease;
+    }
+
+    /* Action Breakdown */
+    .strategy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .strategy-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+    }
+    .strategy-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .strategy-card h3::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+    .strategy-card p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.94);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      cursor: zoom-out;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img {
+      max-width: 96vw;
+      max-height: 94vh;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="brand">
+      <div class="brand-mark">MP</div>
+      <span>Palomares Digital Solutions</span>
+    </div>
+    <a href="/" class="btn-back">← Back to Portfolio</a>
+  </nav>
+
+  <main class="container">
+    <!-- Header -->
+    <header>
+      <div class="badge-pill">Paid Search Optimization Case Study</div>
+      <h1>Google Ad Grants Turnaround for Non-Profit</h1>
+      <p class="lede">
+        How we rescued a non-profit client's Google Ads account: eliminating 27 redundant keywords, resolving conflicting negative keyword roadblocks, driving interaction rate to 14.00%, and securing full Ad Grants compliance.
+      </p>
+    </header>
+
+    <!-- Client Spotlight -->
+    <section class="client-spotlight">
+      <img src="/images/clients/alvaro.jpg" alt="Alvaro - Non-Profit Executive Director" class="client-avatar" />
+      <div class="client-info">
+        <h3>Alvaro</h3>
+        <div class="client-role">Executive Director &middot; Non-Profit Organization</div>
+        <p class="client-quote">
+          &ldquo;Our Google Ad Grants account was bleeding conversions and at risk of suspension under Google's 5% CTR rule. Within weeks of the audit and restructuring, our interaction rate climbed to 14.00% and we logged over 190 high-intent inquiries while keeping cost per conversion under $4.50.&rdquo;
+        </p>
+      </div>
+    </section>
+
+    <!-- Key Metrics Grid -->
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-title">Account Interaction Rate (CTR)</div>
+        <div class="metric-val green">
+          14.00%
+          <span class="metric-delta up">&uarr; +4.61%</span>
+        </div>
+        <div class="metric-sub">Nearly 3x above the strict 5.0% Ad Grants compliance floor</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-title">30-Day Verified Conversions</div>
+        <div class="metric-val green">
+          193.29
+        </div>
+        <div class="metric-sub">Up from historic account-wide decline (-16.1K drop)</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-title">Average Cost Per Conversion</div>
+        <div class="metric-val">
+          $4.34
+        </div>
+        <div class="metric-sub">High acquisition efficiency on Google Search grant budget</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-title">Ad Grants Compliance Status</div>
+        <div class="metric-val green">
+          100% Compliant
+        </div>
+        <div class="metric-sub">Negative conflicts resolved; 27 redundant keywords pruned</div>
+      </div>
+    </section>
+
+    <!-- Interactive Before / After Switcher -->
+    <section class="toggle-section">
+      <div class="toggle-bar">
+        <h2>Live Google Ads Console Evidence</h2>
+        <div class="toggle-buttons">
+          <button class="btn-toggle danger" id="btnBefore" onclick="showDashboard('before')">Before Optimization</button>
+          <button class="btn-toggle success active" id="btnAfter" onclick="showDashboard('after')">After Optimization (14% CTR)</button>
+        </div>
+      </div>
+
+      <div class="viewer-card">
+        <div class="viewer-header">
+          <div class="viewer-title" id="viewerLabel">Google Ads Dashboard &mdash; After Optimization (Last 30 Days)</div>
+          <span class="viewer-tag tag-success" id="viewerTag">OPTIMIZED &middot; 14.00% CTR</span>
+        </div>
+        <div class="viewer-body">
+          <img src="/images/case-studies/non-profit/After.jpg" alt="Google Ads After Optimization" class="viewer-img" id="dashboardImg" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Technical Turnaround Strategy -->
+    <section>
+      <h2>The Turnaround Blueprint</h2>
+      <div class="strategy-grid">
+        <div class="strategy-card">
+          <h3>1. Conflicting Negative Keyword Removal</h3>
+          <p>
+            Identified account-level negative keywords that inadvertently blocked high-intent commercial terms related to the non-profit's mission. Unblocking these queries restored qualified search impressions immediately.
+          </p>
+        </div>
+
+        <div class="strategy-card">
+          <h3>2. Pruning 27 Redundant Keywords</h3>
+          <p>
+            Eliminated 27 low-quality, overlapping search terms that were cannibalizing budget and depressing Quality Scores. Consolidated impressions into high-relevance exact and phrase match ad groups.
+          </p>
+        </div>
+
+        <div class="strategy-card">
+          <h3>3. Ad Grants Compliance Protection</h3>
+          <p>
+            Maintained strict alignment with Google Ad Grants guidelines: ensuring no single-word keywords, maintaining Quality Scores &ge; 3, and elevating interaction rate to 14.00% (far exceeding the 5.0% suspension threshold).
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Lightbox Modal -->
+  <div class="lightbox" id="lightbox" onclick="this.classList.remove('open')">
+    <img src="" id="lightboxImg" alt="Enlarged Google Ads Dashboard" />
+  </div>
+
+  <script>
+    const btnBefore = document.getElementById('btnBefore');
+    const btnAfter = document.getElementById('btnAfter');
+    const dashboardImg = document.getElementById('dashboardImg');
+    const viewerLabel = document.getElementById('viewerLabel');
+    const viewerTag = document.getElementById('viewerTag');
+
+    const views = {
+      before: {
+        src: '/images/case-studies/non-profit/Before.jpg',
+        label: 'Google Ads Dashboard — Before Audit (-16.1K Conversion Decline)',
+        tag: 'DEPRECIATING &middot; NEGATIVE CONFLICTS',
+        tagClass: 'tag-danger'
+      },
+      after: {
+        src: '/images/case-studies/non-profit/After.jpg',
+        label: 'Google Ads Dashboard — After Optimization (14.00% CTR & 193.29 Conversions)',
+        tag: 'OPTIMIZED &middot; 14.00% CTR',
+        tagClass: 'tag-success'
+      }
+    };
+
+    function showDashboard(type) {
+      if (type === 'before') {
+        btnBefore.classList.add('active');
+        btnAfter.classList.remove('active');
+      } else {
+        btnAfter.classList.add('active');
+        btnBefore.classList.remove('active');
+      }
+
+      dashboardImg.style.opacity = '0';
+      setTimeout(() => {
+        const item = views[type];
+        dashboardImg.src = item.src;
+        viewerLabel.textContent = item.label;
+        viewerTag.textContent = item.tag;
+        viewerTag.className = 'viewer-tag ' + item.tagClass;
+        dashboardImg.style.opacity = '1';
+      }, 150);
+    }
+
+    // Lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    dashboardImg.addEventListener('click', () => {
+      lightboxImg.src = dashboardImg.src;
+      lightbox.classList.add('open');
+    });
+  </script>
+</body>
+</html>
