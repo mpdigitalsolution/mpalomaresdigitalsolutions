@@ -61,9 +61,19 @@ export const caseStudies: { id: string; title: string; summary: string; link: Li
 ]
 
 export const processDoc = {
-  title: 'Process Doc',
-  summary: 'A clear technical architecture spec and node mapping document, ensuring reliable production deployment and zero API downtime.',
-  link: { label: 'Open the sample doc', href: '/demos/plans/sample-plan.html', external: true } satisfies LinkRef,
+  title: 'GoHighLevel CRM & Pipeline Architecture Blueprint',
+  summary: 'Comprehensive GoHighLevel systems architecture: 6-stage sales Kanban, multi-industry pipeline schemas, contact smart lists, custom field data models, and omnichannel follow-up cadences.',
+  link: { label: 'Open Interactive Architecture Blueprint', href: '/demos/ghl/crm-architecture.html', external: true } satisfies LinkRef,
+  lead: ghlShot('ghl-sales-pipeline-kanban.png', 'GoHighLevel Sales Pipeline Kanban Board'),
+  gallery: [
+    ghlShot('ghl-sales-pipeline-kanban.png', '6-Stage Sales Opportunity Kanban with Deal Values'),
+    ghlShot('ghl-multi-pipeline-architecture.png', 'Multi-Industry Pipeline Hierarchy (Marketing, Real Estate, Sales)'),
+    ghlShot('ghl-contacts-smart-lists.png', 'Centralized Contact Database with Source Attribution Tags'),
+    ghlShot('ghl-smart-list-segmentation.png', 'Smart List Lifecycle Segmentation Filters (VIP, Nurture Cold)'),
+    ghlShot('ghl-custom-fields.png', 'Custom Contact & Opportunity Field Data Schemas'),
+    ghlShot('ghl-sms-email-omnichannel.png', 'Omnichannel 2-Way SMS and HTML Email Conversation Cadence'),
+    ghlShot('ghl-workflow-logic-snippet.png', 'Workflow Condition Rules and Webhook Routing Logic Snippet'),
+  ],
 }
 
 /* ---------- Screens ---------- */

@@ -17,7 +17,7 @@ export const servicesSection = {
   titleBold: 'or stack a few.',
   explore: 'Explore',
   /** The Work chapter each card opens, by service id (a chapter id from home.ts). */
-  work: { 'service-1': 'screens', 'service-2': 'websites', 'service-3': 'websites', 'service-4': 'websites', 'service-5': 'featured' } as Record<string, string>,
+  work: { 'service-1': 'screens', 'service-2': 'process', 'service-3': 'websites', 'service-4': 'websites', 'service-5': 'featured' } as Record<string, string>,
 }
 
 export const services: Service[] = [

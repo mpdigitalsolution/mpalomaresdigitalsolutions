@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GoHighLevel CRM & Pipeline Architecture Blueprint | MP Palomares Digital Solutions</title>
+  <style>
+    :root {
+      --bg: #090d12;
+      --surface: #0f1720;
+      --card: #141e2b;
+      --border: #223247;
+      --border-light: rgba(255, 255, 255, 0.08);
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.25);
+      --accent: #2dd4bf;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 80px;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* Top Nav */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(9, 13, 18, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(20px, 4vw, 48px);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+    }
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: #000;
+      font-size: 14px;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .btn-back {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-back:hover {
+      color: #fff;
+      border-color: var(--primary);
+      background: var(--surface);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1340px;
+      margin: 0 auto;
+      padding: 40px clamp(18px, 3.5vw, 44px) 0;
+    }
+
+    /* Header */
+    .blueprint-header {
+      margin-bottom: 36px;
+    }
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--primary);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      margin-bottom: 16px;
+    }
+    .badge-pill::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+    }
+    h1 {
+      font-size: clamp(28px, 4vw, 46px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 14px;
+      background: linear-gradient(180deg, #ffffff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .lede {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 820px;
+    }
+
+    /* Stats strip */
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+    .spec-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 22px;
+    }
+    .spec-num {
+      font-family: var(--mono);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .spec-label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Tab navigation */
+    .tabs-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 8px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      margin-bottom: 24px;
+    }
+    .tabs-wrap::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tab-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .tab-btn.active {
+      color: #fff;
+      background: var(--card);
+      border: 1px solid var(--border-light);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4), inset 0 0 0 1px var(--primary-glow);
+    }
+    .tab-btn small {
+      font-family: var(--mono);
+      color: var(--primary);
+      font-size: 11px;
+    }
+
+    /* Viewer Stage */
+    .stage {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.6);
+    }
+    .browser-bar {
+      height: 48px;
+      background: #0b1119;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 16px;
+    }
+    .browser-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .browser-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #2a3b4f;
+    }
+    .browser-dots span:nth-child(1) { background: #ef4444; }
+    .browser-dots span:nth-child(2) { background: #f59e0b; }
+    .browser-dots span:nth-child(3) { background: #10b981; }
+    .browser-url {
+      background: #141e2b;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 4px 14px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      flex: 1;
+      max-width: 520px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .browser-status {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      background: rgba(45, 212, 191, 0.1);
+      padding: 3px 10px;
+      border-radius: 99px;
+      margin-left: auto;
+    }
+
+    .frame-content {
+      position: relative;
+      background: #000;
+      min-height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .frame-img {
+      width: 100%;
+      height: auto;
+      max-height: 75vh;
+      object-fit: contain;
+      display: block;
+      transition: transform 0.3s ease;
+      cursor: zoom-in;
+    }
+
+    /* Explanation pane */
+    .stage-meta {
+      padding: 30px clamp(20px, 3.5vw, 36px);
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 32px;
+    }
+    @media (max-width: 900px) {
+      .stage-meta { grid-template-columns: 1fr; }
+    }
+    .meta-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .meta-desc {
+      color: var(--muted);
+      font-size: 15px;
+      margin-bottom: 18px;
+    }
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pill {
+      font-family: var(--mono);
+      font-size: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 6px;
+      color: #cbd5e1;
+    }
+
+    .key-metrics {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .key-metrics h4 {
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-family: var(--mono);
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    .key-metrics ul {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+    .key-metrics li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .key-metrics li::before {
+      content: "✓";
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    /* Lightbox Modal */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.94);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      cursor: zoom-out;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img {
+      max-width: 96vw;
+      max-height: 94vh;
+      object-fit: contain;
+      border-radius: 10px;
+      box-shadow: 0 0 60px rgba(0,0,0,0.8);
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 24px;
+      right: 28px;
+      background: #1e293b;
+      color: #fff;
+      border: 1px solid var(--border);
+      font-size: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <nav class="nav">
+    <div class="brand">
+      <div class="brand-mark">MP</div>
+      <span>Palomares Digital Solutions</span>
+    </div>
+    <div class="nav-actions">
+      <a href="/" class="btn-back">← Back to Portfolio</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <!-- Header -->
+    <header class="blueprint-header">
+      <div class="badge-pill">Production Architecture Spec v1.0</div>
+      <h1>GoHighLevel CRM & Pipeline Architecture</h1>
+      <p class="lede">
+        End-to-end technical breakdown of the multi-stage deal flow, multi-industry pipeline configurations, granular contact smart lists, custom field data schemas, and omnichannel follow-up cadences.
+      </p>
+    </header>
+
+    <!-- Metrics Strip -->
+    <section class="specs-grid">
+      <div class="spec-card">
+        <div class="spec-num">3</div>
+        <div class="spec-label">Pipelines Configured (Sales, Real Estate, Marketing)</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-num">27</div>
+        <div class="spec-label">Total Custom Lifecycle Stages</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-num">36+</div>
+        <div class="spec-label">Contacts with Source Attribution Tags</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-num">&lt;60s</div>
+        <div class="spec-label">Automated Missed-Call & Form Speed-to-Lead</div>
+      </div>
+    </section>
+
+    <!-- Interactive Navigation Tabs -->
+    <nav class="tabs-wrap" id="tabsList">
+      <button class="tab-btn active" data-index="0">
+        <small>01</small> Sales Kanban Board
+      </button>
+      <button class="tab-btn" data-index="1">
+        <small>02</small> Multi-Pipeline Structure
+      </button>
+      <button class="tab-btn" data-index="2">
+        <small>03</small> Contacts & Attribution
+      </button>
+      <button class="tab-btn" data-index="3">
+        <small>04</small> Smart List Segmentation
+      </button>
+      <button class="tab-btn" data-index="4">
+        <small>05</small> Custom Fields Schema
+      </button>
+      <button class="tab-btn" data-index="5">
+        <small>06</small> Omnichannel Messaging
+      </button>
+      <button class="tab-btn" data-index="6">
+        <small>07</small> Execution Logic Snippet
+      </button>
+    </nav>
+
+    <!-- Main Visual Stage Frame -->
+    <section class="stage">
+      <div class="browser-bar">
+        <div class="browser-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="browser-url" id="frameUrl">app.gohighlevel.com/v2/location/opportunities/pipelines/sales-pipeline</div>
+        <span class="browser-status" id="frameBadge">LIVE KANBAN VIEW</span>
+      </div>
+
+      <div class="frame-content">
+        <img src="/images/ghl/ghl-sales-pipeline-kanban.png" alt="Sales Pipeline Kanban" class="frame-img" id="stageImg" />
+      </div>
+
+      <div class="stage-meta">
+        <div>
+          <h2 class="meta-title" id="metaTitle">6-Stage Visual Sales Opportunity Kanban</h2>
+          <p class="meta-desc" id="metaDesc">
+            Direct opportunity management tracking active leads across New Lead, Contacted, Proposal Sent, Negotiating, Won, and Lost stages with live deal valuations and task scheduling.
+          </p>
+          <div class="pill-list" id="metaPills">
+            <span class="pill">Stage 1: New Lead</span>
+            <span class="pill">Stage 2: Contacted</span>
+            <span class="pill">Stage 3: Proposal Sent</span>
+            <span class="pill">Stage 4: Negotiating</span>
+            <span class="pill">Stage 5: Won</span>
+            <span class="pill">Stage 6: Lost</span>
+          </div>
+        </div>
+
+        <div class="key-metrics">
+          <h4>Architecture Specs</h4>
+          <ul id="metaSpecs">
+            <li>Dynamic deal values calculation</li>
+            <li>Automated status tagging per card</li>
+            <li>Direct integration with Twilio SMS</li>
+            <li>One-click task & calendar sync</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Fullscreen Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">&times;</button>
+    <img src="" id="lightboxImg" alt="Enlarged Architecture View" />
+  </div>
+
+  <script>
+    const data = [
+      {
+        title: "6-Stage Visual Sales Opportunity Kanban",
+        desc: "Full visual deal board spanning New Lead, Contacted, Proposal Sent, Negotiating, Won, and Lost stages with active deal valuation and velocity metrics. Real client opportunities logged with multi-source attribution.",
+        img: "/images/ghl/ghl-sales-pipeline-kanban.png",
+        url: "app.gohighlevel.com/v2/location/opportunities/pipelines/sales-pipeline",
+        badge: "LIVE KANBAN",
+        pills: ["New Lead ($8.5k)", "Contacted ($5.0k)", "Proposal Sent ($4.0k)", "Negotiating", "Won", "Lost"],
+        specs: [
+          "Dynamic currency calculation per stage",
+          "Automated status tagging per deal card",
+          "One-click direct call and SMS trigger",
+          "Real-time pipeline value forecasting"
+        ]
+      },
+      {
+        title: "Multi-Industry Pipeline Hierarchy",
+        desc: "Hierarchical opportunity architecture separating Marketing Pipeline (12 stages), Real Estate Pipeline (9 stages), and Direct Sales Pipeline (6 stages). Eliminates lead cross-contamination across client departments.",
+        img: "/images/ghl/ghl-multi-pipeline-architecture.png",
+        url: "app.gohighlevel.com/v2/location/settings/opportunities-pipelines",
+        badge: "PIPELINE SCHEMAS",
+        pills: ["Marketing Pipeline (12 Stages)", "Real Estate Pipeline (9 Stages)", "Sales Pipeline (6 Stages)"],
+        specs: [
+          "Departmental data segregation",
+          "Custom conversion triggers per pipeline",
+          "Automated stage velocity monitoring",
+          "Seamless handoff between teams"
+        ]
+      },
+      {
+        title: "Contact Database & Source Attribution",
+        desc: "Centralized GoHighLevel contact repository with 36 verified records categorized with granular source attribution tags: source-facebook, source-google, source-instagram, source-website, and source-referral.",
+        img: "/images/ghl/ghl-contacts-smart-lists.png",
+        url: "app.gohighlevel.com/v2/location/contacts",
+        badge: "CONTACT DATABASE",
+        pills: ["client-active", "lead-hot", "nurture-cold", "client-vip", "lead-new"],
+        specs: [
+          "Granular multi-touch attribution tags",
+          "Direct DND (Do Not Disturb) compliance",
+          "Phone and email validation flags",
+          "Instant bulk action operations"
+        ]
+      },
+      {
+        title: "Smart List Lifecycle Segmentation",
+        desc: "Pre-configured smart lists enabling instant filtering into Nurture Cold, Client VIP, Buyer Leads, Lead New, and Client Active segments for targeted multi-channel re-engagement campaigns.",
+        img: "/images/ghl/ghl-smart-list-segmentation.png",
+        url: "app.gohighlevel.com/v2/location/contacts/smart-lists",
+        badge: "SMART LISTS",
+        pills: ["Nurture Cold", "Client VIP", "Buyer Leads", "Lead New", "Client Active"],
+        specs: [
+          "Live rule-based auto-enrollment",
+          "Audience segmentation for broadcasts",
+          "Cold lead suppression filters",
+          "One-click campaign assignment"
+        ]
+      },
+      {
+        title: "Custom Fields & Data Schema",
+        desc: "Comprehensive custom field configuration tailored for specific vertical qualifiers including property type, vehicle model preference, budget range, and inspection timeline.",
+        img: "/images/ghl/ghl-custom-fields.png",
+        url: "app.gohighlevel.com/v2/location/settings/custom-fields",
+        badge: "DATA SCHEMA",
+        pills: ["Custom Contact Fields", "Custom Opportunity Fields", "Automated Form Mapping"],
+        specs: [
+          "Type-safe custom attributes",
+          "Seamless mapping to web intake forms",
+          "Merge field support for dynamic SMS/Email",
+          "Webhook serialization friendly"
+        ]
+      },
+      {
+        title: "Omnichannel SMS & Email Sequences",
+        desc: "Integrated conversation history and template dispatch verifying seamless two-way SMS and email delivery with timing delays, read receipts, and response listeners.",
+        img: "/images/ghl/ghl-sms-email-omnichannel.png",
+        url: "app.gohighlevel.com/v2/location/conversations/messages",
+        badge: "OMNICHANNEL CADENCE",
+        pills: ["2-Way SMS Messaging", "HTML Email Templates", "Delivery Receipts"],
+        specs: [
+          "Twilio & Mailgun carrier integration",
+          "Automated fallback communication channels",
+          "Speed-to-lead automated response within 60s",
+          "Complete conversation audit trails"
+        ]
+      },
+      {
+        title: "Workflow Execution Logic Snippet",
+        desc: "Modular condition rules and webhook trigger snippet validating contact intent, checking business hours, and routing high-value prospects directly to senior account executives.",
+        img: "/images/ghl/ghl-workflow-logic-snippet.png",
+        url: "app.gohighlevel.com/v2/location/automation/workflows/logic-snippet",
+        badge: "LOGIC SNIPPET",
+        pills: ["If/Else Conditions", "Time Windows", "Webhooks Handshake"],
+        specs: [
+          "Deterministic if/else condition branches",
+          "Custom variable evaluation",
+          "Instant webhook payload dispatch",
+          "Zero duplicate execution safety"
+        ]
+      }
+    ];
+
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const stageImg = document.getElementById('stageImg');
+    const frameUrl = document.getElementById('frameUrl');
+    const frameBadge = document.getElementById('frameBadge');
+    const metaTitle = document.getElementById('metaTitle');
+    const metaDesc = document.getElementById('metaDesc');
+    const metaPills = document.getElementById('metaPills');
+    const metaSpecs = document.getElementById('metaSpecs');
+
+    function switchTab(index) {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      tabBtns[index].classList.add('active');
+
+      const item = data[index];
+      stageImg.style.opacity = '0';
+      setTimeout(() => {
+        stageImg.src = item.img;
+        stageImg.alt = item.title;
+        frameUrl.textContent = item.url;
+        frameBadge.textContent = item.badge;
+        metaTitle.textContent = item.title;
+        metaDesc.textContent = item.desc;
+
+        metaPills.innerHTML = item.pills.map(p => `<span class="pill">${p}</span>`).join('');
+        metaSpecs.innerHTML = item.specs.map(s => `<li>${s}</li>`).join('');
+        stageImg.style.opacity = '1';
+      }, 150);
+    }
+
+    tabBtns.forEach((btn, i) => {
+      btn.addEventListener('click', () => switchTab(i));
+    });
+
+    // Lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxClose = document.getElementById('lightboxClose');
+
+    stageImg.addEventListener('click', () => {
+      lightboxImg.src = stageImg.src;
+      lightbox.classList.add('open');
+    });
+    lightbox.addEventListener('click', () => {
+      lightbox.classList.remove('open');
+    });
+    lightboxClose.addEventListener('click', () => {
+      lightbox.classList.remove('open');
+    });
+  </script>
+</body>
+</html>
