@@ -73,12 +73,12 @@ export const screens: { id: string; name: string; kicker: string; summary: strin
     image: n8nShot('gmail-triage-canvas.png', 'Gmail AI Triage Canvas'),
   },
   {
-    id: 'n8n-sheets-crm',
-    name: 'Zero-Maintenance Google Sheets CRM & Telegram Alerts',
-    kicker: 'CRM Integration',
+    id: 'n8n-messenger-ai',
+    name: '24/7 Facebook Messenger AI Agent (DeepSeek + Knowledge Base)',
+    kicker: 'Messenger Automation',
     status: 'Live',
-    summary: 'Automatic structured customer database logging sender, category, message ID, and timestamp with exponential backoff (5x retry) for zero data loss, paired with real-time Telegram mobile push notifications.',
-    image: n8nShot('sheets-crm.png', 'Google Sheets CRM Log'),
+    summary: 'Webhook receiver verifying Meta handshakes, retrieving company knowledge from Google Docs, and powering an autonomous DeepSeek AI agent with conversational memory to answer customer inquiries and dispatch replies via Facebook Graph API in real-time.',
+    image: n8nShot('messenger.png', 'Facebook Messenger AI Agent Workflow Canvas'),
   },
   {
     id: 'n8n-airbnb-rag',
