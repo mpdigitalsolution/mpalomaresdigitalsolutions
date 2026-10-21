@@ -9,3 +9,6 @@ scripts/out/
 
 # TypeScript incremental build state
 *.tsbuildinfo
+
+.vercel
+bun.lock

@@ -8,13 +8,6 @@ export const workPage = {
 
 /* ---------- Featured project ---------- */
 
-const shot = (file: string, alt: string, width: number, height: number): Image => ({
-  src: `/images/work/${file}`,
-  alt,
-  width,
-  height,
-})
-
 const n8nShot = (file: string, alt: string): Image => ({
   src: `/images/n8n/${file}`,
   alt,
