@@ -9,14 +9,9 @@ const mark = (name: string, file: string, mono?: true): ToolMark => ({ name, log
  * grounds and never disappears.
  */
 export const tools = {
-  n8n: mark('n8n', 'tool-01.svg'),
-  deepseek: mark('DeepSeek', 'tool-02.svg'),
-  telegram: mark('Telegram', 'tool-03.svg'),
-  slack: mark('Slack', 'tool-04.svg'),
-  gmail: mark('Gmail', 'tool-05.svg'),
-  toolA: mark('n8n', 'tool-01.svg'),
-  toolB: mark('DeepSeek', 'tool-02.svg'),
-  toolC: mark('Telegram', 'tool-03.svg'),
+  toolA: mark('Tool A', 'tool-01.svg'),
+  toolB: mark('Tool B', 'tool-02.svg'),
+  toolC: mark('Tool C', 'tool-03.svg'),
   toolD: mark('Tool D', 'tool-04.svg'),
   toolE: mark('Tool E', 'tool-05.svg'),
   toolF: mark('Tool F', 'tool-06.svg'),

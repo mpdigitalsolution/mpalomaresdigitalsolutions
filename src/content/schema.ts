@@ -58,9 +58,6 @@ export type Service = {
   outcome: string
   bullets: [string, string, string]
   tools: ToolMark[]
-  /** Optional direct link to a dedicated architecture showcase or live demo. */
-  href?: string
-  external?: boolean
 }
 
 export type MethodStep = {

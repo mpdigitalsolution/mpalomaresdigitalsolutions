@@ -35,9 +35,9 @@ export const featuredProject = {
 export const caseStudies: { id: string; title: string; summary: string; link: LinkRef }[] = [
   {
     id: 'case-study-1',
-    title: 'Production n8n Automation Architecture',
-    summary: 'Autonomous operations: 22-node AI job scraper + ATS resume generator, 24/7 intelligent Gmail triage with Sheets CRM, and Airbnb RAG vector concierge.',
-    link: { label: 'Explore n8n Architecture Showcase', href: '/n8n.html', external: true },
+    title: 'Case Study 1',
+    summary: 'PLACEHOLDER - tell me what to put here: two sentences on the problem, what you built and the result.',
+    link: { label: 'Read the case study', href: '#', external: true },
   },
   {
     id: 'case-study-2',

@@ -36,64 +36,34 @@ export function ServicesSection() {
       <ol className="sv__stack">
         {services.map((service, i) => (
           <li key={service.id} className="sv__item" style={{ '--i': i } as CSSProperties}>
-            {service.href ? (
-              <a
-                href={service.href}
-                className="sv__card"
-                data-card
-                aria-label={`${service.title} - ${service.outcome}`}
-              >
-                <span className="sv__top">
-                  <span className="sv__index">
-                    {pad(i + 1)}
-                    <span>{service.outcome}</span>
-                  </span>
-                  <span className="sv__tags">
-                    {service.tools.map((tool) => (
-                      <span key={tool.name}>{tool.name}</span>
-                    ))}
-                  </span>
+            <Link
+              to={chapterPath(servicesSection.work[service.id] ?? 'screens')}
+              state={{ sheet: true }}
+              preventScrollReset
+              className="sv__card"
+              data-card
+            >
+              <span className="sv__top">
+                <span className="sv__index">
+                  {pad(i + 1)}
+                  <span>{service.outcome}</span>
                 </span>
-                <span className="sv__name">{service.title}</span>
-                <span className="sv__desc">
-                  {service.summary} {service.bullets.join('. ')}.
+                <span className="sv__tags">
+                  {service.tools.map((tool) => (
+                    <span key={tool.name}>{tool.name}</span>
+                  ))}
                 </span>
-                <span className="sv__explore">
-                  {servicesSection.explore}
-                  <ArrowUpRight size={14} weight="bold" aria-hidden />
-                </span>
-                <span className="sv__dim" aria-hidden />
-              </a>
-            ) : (
-              <Link
-                to={chapterPath(servicesSection.work[service.id] ?? 'screens')}
-                state={{ sheet: true }}
-                preventScrollReset
-                className="sv__card"
-                data-card
-              >
-                <span className="sv__top">
-                  <span className="sv__index">
-                    {pad(i + 1)}
-                    <span>{service.outcome}</span>
-                  </span>
-                  <span className="sv__tags">
-                    {service.tools.map((tool) => (
-                      <span key={tool.name}>{tool.name}</span>
-                    ))}
-                  </span>
-                </span>
-                <span className="sv__name">{service.title}</span>
-                <span className="sv__desc">
-                  {service.summary} {service.bullets.join('. ')}.
-                </span>
-                <span className="sv__explore">
-                  {servicesSection.explore}
-                  <ArrowUpRight size={14} weight="bold" aria-hidden />
-                </span>
-                <span className="sv__dim" aria-hidden />
-              </Link>
-            )}
+              </span>
+              <span className="sv__name">{service.title}</span>
+              <span className="sv__desc">
+                {service.summary} {service.bullets.join('. ')}.
+              </span>
+              <span className="sv__explore">
+                {servicesSection.explore}
+                <ArrowUpRight size={14} weight="bold" aria-hidden />
+              </span>
+              <span className="sv__dim" aria-hidden />
+            </Link>
           </li>
         ))}
         {/* Room for the finished pile to hold (services.css .sv__tail): sticky range ends at the list's content box. */}
