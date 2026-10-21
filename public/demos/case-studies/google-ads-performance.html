@@ -1,0 +1,1086 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Google Ads & Telemetry Mastery: Non-Profit & Healthcare Turnaround | Marlon Palomares</title>
+  <meta name="description" content="Dual-sector Google Ads case study: Rescuing a non-profit Ad Grants account to 14.00% CTR and rebuilding broken GTM conversion telemetry for Resilience Therapy to achieve 40% CTR at $2.97 CPC.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d14;
+      --surface: #0f1622;
+      --card: #141d2c;
+      --card-hover: #19263a;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(56, 189, 248, 0.35);
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.2);
+      --accent: #2dd4bf;
+      --danger: #ef4444;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+      --font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 100px;
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(56, 189, 248, 0.12), transparent),
+        radial-gradient(circle at 85% 65%, rgba(45, 212, 191, 0.06), transparent);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* Nav */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(9, 13, 20, 0.9);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(20px, 4vw, 48px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 15.5px;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #000;
+      font-size: 13.5px;
+    }
+
+    .btn-back {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-back:hover {
+      color: #fff;
+      border-color: var(--primary);
+      background: var(--card);
+      transform: translateX(-2px);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 44px 24px 0;
+    }
+
+    /* Hero */
+    .hero {
+      margin-bottom: 40px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 999px;
+      color: var(--primary);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .badge-pill::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 10px var(--primary);
+    }
+
+    .title {
+      font-size: clamp(32px, 4.2vw, 48px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 18px;
+    }
+
+    .title span {
+      background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 50%, #2dd4bf 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .lead {
+      color: var(--text-muted);
+      font-size: clamp(16px, 1.8vw, 18.5px);
+      max-width: 860px;
+      line-height: 1.65;
+      margin-bottom: 32px;
+    }
+
+    /* Sector Navigation Tabs */
+    .track-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+
+    .track-tab {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .track-tab:hover {
+      background: var(--card);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .track-tab.active {
+      background: var(--primary);
+      color: #000;
+      border-color: var(--primary);
+      box-shadow: 0 0 18px var(--primary-glow);
+    }
+
+    .track-tab .tag-count {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 11px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    /* Stats strip */
+    .dual-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .dual-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dual-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary);
+    }
+
+    .dual-card.accent::after { background: var(--accent); }
+    .dual-card.success::after { background: var(--success); }
+    .dual-card.warning::after { background: var(--warning); }
+
+    .dual-sector {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .dual-val {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      font-family: var(--mono);
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .dual-label {
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+
+    /* Tab content panes */
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Playbook Framework */
+    .playbook-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-bottom: 56px;
+    }
+
+    .playbook-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .playbook-step {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .playbook-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .playbook-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* Evidence Cards Grid */
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+      gap: 24px;
+      margin-bottom: 56px;
+    }
+
+    .evidence-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.2s ease;
+    }
+
+    .evidence-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+    }
+
+    .card-head {
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.02);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .head-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .pill-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pill-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+
+    .pill-success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+    }
+
+    .pill-primary {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #7dd3fc;
+    }
+
+    .img-box {
+      background: #000;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      transition: transform 0.3s ease;
+    }
+
+    .img-box:hover img {
+      transform: scale(1.02);
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(9, 13, 20, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+
+    .img-box:hover .overlay {
+      opacity: 1;
+    }
+
+    .card-body {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-body h3 {
+      font-size: 17.5px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .card-body p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .tags-row {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .tag-item {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    /* Comparison Table */
+    .compare-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      margin-bottom: 56px;
+      overflow-x: auto;
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13.5px;
+    }
+
+    .compare-table th {
+      padding: 12px 16px;
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .compare-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+    }
+
+    .compare-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: #fff;
+    }
+
+    .val-highlight {
+      color: #34d399;
+      font-weight: 700;
+      font-family: var(--mono);
+    }
+
+    /* Lightbox Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 13, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      max-width: 1100px;
+      width: 100%;
+      max-height: 92vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .modal-header h4 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .close-modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+
+    .close-modal:hover {
+      color: #fff;
+      background: var(--card-hover);
+    }
+
+    .modal-img-wrap {
+      background: #000;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-height: 68vh;
+      overflow: hidden;
+    }
+
+    .modal-img-wrap img {
+      max-width: 100%;
+      max-height: 64vh;
+      object-fit: contain;
+      border-radius: var(--radius-sm);
+    }
+
+    .modal-footer {
+      padding: 18px 24px;
+      border-top: 1px solid var(--border);
+      background: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .modal-caption {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      max-width: 700px;
+    }
+
+    .modal-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .modal-btn {
+      padding: 6px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .modal-btn:hover {
+      background: var(--card-hover);
+    }
+
+    @media (max-width: 640px) {
+      .evidence-grid {
+        grid-template-columns: 1fr;
+      }
+      .track-tabs {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="nav">
+    <div class="brand">
+      <div class="brand-mark">MP</div>
+      <span>Marlon Palomares · Google Ads & Telemetry Case Study</span>
+    </div>
+    <a href="/" class="btn-back">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Return to Portfolio
+    </a>
+  </nav>
+
+  <main class="container">
+    <!-- Header -->
+    <header class="hero">
+      <div class="badge-pill">Unified Search & Telemetry Case Study</div>
+      <h1 class="title">Google Ads Turnaround: <span>Non-Profit & Healthcare</span></h1>
+      <p class="lead">
+        A combined performance study demonstrating search mastery across two demanding sectors: rescuing a non-profit Google Ad Grants account to 14.00% CTR compliance (193+ monthly conversions), and repairing broken appointment telemetry for Resilience Therapy via GTM to achieve 40.00% CTR at $2.97 CPC.
+      </p>
+
+      <!-- Sector Switcher Tabs -->
+      <div class="track-tabs">
+        <button class="track-tab active" data-tab="overview">
+          Executive Overview & Methodology
+        </button>
+        <button class="track-tab" data-tab="nonprofit">
+          Track 1: Non-Profit Ad Grants (Alvaro) <span class="tag-count">14.00% CTR</span>
+        </button>
+        <button class="track-tab" data-tab="resilience">
+          Track 2: Healthcare & GTM (Resilience Therapy) <span class="tag-count">$2.97 CPC</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Combined Metrics Strip -->
+    <div class="dual-metrics">
+      <div class="dual-card success">
+        <div class="dual-sector">Non-Profit (Alvaro)</div>
+        <div class="dual-val">14.00%</div>
+        <div class="dual-label">Interaction rate (Google 5% floor satisfied)</div>
+      </div>
+      <div class="dual-card accent">
+        <div class="dual-sector">Non-Profit (Alvaro)</div>
+        <div class="dual-val">193+</div>
+        <div class="dual-label">Monthly conversions ($4.34 cost/conv)</div>
+      </div>
+      <div class="dual-card">
+        <div class="dual-sector">Healthcare (Resilience)</div>
+        <div class="dual-val">40.00%</div>
+        <div class="dual-label">Peak local search CTR on EMDR keywords</div>
+      </div>
+      <div class="dual-card warning">
+        <div class="dual-sector">Healthcare (Resilience)</div>
+        <div class="dual-val">$2.97</div>
+        <div class="dual-label">Avg CPC (vs. $8.50+ mental health benchmark)</div>
+      </div>
+    </div>
+
+    <!-- TAB 1: EXECUTIVE OVERVIEW -->
+    <div class="tab-pane active" id="pane-overview">
+      <section>
+        <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 12px;">Marlon's 4-Step Search & Telemetry Framework</h2>
+        <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 28px; max-width: 820px;">
+          Whether operating under the strict non-profit guidelines of Google Ad Grants or bidding on competitive clinical healthcare keywords, every turnaround follows this standardized, scientific execution playbook.
+        </p>
+
+        <div class="playbook-grid">
+          <div class="playbook-card">
+            <span class="playbook-step">Step 01</span>
+            <h3 class="playbook-title">Telemetry & Goal Audit</h3>
+            <p class="playbook-desc">
+              Inspect conversion actions for inactive status, tracking loops, and zero-conversion leaks before spending ad dollars.
+            </p>
+          </div>
+          <div class="playbook-card">
+            <span class="playbook-step">Step 02</span>
+            <h3 class="playbook-title">Full GTM Instrumentation</h3>
+            <p class="playbook-desc">
+              Deploy Google Tag Manager with Conversion Linker, calls from website, form submissions, and dual GA4 event parameters.
+            </p>
+          </div>
+          <div class="playbook-card">
+            <span class="playbook-step">Step 03</span>
+            <h3 class="playbook-title">Negative Conflict Pruning</h3>
+            <p class="playbook-desc">
+              Audit search term reports to eliminate cannibalizing negatives, purge low-intent single-word queries, and secure 8/10 Quality Scores.
+            </p>
+          </div>
+          <div class="playbook-card">
+            <span class="playbook-step">Step 04</span>
+            <h3 class="playbook-title">Smart Bidding Scaling</h3>
+            <p class="playbook-desc">
+              Transition to Maximize Conversions bidding once clean conversion data flows, locking in low CPC and compliant interaction rates.
+            </p>
+          </div>
+        </div>
+
+        <!-- Comparative Telemetry Table -->
+        <div class="compare-wrap">
+          <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">Sector Telemetry & Transformation Matrix</h3>
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Account & Sector</th>
+                <th>Core Challenge</th>
+                <th>Technical Architecture Deployed</th>
+                <th>Key Performance Metric</th>
+                <th>Cost / Efficiency</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color: #fff; font-weight: 600;">Non-Profit Ad Grants (Alvaro)</td>
+                <td>5% CTR compliance threat & negative keyword conflicts</td>
+                <td>Negative conflict cleanup, 27 redundant queries pruned, Maximize Conversions</td>
+                <td class="val-highlight">14.00% CTR</td>
+                <td>193+ Conv @ $4.34/conv</td>
+              </tr>
+              <tr>
+                <td style="color: #fff; font-weight: 600;">Resilience Therapy (Clinical)</td>
+                <td>Booking goal recorded 0 conversions (blind bidding)</td>
+                <td>GTM-WCCSC24W container, dual GA4 streams, local EMDR phrase matching</td>
+                <td class="val-highlight">40.00% Peak CTR</td>
+                <td>142 Clicks @ $2.97 CPC</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 2: NON-PROFIT (ALVARO) -->
+    <div class="tab-pane" id="pane-nonprofit">
+      <section>
+        <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 12px;">Track 1: Non-Profit Google Ad Grants Turnaround</h2>
+        <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 28px; max-width: 820px;">
+          Google Ad Grants provides $10,000/month in search advertising, but requires maintaining a strict 5.00% CTR floor and zero negative keyword conflicts. Here is the verified Before/After evidence.
+        </p>
+
+        <div class="evidence-grid">
+          <!-- Non Profit Before -->
+          <div class="evidence-card">
+            <div class="card-head">
+              <span class="head-title">Initial State: Declining CTR & Compliance Risk</span>
+              <span class="pill-tag pill-danger">Pre-Optimization</span>
+            </div>
+            <div class="img-box" onclick="openLightbox(0)">
+              <img src="/images/case-studies/non-profit/Before.jpg" alt="Google Ads Non-Profit Before Audit">
+              <div class="overlay">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                Inspect Before Dashboard
+              </div>
+            </div>
+            <div class="card-body">
+              <h3>The Audit: Negative Keyword Conflicts & Dropping CTR</h3>
+              <p>
+                Search term audit revealed negative keywords blocking primary search queries, diluting CTR down toward Google's mandatory 5% suspension threshold.
+              </p>
+              <ul class="tags-row">
+                <li class="tag-item">Negative Keyword Clashes</li>
+                <li class="tag-item">Ad Grants 5% CTR Risk</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Non Profit After -->
+          <div class="evidence-card">
+            <div class="card-head">
+              <span class="head-title">Post-Optimization: 14.00% Interaction Rate</span>
+              <span class="pill-tag pill-success">14.00% CTR Achieved</span>
+            </div>
+            <div class="img-box" onclick="openLightbox(1)">
+              <img src="/images/case-studies/non-profit/After.jpg" alt="Google Ads Non-Profit After Optimization">
+              <div class="overlay">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                Inspect After Dashboard
+              </div>
+            </div>
+            <div class="card-body">
+              <h3>The Turnaround: 193+ High-Intent Monthly Inquiries</h3>
+              <p>
+                Eliminated 27 redundant keywords and calibrated responsive search ads. Interaction rate climbed to 14.00% (nearly 3x the compliance requirement) at $4.34 cost per conversion.
+              </p>
+              <ul class="tags-row">
+                <li class="tag-item">14.00% Interaction Rate</li>
+                <li class="tag-item">193 Conversions</li>
+                <li class="tag-item">$4.34 CPA</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 3: HEALTHCARE (RESILIENCE THERAPY) -->
+    <div class="tab-pane" id="pane-resilience">
+      <section>
+        <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 12px;">Track 2: Healthcare & Telemetry Rebuild (Resilience Therapy)</h2>
+        <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 28px; max-width: 820px;">
+          Auditing a specialized EMDR and trauma recovery psychotherapy clinic (`resiliencetherapy.net`). Repaired broken booking telemetry and executed high-intent local search campaigns.
+        </p>
+
+        <div class="evidence-grid">
+          <!-- Broken Goal -->
+          <div class="evidence-card">
+            <div class="card-head">
+              <span class="head-title">Audit: Booking Action Inactive (0 Conversions)</span>
+              <span class="pill-tag pill-danger">Telemetry Leak</span>
+            </div>
+            <div class="img-box" onclick="openLightbox(2)">
+              <img src="/images/case-studies/resilience-therapy/resilience-broken-conversion.png" alt="Broken Booking Goal Audit">
+              <div class="overlay">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                Inspect Audit Evidence
+              </div>
+            </div>
+            <div class="card-body">
+              <h3>Initial State: Blind Bidding</h3>
+              <p>
+                Primary conversion goal for <em>/booking-confirmed/</em> registered zero conversions with an inactive status warning. Google's bidding algorithm had zero signals to optimize toward.
+              </p>
+              <ul class="tags-row">
+                <li class="tag-item">Primary Goal Inactive</li>
+                <li class="tag-item">0 Recorded Bookings</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- GTM Architecture -->
+          <div class="evidence-card">
+            <div class="card-head">
+              <span class="head-title">GTM Container (GTM-WCCSC24W)</span>
+              <span class="pill-tag pill-success">Dual-Stream Verified</span>
+            </div>
+            <div class="img-box" onclick="openLightbox(3)">
+              <img src="/images/case-studies/resilience-therapy/resilience-gtm-container.png" alt="Google Tag Manager Event Infrastructure">
+              <div class="overlay">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                Inspect GTM Architecture
+              </div>
+            </div>
+            <div class="card-body">
+              <h3>The Fix: Full-Stack GTM Event Telemetry</h3>
+              <p>
+                Configured Conversion Linker, calls from website, form submissions, phone clicks, and email clicks, mirrored synchronously into Google Ads and GA4 event parameters.
+              </p>
+              <ul class="tags-row">
+                <li class="tag-item">GTM-WCCSC24W</li>
+                <li class="tag-item">Calls & Forms</li>
+                <li class="tag-item">Dual GA4 Streams</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Search Keywords -->
+          <div class="evidence-card">
+            <div class="card-head">
+              <span class="head-title">Keyword Intent & CTR Breakdown</span>
+              <span class="pill-tag pill-primary">Quality Score 8/10</span>
+            </div>
+            <div class="img-box" onclick="openLightbox(4)">
+              <img src="/images/case-studies/resilience-therapy/resilience-keywords-ctr.png" alt="Search CTR Telemetry">
+              <div class="overlay">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                Inspect Keyword CTRs
+              </div>
+            </div>
+            <div class="card-body">
+              <h3>Localized Query Capture: Up to 40% CTR</h3>
+              <p>
+                Phrase-matched queries like <em>"emdr grand rapids"</em> achieved 40.00% CTR, and <em>"emdr therapy detroit"</em> logged 33.33% CTR, while national EMDR terms earned 8/10 Quality Scores.
+              </p>
+              <ul class="tags-row">
+                <li class="tag-item">40.00% Local CTR</li>
+                <li class="tag-item">8/10 Quality Score</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 14-Day Performance -->
+          <div class="evidence-card">
+            <div class="card-head">
+              <span class="head-title">14-Day Performance Overview</span>
+              <span class="pill-tag pill-success">$2.97 Avg CPC</span>
+            </div>
+            <div class="img-box" onclick="openLightbox(5)">
+              <img src="/images/case-studies/resilience-therapy/resilience-campaign-scale.png" alt="14-Day Campaign Performance Overview">
+              <div class="overlay">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                Inspect Scale Overview
+              </div>
+            </div>
+            <div class="card-body">
+              <h3>Efficient $40/Day Patient Inflow</h3>
+              <p>
+                Captured 142 patient clicks from 3,566 impressions for $422.17 total spend ($2.97 avg CPC), creating a steady stream of consultation inquiries for the clinical staff.
+              </p>
+              <ul class="tags-row">
+                <li class="tag-item">142 Clicks</li>
+                <li class="tag-item">$2.97 CPC</li>
+                <li class="tag-item">3,566 Impressions</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Lightbox Modal -->
+  <div class="modal-backdrop" id="modalBackdrop" onclick="handleBackdropClick(event)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h4 id="modalTitle">Screenshot Evidence</h4>
+        <button class="close-modal" onclick="closeModal()" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-img-wrap">
+        <img id="modalImg" src="" alt="Evidence View">
+      </div>
+      <div class="modal-footer">
+        <p class="modal-caption" id="modalCap">Caption text</p>
+        <div class="modal-btns">
+          <button class="modal-btn" onclick="prevSlide()">Previous</button>
+          <button class="modal-btn" onclick="nextSlide()">Next</button>
+          <a class="modal-btn" id="modalOpen" href="" target="_blank">Open High-Res</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const slides = [
+      {
+        title: "Non-Profit Ad Grants Audit (Alvaro): Negative Keyword Clashes",
+        src: "/images/case-studies/non-profit/Before.jpg",
+        caption: "Audit showing negative keywords blocking intended search terms and diluting CTR toward the 5% compliance boundary."
+      },
+      {
+        title: "Non-Profit Ad Grants After: 14.00% Interaction Rate",
+        src: "/images/case-studies/non-profit/After.jpg",
+        caption: "Post-restructuring dashboard logging 14.00% interaction rate and 193 monthly conversions at $4.34 cost per conversion."
+      },
+      {
+        title: "Resilience Therapy Audit: Inactive Booking Goal",
+        src: "/images/case-studies/resilience-therapy/resilience-broken-conversion.png",
+        caption: "Audit showing 0 recorded conversions on the clinic's primary booking goal before GTM telemetry reconstruction."
+      },
+      {
+        title: "Resilience Therapy: Google Tag Manager Container (GTM-WCCSC24W)",
+        src: "/images/case-studies/resilience-therapy/resilience-gtm-container.png",
+        caption: "Full GTM tag architecture: Calls from website, Conversion Linker, Form Submit, Phone Clicks, and dual GA4 event streams."
+      },
+      {
+        title: "Resilience Therapy: High-Intent Keyword Matrix & Search CTRs",
+        src: "/images/case-studies/resilience-therapy/resilience-keywords-ctr.png",
+        caption: "Telemetry table logging 40.00% CTR on 'emdr grand rapids' and 8/10 Quality Score on EMDR therapy keywords."
+      },
+      {
+        title: "Resilience Therapy: 14-Day Performance Overview ($2.97 Avg CPC)",
+        src: "/images/case-studies/resilience-therapy/resilience-campaign-scale.png",
+        caption: "14-day overview capturing 142 clicks from 3,566 impressions on a controlled $40/day budget."
+      }
+    ];
+
+    let currentSlide = 0;
+
+    // Tab Switching
+    const tabs = document.querySelectorAll('.track-tab');
+    const panes = document.querySelectorAll('.tab-pane');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        panes.forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        const target = tab.getAttribute('data-tab');
+        document.getElementById('pane-' + target).classList.add('active');
+        history.replaceState(null, null, '#' + target);
+      });
+    });
+
+    // Auto switch on anchor hash
+    window.addEventListener('DOMContentLoaded', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && document.getElementById('pane-' + hash)) {
+        tabs.forEach(t => {
+          if (t.getAttribute('data-tab') === hash) t.classList.add('active');
+          else t.classList.remove('active');
+        });
+        panes.forEach(p => {
+          if (p.id === 'pane-' + hash) p.classList.add('active');
+          else p.classList.remove('active');
+        });
+      }
+    });
+
+    // Lightbox Modal
+    function openLightbox(index) {
+      currentSlide = index;
+      const s = slides[index];
+      document.getElementById('modalTitle').textContent = s.title;
+      document.getElementById('modalImg').src = s.src;
+      document.getElementById('modalCap').textContent = s.caption;
+      document.getElementById('modalOpen').href = s.src;
+      document.getElementById('modalBackdrop').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('modalBackdrop').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function handleBackdropClick(e) {
+      if (e.target.id === 'modalBackdrop') closeModal();
+    }
+
+    function prevSlide() {
+      currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+      openLightbox(currentSlide);
+    }
+
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % slides.length;
+      openLightbox(currentSlide);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const modal = document.getElementById('modalBackdrop');
+      if (modal.classList.contains('open')) {
+        if (e.key === 'Escape') closeModal();
+        if (e.key === 'ArrowLeft') prevSlide();
+        if (e.key === 'ArrowRight') nextSlide();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -41,18 +41,11 @@ export const featuredProject = {
 
 export const caseStudies: { id: string; title: string; summary: string; link: LinkRef; image?: Image }[] = [
   {
-    id: 'case-study-resilience-therapy',
-    title: 'Google Ads & Telemetry Turnaround for Resilience Therapy',
-    summary: 'Audited broken appointment telemetry, deployed a full-stack Google Tag Manager container (GTM-WCCSC24W) with dual GA4 streams, and scaled high-intent EMDR search campaigns to 40.00% peak CTR and $2.97 average CPC.',
-    image: { src: '/images/case-studies/resilience-therapy/resilience-campaign-scale.png', alt: 'Resilience Therapy Google Ads Performance', width: 1280, height: 640 },
-    link: { label: 'View Case Study & GTM Telemetry Evidence', href: '/demos/case-studies/resilience-therapy.html', external: true },
-  },
-  {
-    id: 'case-study-google-ads-nonprofit',
-    title: 'Google Ad Grants Optimization for Non-Profit (Alvaro)',
-    summary: 'Rescued a declining non-profit Ad Grants account: resolved negative keyword conflicts, pruned 27 redundant keywords, and boosted interaction rate to 14.00% with 193+ monthly conversions at $4.34/conv.',
-    image: { src: '/images/case-studies/non-profit/After.jpg', alt: 'Google Ads Non-Profit Turnaround', width: 1280, height: 640 },
-    link: { label: 'View Case Study & Live Dashboard Evidence', href: '/demos/case-studies/google-ads-nonprofit.html', external: true },
+    id: 'case-study-google-ads-mastery',
+    title: 'Google Ads & Telemetry Turnaround: Non-Profit & Healthcare',
+    summary: 'Dual-track search engine turnaround: rescued an Ad Grants non-profit account to 14.00% CTR compliance and 193+ monthly conversions, while rebuilding broken booking telemetry for Resilience Therapy via GTM to achieve 40.00% local CTR at $2.97 CPC.',
+    image: { src: '/images/case-studies/non-profit/After.jpg', alt: 'Google Ads Search & Telemetry Turnaround Suite', width: 1280, height: 640 },
+    link: { label: 'Explore Merged Case Study & Evidence Suite', href: '/demos/case-studies/google-ads-performance.html', external: true },
   },
   {
     id: 'case-study-1',
