@@ -9,18 +9,18 @@ const mark = (name: string, file: string, mono?: true): ToolMark => ({ name, log
  * grounds and never disappears.
  */
 export const tools = {
-  toolA: mark('Tool A', 'tool-01.svg'),
-  toolB: mark('Tool B', 'tool-02.svg'),
-  toolC: mark('Tool C', 'tool-03.svg'),
-  toolD: mark('Tool D', 'tool-04.svg'),
-  toolE: mark('Tool E', 'tool-05.svg'),
-  toolF: mark('Tool F', 'tool-06.svg'),
-  toolG: mark('Tool G', 'tool-07.svg'),
-  toolH: mark('Tool H', 'tool-08.svg'),
-  toolI: mark('Tool I', 'tool-09.svg'),
-  toolJ: mark('Tool J', 'tool-10.svg'),
-  toolK: mark('Tool K', 'tool-11.svg'),
-  toolL: mark('Tool L', 'tool-12.svg'),
+  toolA: mark('n8n', 'tool-01.svg'),
+  toolB: mark('GoHighLevel', 'tool-02.svg'),
+  toolC: mark('DeepSeek AI', 'tool-03.svg'),
+  toolD: mark('Google Workspace', 'tool-04.svg'),
+  toolE: mark('Telegram', 'tool-05.svg'),
+  toolF: mark('Slack', 'tool-06.svg'),
+  toolG: mark('Supabase', 'tool-07.svg'),
+  toolH: mark('Meta Graph API', 'tool-08.svg'),
+  toolI: mark('Twilio', 'tool-09.svg'),
+  toolJ: mark('Stripe', 'tool-10.svg'),
+  toolK: mark('RapidAPI', 'tool-11.svg'),
+  toolL: mark('OpenAI', 'tool-12.svg'),
 } satisfies Record<string, ToolMark>
 
 /** The daily drivers, in the order you want them shown. */

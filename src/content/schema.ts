@@ -74,7 +74,9 @@ export type Demo = {
   label: string
   tag: string
   summary: string
-  href: string
+  href?: string
+  image?: Image
+  status?: BuildStatus
 }
 
 export type AppBuild = {

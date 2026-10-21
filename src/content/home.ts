@@ -9,6 +9,7 @@ import {
   experiments,
   featuredProject,
   funnelPages,
+  ghlWorkflows,
   processDoc,
   sampleSites,
   screens,
@@ -22,10 +23,10 @@ import {
  * (see the comment on `.hero__title` there).
  */
 export const homeHero = {
-  headlineThin: 'Your headline.',
-  headlineBold: 'Make it yours.',
-  subhead: 'PLACEHOLDER - tell me what to put here: one sentence on who you help and the result you get them.',
-  cta: { label: 'Get in touch', to: '/#contact' },
+  headlineThin: 'Autonomous operations.',
+  headlineBold: 'Built to scale.',
+  subhead: 'Production-grade n8n automations, custom AI agents, and high-converting GoHighLevel systems engineered to eliminate bottlenecks and accelerate revenue.',
+  cta: { label: 'Explore Workflows', to: '/work/screens' },
 }
 
 /**
@@ -38,15 +39,14 @@ export type ManifestoPart = string | { key: string }
 export const homeManifesto = {
   eyebrow: method.eyebrow,
   parts: [
-    'This is your',
-    { key: 'statement.' },
-    'Say who you',
-    { key: 'help,' },
-    'what you',
-    { key: 'make' },
-    'for them, and how you',
-    { key: 'deliver' },
-    'the result they came for.',
+    'We build systems that turn manual',
+    { key: 'chaos' },
+    'into autonomous',
+    { key: 'predictability.' },
+    'From intelligent AI lead intake to',
+    { key: 'multi-channel' },
+    'CRM synchronization, your business runs 24/7 without',
+    { key: 'friction.' },
   ] satisfies ManifestoPart[],
 }
 
@@ -67,7 +67,7 @@ export const homeSections = {
 
 export const ctaBand = {
   title: 'Tell me what is eating your week.',
-  body: 'PLACEHOLDER - tell me what to put here: one or two sentences on what the visitor gets when they write to you.',
+  body: 'Share your current manual bottleneck or integration roadblock. We will map a high-ROI automated pipeline designed for zero data loss.',
   button: 'Email me your question',
 }
 
@@ -99,8 +99,9 @@ const demoItem =
     kicker: demo.tag,
     group,
     summary: demo.summary,
-    image: cover(demo.id, demo.label),
+    image: demo.image ?? cover(demo.id, demo.label),
     href: demo.href,
+    status: demo.status,
   })
 
 const groupItems = (groups: typeof sideProjects): WorkItem[] =>
@@ -201,16 +202,23 @@ export const workChapters: WorkChapter[] = [
   },
   {
     id: 'websites',
-    title: 'Websites',
-    line: 'Sample sites, funnel pages and booking pages.',
-    count: sampleSites.length + funnelPages.length + bookingPages.length,
-    unit: 'pages',
-    description: 'PLACEHOLDER - tell me what to put here: one or two sentences on the sites and pages people can open live (under 160 characters).',
-    marks: [tools.toolI, tools.toolJ, tools.toolK],
+    title: 'GoHighLevel & Funnels',
+    line: 'Conversion-engineered GoHighLevel websites, funnels & CRM pipelines.',
+    count: sampleSites.length + funnelPages.length + bookingPages.length + ghlWorkflows.length,
+    unit: 'builds',
+    description: 'Production client assets: Real estate lead portals, wellness assessment funnels, local service landing pages, and multi-channel GHL CRM pipelines.',
+    tile: {
+      src: '/images/ghl/ghl-real-estate-website.jpg',
+      alt: 'Property Deals Luxury Real Estate Portal',
+      width: 1600,
+      height: 900,
+    },
+    marks: [tools.toolB, tools.toolH, tools.toolI],
     items: [
-      ...sampleSites.map(demoItem('Sample sites')),
-      ...funnelPages.map(demoItem('Funnel pages')),
-      ...bookingPages.map(demoItem('Booking pages')),
+      ...sampleSites.map(demoItem('Websites & Landing Pages')),
+      ...funnelPages.map(demoItem('Sales Funnels & Lead Gen')),
+      ...bookingPages.map(demoItem('CRM Architecture & Pipelines')),
+      ...ghlWorkflows.map(demoItem('GoHighLevel Automation Workflows')),
     ],
   },
   {

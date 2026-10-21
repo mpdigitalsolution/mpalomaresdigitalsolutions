@@ -3,13 +3,20 @@ import type { AiGroup, AppBuild, Demo, Image, LinkRef } from './schema'
 export const workPage = {
   eyebrow: 'Work',
   title: 'Real builds you can open.',
-  lede: 'PLACEHOLDER - tell me what to put here: one sentence on what the visitor can open in this section.',
+  lede: 'Production-grade n8n automations, conversion-engineered GoHighLevel websites and funnels, and autonomous AI agents.',
 }
 
 /* ---------- Featured project ---------- */
 
 const n8nShot = (file: string, alt: string): Image => ({
   src: `/images/n8n/${file}`,
+  alt,
+  width: 1600,
+  height: 900,
+})
+
+const ghlShot = (file: string, alt: string): Image => ({
+  src: `/images/ghl/${file}`,
   alt,
   width: 1600,
   height: 900,
@@ -44,6 +51,12 @@ export const caseStudies: { id: string; title: string; summary: string; link: Li
     title: 'Airbnb RAG Guest Concierge (FiFi) & Supabase Vector Engine',
     summary: 'Eliminated manual guest inquiries by syncing property docs to Supabase pgvector hourly, answering guest questions with property-grounded accuracy and zero hallucinations.',
     link: { label: 'View RAG Concierge Workflow', href: '/work/screens', external: false },
+  },
+  {
+    id: 'case-study-3',
+    title: 'Multi-Channel GoHighLevel Lead Nurturing & Speed-to-Lead Engine',
+    summary: 'Engineered automated missed-call text back and 5-way conditional branch nurturing across automotive and home service niches, converting cold inquiries into booked calls in under 60 seconds.',
+    link: { label: 'Explore GoHighLevel Systems', href: '/work/websites', external: false },
   },
 ]
 
@@ -106,37 +119,171 @@ export const screens: { id: string; name: string; kicker: string; summary: strin
   },
 ]
 
-/* ---------- Websites (self-contained demo pages in public/demos) ---------- */
-
-const demo = (dir: string, file: string, label: string, tag: string, summary: string): Demo => ({
-  id: file,
-  label,
-  tag,
-  summary,
-  href: `/demos/${dir}/${file}.html`,
-})
-
-const SITE_SUMMARY = 'PLACEHOLDER - tell me what to put here: one sentence on the site and who it is for.'
-const FUNNEL_SUMMARY = 'PLACEHOLDER - tell me what to put here: one sentence on what this funnel page does.'
-const BOOKING_SUMMARY = 'PLACEHOLDER - tell me what to put here: one sentence on the booking page and its audience.'
+/* ---------- Websites & GoHighLevel Assets ---------- */
 
 export const sampleSites: Demo[] = [
-  demo('sites', 'site-1', 'Sample Site 1', 'Website', SITE_SUMMARY),
-  demo('sites', 'site-2', 'Sample Site 2', 'Website', SITE_SUMMARY),
-  demo('sites', 'site-3', 'Sample Site 3', 'Website', SITE_SUMMARY),
-  demo('sites', 'site-4', 'Sample Site 4', 'Website', SITE_SUMMARY),
+  {
+    id: 'ghl-real-estate-website',
+    label: 'Property Deals Luxury Real Estate Portal',
+    tag: 'Web Portal',
+    summary: 'Full-featured residential property portal built in GoHighLevel with integrated 2-way SMS chat widget, search filters, and one-click consultation scheduler.',
+    image: ghlShot('ghl-real-estate-website.jpg', 'Property Deals Luxury Real Estate Website'),
+    href: '/images/ghl/ghl-real-estate-website.jpg',
+    status: 'Live',
+  },
+  {
+    id: 'ghl-wellness-hero',
+    label: 'Holistic Wellness $97 Assessment Portal',
+    tag: 'Healthcare Funnel',
+    summary: 'High-converting wellness evaluation website featuring root cause diagnosis breakdown, clear benefit pillars, and seamless Stripe-backed checkout entry.',
+    image: ghlShot('ghl-wellness-hero.png', 'Holistic Wellness Assessment Portal'),
+    href: '/images/ghl/ghl-wellness-hero.png',
+    status: 'Live',
+  },
+  {
+    id: 'ghl-junk-removal',
+    label: 'MP Junk Removal & Local Services Landing Page',
+    tag: 'Local Service Landing Page',
+    summary: 'Speed-optimized emergency local service landing page with 5-star Google review integration, trust badges, click-to-call banners, and instant free estimate forms.',
+    image: ghlShot('ghl-junk-removal-service.png', 'MP Junk Removal & Local Services Landing Page'),
+    href: '/images/ghl/ghl-junk-removal-service.png',
+    status: 'Live',
+  },
+  {
+    id: 'ghl-wellness-quote',
+    label: 'Wellness Assessment Pricing & Booking Form',
+    tag: 'Lead Capture Portal',
+    summary: 'Interactive assessment intake form with mobile-optimized layout, consent compliance disclaimers, and automated contact record creation in GHL.',
+    image: ghlShot('ghl-wellness-quote-form.png', 'Wellness Assessment Pricing & Booking Form'),
+    href: '/images/ghl/ghl-wellness-quote-form.png',
+    status: 'Live',
+  },
 ]
 
 export const funnelPages: Demo[] = [
-  demo('funnels', 'funnel-1', 'Funnel Page 1', 'Funnel', FUNNEL_SUMMARY),
-  demo('funnels', 'funnel-2', 'Funnel Page 2', 'Funnel', FUNNEL_SUMMARY),
-  demo('funnels', 'funnel-3', 'Funnel Page 3', 'Funnel', FUNNEL_SUMMARY),
-  demo('funnels', 'funnel-4', 'Funnel Page 4', 'Funnel', FUNNEL_SUMMARY),
+  {
+    id: 'ghl-real-estate-funnel',
+    label: 'Property Deals Acquisition & Buyer Funnel',
+    tag: 'Direct-Response Funnel',
+    summary: 'Multi-step investor and homebuyer lead generation funnel designed to capture high-intent property inquiries and route directly into sales opportunities.',
+    image: ghlShot('ghl-real-estate-funnel.png', 'Property Deals Acquisition Funnel'),
+    href: '/images/ghl/ghl-real-estate-funnel.png',
+    status: 'Live',
+  },
+  {
+    id: 'ghl-wellness-highlights',
+    label: 'Holistic Wellness Assessment Highlights & Modules',
+    tag: 'Educational Funnel Step',
+    summary: 'Visual value proposition section highlighting root cause discovery, customized wellness plans, and transparent expectations before committing.',
+    image: ghlShot('ghl-wellness-highlights.png', 'Holistic Wellness Assessment Highlights'),
+    href: '/images/ghl/ghl-wellness-highlights.png',
+    status: 'Live',
+  },
+  {
+    id: 'ghl-wellness-faq-reviews',
+    label: 'Customer Social Proof & Interactive FAQ Module',
+    tag: 'Social Proof & FAQ',
+    summary: 'Conversion-focused accordion FAQs and verified customer testimonials systematically overcoming purchase objections to maximize checkout completion.',
+    image: ghlShot('ghl-wellness-faq-reviews.png', 'Customer Proof & FAQ Funnel Step'),
+    href: '/images/ghl/ghl-wellness-faq-reviews.png',
+    status: 'Live',
+  },
 ]
 
 export const bookingPages: Demo[] = [
-  demo('funnels', 'booking-1', 'Booking Page 1', 'Booking', BOOKING_SUMMARY),
-  demo('funnels', 'booking-2', 'Booking Page 2', 'Booking', BOOKING_SUMMARY),
+  {
+    id: 'ghl-sales-pipeline-kanban',
+    label: '6-Stage Sales Opportunity Pipeline (Kanban)',
+    tag: 'Sales Pipeline',
+    summary: 'Visual deal board spanning New Lead, Contacted, Proposal Sent, Negotiating, Won, and Lost stages with active deal valuation and velocity metrics.',
+    image: ghlShot('ghl-sales-pipeline-kanban.png', 'GoHighLevel Sales Pipeline Kanban'),
+    href: '/images/ghl/ghl-sales-pipeline-kanban.png',
+    status: 'Live',
+  },
+  {
+    id: 'ghl-multi-pipeline',
+    label: 'Multi-Industry Pipeline Architecture',
+    tag: 'CRM System Architecture',
+    summary: 'Custom pipeline schema separating Marketing (12 stages), Real Estate (9 stages), and Direct Sales (6 stages) to prevent lead leakage across departments.',
+    image: ghlShot('ghl-multi-pipeline-architecture.png', 'Multi-Industry Pipeline Architecture'),
+    href: '/images/ghl/ghl-multi-pipeline-architecture.png',
+    status: 'Live',
+  },
+  {
+    id: 'ghl-contacts-smart-lists',
+    label: 'Segmented Smart Lists & Multi-Source Attribution',
+    tag: 'Contact Segmentation',
+    summary: 'Granular contact database segmented by lifecycle stages (Nurture Cold, Client VIP, Buyer Leads, Lead New) and tagged by traffic source (Facebook, Google, Referral).',
+    image: ghlShot('ghl-contacts-smart-lists.png', 'GoHighLevel Contacts and Smart Lists'),
+    href: '/images/ghl/ghl-contacts-smart-lists.png',
+    status: 'Live',
+  },
+  {
+    id: 'ghl-custom-fields',
+    label: 'Custom Data Fields Schema & Attributes',
+    tag: 'Data Schema',
+    summary: 'Tailored contact attribute definitions and custom values capturing industry-specific qualifiers (vehicle preference, property budget, inspection type).',
+    image: ghlShot('ghl-custom-fields.png', 'GoHighLevel Custom Fields Schema'),
+    href: '/images/ghl/ghl-custom-fields.png',
+    status: 'Live',
+  },
+]
+
+export const ghlWorkflows: Demo[] = [
+  {
+    id: 'ghl-advanced-lead-nurture',
+    label: 'Advanced AI Lead Nurture & Review System',
+    tag: 'AI-Augmented Workflow',
+    summary: 'Multi-stage automation with ChatGPT AI responding to inbound messages, time-delayed follow-ups, SurveyMonkey satisfaction checks, and Google Analytics conversion events.',
+    image: ghlShot('ghl-advanced-lead-nurture-system.png', 'Advanced Lead Nurture System Workflow'),
+    href: '/images/ghl/ghl-advanced-lead-nurture-system.png',
+    status: 'Live',
+  },
+  {
+    id: 'ghl-automotive-nurture',
+    label: 'Automotive 5-Way Dynamic Branch Nurturing',
+    tag: 'Dynamic Branching Drip',
+    summary: 'Dynamic multi-branch workflow triggering on appointment booking, form submit, or reply, dynamically routing leads across 5 vehicle interest branches for custom SMS/Email nurturing.',
+    image: ghlShot('ghl-automotive-branch-nurture.png', 'Automotive Multi-Branch Nurture Workflow'),
+    href: '/images/ghl/ghl-automotive-branch-nurture.png',
+    status: 'Live',
+  },
+  {
+    id: 'ghl-roofing-conversion',
+    label: 'Roofing Contractor Lead-to-Customer Pipeline',
+    tag: 'Contractor Conversion',
+    summary: 'Automated lead-to-opportunity creation for roofing contractors, splitting into dedicated inspection, repair, and full replacement multi-touch SMS & email follow-up tracks.',
+    image: ghlShot('ghl-roofing-lead-conversion.png', 'Roofing Lead Conversion Workflow'),
+    href: '/images/ghl/ghl-roofing-lead-conversion.png',
+    status: 'Live',
+  },
+  {
+    id: 'ghl-missed-call-textback',
+    label: '60-Second Missed-Call Text-Back (MCTB) Engine',
+    tag: 'Speed-to-Lead Follow-up',
+    summary: 'Instantly detects missed inbound calls or incoming messages, creates an opportunity card, and dispatches an instant SMS text follow-up to engage prospective clients within 60 seconds.',
+    image: ghlShot('ghl-missed-call-textback.png', 'Missed Call Text Back Workflow'),
+    href: '/images/ghl/ghl-missed-call-textback.png',
+    status: 'Live',
+  },
+  {
+    id: 'ghl-chiropractor-capture',
+    label: 'Chiropractor Assessment Lead Capture & Drip',
+    tag: 'Lead Capture Workflow',
+    summary: 'Automates lead capture from online health assessments: tags contact, waits, dispatches personalized SMS, and uses conditional reply logic to trigger follow-up emails.',
+    image: ghlShot('ghl-chiropractor-lead-capture.png', 'Chiropractor Lead Capture Workflow'),
+    href: '/images/ghl/ghl-chiropractor-lead-capture.png',
+    status: 'Live',
+  },
+  {
+    id: 'ghl-lead-disqualification',
+    label: 'Lead Intent Disqualification & Auto-Tagging',
+    tag: 'CRM Hygiene Workflow',
+    summary: 'Listens for customer responses indicating lack of interest, automatically strips active prospect tags, applies suppression labels, and sends a polite confirmation SMS.',
+    image: ghlShot('ghl-lead-disqualification-logic.png', 'Lead Disqualification Logic'),
+    href: '/images/ghl/ghl-lead-disqualification-logic.png',
+    status: 'Live',
+  },
 ]
 
 /* ---------- Apps and extensions ---------- */
@@ -233,6 +380,7 @@ export const workCount =
   sampleSites.length +
   funnelPages.length +
   bookingPages.length +
+  ghlWorkflows.length +
   apps.length +
   buildsIn(sideProjects) +
   buildsIn(experiments)
