@@ -83,11 +83,12 @@ export type AppBuild = {
   id: string
   name: string
   /** The label above the name. Widen the list for other kinds ("iOS app", "Web app"). */
-  kind: 'Mobile app' | 'Browser extension'
+  kind: 'Mobile app' | 'Browser extension' | 'Chrome Extension' | 'Browser Extension'
   tagline: string
   summary: string
   status?: BuildStatus
   image: Image
+  href?: string
 }
 
 export type AiBuild = {

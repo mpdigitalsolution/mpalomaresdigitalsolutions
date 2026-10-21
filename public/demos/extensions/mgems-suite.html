@@ -1,0 +1,1544 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MGEMS Chrome Extension Suite: Keyword Manager & Multi-LLM Optimizer | Marlon Palomares</title>
+  <meta name="description" content="Proprietary Chrome Extension Suite: Google Keyword Planner extractor with DeepSeek RSA generator, and multi-model prompt optimizer across Claude, Gemini, DeepSeek, and ChatGPT.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d14;
+      --surface: #0f172a;
+      --card: #131d31;
+      --card-hover: #192742;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(56, 189, 248, 0.35);
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.2);
+      --accent: #2dd4bf;
+      --purple: #a855f7;
+      --amber: #f59e0b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+      --font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 100px;
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(56, 189, 248, 0.12), transparent),
+        radial-gradient(circle at 85% 65%, rgba(168, 85, 247, 0.06), transparent);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* Nav */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(9, 13, 20, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      height: 72px;
+      display: flex;
+      align-items: center;
+    }
+    .nav-container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 24px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      transition: all 0.2s ease;
+    }
+    .back-btn:hover {
+      color: var(--text);
+      border-color: var(--primary);
+      background: rgba(56, 189, 248, 0.08);
+    }
+    .nav-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .badge-mv3 {
+      font-size: 11px;
+      font-weight: 600;
+      font-family: var(--mono);
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--primary);
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .repo-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 999px;
+      transition: all 0.2s;
+    }
+    .repo-pill:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 40px 24px 0;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 40px 0 32px;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+    }
+    .hero-title {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+    .hero-title span.grad {
+      background: linear-gradient(135deg, #38bdf8 0%, #2dd4bf 50%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-lead {
+      font-size: 18px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 32px;
+    }
+
+    /* Metric Bar */
+    .metric-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 24px 0 48px;
+    }
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .metric-card:hover {
+      border-color: var(--border-accent);
+    }
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      opacity: 0.8;
+    }
+    .metric-val {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      font-family: var(--mono);
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+    .metric-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .metric-sub {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* Tabs */
+    .tabs-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 36px;
+    }
+    .tabs-nav {
+      display: inline-flex;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px;
+      gap: 6px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 22px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .tab-btn:hover {
+      color: var(--text);
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(45, 212, 191, 0.18));
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.15);
+    }
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .tab-content.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Sandbox Panels */
+    .sandbox-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 992px) {
+      .sandbox-grid { grid-template-columns: 1fr; }
+    }
+    .panel-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .panel-title {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .panel-tag {
+      font-size: 11px;
+      font-family: var(--mono);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: var(--text-muted);
+    }
+
+    /* Forms & Inputs */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .input-field {
+      width: 100%;
+      background: rgba(9, 13, 20, 0.8);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .input-field:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+    }
+    .quick-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .quick-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .quick-chip:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(56, 189, 248, 0.08);
+    }
+
+    /* Actions */
+    .btn-action {
+      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+      color: #031326;
+      border: none;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+    }
+    .btn-action:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.45);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 13px;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Keyword Results Box */
+    .match-type-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .match-tab {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .match-tab.active {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .code-console {
+      background: #06090e;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: #38bdf8;
+      max-height: 260px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    /* RSA Generator Cards */
+    .rsa-card-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .rsa-item {
+      background: rgba(9, 13, 20, 0.6);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .rsa-item-text {
+      font-size: 13.5px;
+      color: var(--text);
+      font-weight: 500;
+      flex-grow: 1;
+    }
+    .char-badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 7px;
+      border-radius: 4px;
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      white-space: nowrap;
+    }
+    .char-badge.warning {
+      background: rgba(245, 158, 11, 0.12);
+      color: var(--amber);
+      border-color: rgba(245, 158, 11, 0.25);
+    }
+    .copy-icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 4px;
+      border-radius: 4px;
+      transition: color 0.15s;
+    }
+    .copy-icon-btn:hover {
+      color: var(--primary);
+    }
+
+    /* Tab 2: 4-Style Comparison Grid (Optimizer Pro) */
+    .optimizer-styles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 24px;
+    }
+    .style-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+    .style-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+    }
+    .style-card-header {
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .style-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .key-shortcut {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      padding: 2px 6px;
+      color: var(--text-muted);
+    }
+    .style-card-body {
+      padding: 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .style-text {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #cbd5e1;
+      background: rgba(9, 13, 20, 0.7);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      min-height: 160px;
+      font-family: var(--font);
+    }
+    .style-card-footer {
+      padding: 12px 20px;
+      background: rgba(9, 13, 20, 0.5);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    /* Model Pill Bar */
+    .model-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .model-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .model-chip.active {
+      background: rgba(168, 85, 247, 0.15);
+      border-color: var(--purple);
+      color: #d8b4fe;
+    }
+
+    /* Gallery Grid */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+    .gallery-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .gallery-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+    }
+    .gallery-img-wrapper {
+      position: relative;
+      background: #06090e;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 280px;
+    }
+    .gallery-img-wrapper img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .gallery-card:hover .gallery-img-wrapper img {
+      transform: scale(1.03);
+    }
+    .gallery-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(9, 13, 20, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .gallery-card:hover .gallery-overlay {
+      opacity: 1;
+    }
+    .zoom-hint {
+      background: rgba(56, 189, 248, 0.9);
+      color: #031326;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .gallery-meta {
+      padding: 18px 20px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .gallery-kicker {
+      font-size: 11px;
+      font-family: var(--mono);
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    .gallery-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .gallery-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Architecture Tab */
+    .arch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-top: 24px;
+    }
+    .arch-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .arch-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--primary);
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    .arch-title {
+      font-size: 17px;
+      font-weight: 700;
+    }
+    .arch-desc {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .arch-code {
+      font-family: var(--mono);
+      font-size: 12px;
+      background: #06090e;
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 6px;
+      color: var(--accent);
+      margin-top: 4px;
+    }
+
+    /* Lightbox Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.94);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    .modal-content {
+      position: relative;
+      max-width: 1200px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .modal-img {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-accent);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+      object-fit: contain;
+    }
+    .modal-caption {
+      margin-top: 14px;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      text-align: center;
+    }
+    .modal-close {
+      position: absolute;
+      top: -46px;
+      right: 0;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 700;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .modal-close:hover {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0f172a;
+      border: 1px solid var(--primary);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.2);
+      color: var(--text);
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 200;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Header -->
+  <nav class="nav">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="/work/apps" class="back-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Back to Apps Chapter
+        </a>
+        <div class="nav-title">
+          <span>MGEMS Extension Suite</span>
+          <span class="badge-mv3">Manifest V3</span>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="https://github.com/mpdigitalsolution/MGEMS-KEYWORD-MANAGER" target="_blank" rel="noopener" class="repo-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          Keyword Manager Repo
+        </a>
+        <a href="https://github.com/mpdigitalsolution/Mgemz-Optimizer" target="_blank" rel="noopener" class="repo-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          Optimizer Pro Repo
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <main class="container">
+    <header class="hero">
+      <div class="hero-eyebrow">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+        Proprietary Browser Engineering
+      </div>
+      <h1 class="hero-title">
+        MGEMS Chrome Extension Suite: <br>
+        <span class="grad">Keyword Manager & Multi-LLM Optimizer</span>
+      </h1>
+      <p class="hero-lead">
+        Two specialized browser automation tools engineered to compress days of PPC research and prompt engineering into seconds. Grab keywords directly from Google Keyword Planner, generate high-intent RSA ad copy via DeepSeek API, and optimize prompts across Claude, Gemini, DeepSeek, and ChatGPT in four simultaneous styles.
+      </p>
+    </header>
+
+    <!-- High-Impact Telemetry Metric Bar -->
+    <section class="metric-bar">
+      <div class="metric-card">
+        <div class="metric-val">100%</div>
+        <div class="metric-label">In-Browser Extraction</div>
+        <div class="metric-sub">Direct Google Keyword Planner scraping</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val">&le;30 / &le;90</div>
+        <div class="metric-label">RSA Character Guardrails</div>
+        <div class="metric-sub">Zero-rejection Google Ads headlines & descriptions</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val">4 Models</div>
+        <div class="metric-label">Multi-LLM Prompt Sync</div>
+        <div class="metric-sub">Claude 3.5 &bull; Gemini 2.5 &bull; DeepSeek &bull; ChatGPT</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val">1-Click</div>
+        <div class="metric-label">Match-Type Tokenization</div>
+        <div class="metric-sub">Broad, "Phrase", and [Exact] instant formatting</div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs-wrapper">
+      <nav class="tabs-nav" role="tablist">
+        <button type="button" class="tab-btn active" onclick="switchTab('tab-keyword-manager')" role="tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          MGEMS Keyword Manager
+        </button>
+        <button type="button" class="tab-btn" onclick="switchTab('tab-optimizer-pro')" role="tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          MGEMS Optimizer Pro
+        </button>
+        <button type="button" class="tab-btn" onclick="switchTab('tab-architecture')" role="tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+          Manifest V3 Architecture
+        </button>
+        <button type="button" class="tab-btn" onclick="switchTab('tab-gallery')" role="tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+          Screenshots & Visuals
+        </button>
+      </nav>
+    </div>
+
+    <!-- TAB 1: MGEMS KEYWORD MANAGER -->
+    <section id="tab-keyword-manager" class="tab-content active">
+      <div class="sandbox-grid">
+        <!-- Left: Input & Match-Type Extraction Simulator -->
+        <div class="panel-box">
+          <div class="panel-header">
+            <h2 class="panel-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              Google Keyword Planner Extractor
+            </h2>
+            <span class="panel-tag">DOM Injector</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="seedInput">Target Niche or Seed Keywords</label>
+            <input type="text" id="seedInput" class="input-field" value="NDIS Disability Support Services Brisbane" placeholder="e.g. Emergency Plumber Sydney or B2B SaaS CRM">
+            <div class="quick-chips">
+              <span class="quick-chip" onclick="setKeyword('NDIS Disability Support Services Brisbane')">NDIS Support</span>
+              <span class="quick-chip" onclick="setKeyword('Emergency Plumber 24/7 Near Me')">Emergency Plumber</span>
+              <span class="quick-chip" onclick="setKeyword('GoHighLevel CRM Lead Automation')">GoHighLevel CRM</span>
+              <span class="quick-chip" onclick="setKeyword('Mental Health Psychotherapy Clinic')">Therapy Clinic</span>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button type="button" class="btn-action" onclick="simulateExtraction()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path></svg>
+              Extract & Tokenize Match Types
+            </button>
+            <button type="button" class="btn-secondary" onclick="simulateDeepSeekKeywords()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              DeepSeek Intent AI
+            </button>
+          </div>
+
+          <!-- Match Type Selector -->
+          <div class="match-type-tabs">
+            <button type="button" class="match-tab active" onclick="setMatchType('phrase')">"Phrase Match" (<span id="countPhrase">6</span>)</button>
+            <button type="button" class="match-tab" onclick="setMatchType('exact')">[Exact Match] (<span id="countExact">6</span>)</button>
+            <button type="button" class="match-tab" onclick="setMatchType('broad')">Broad Match (<span id="countBroad">6</span>)</button>
+          </div>
+
+          <!-- Console Output -->
+          <div id="keywordConsole" class="code-console">"ndis disability support services brisbane"
+"registered ndis provider brisbane"
+"disability accommodation support brisbane"
+"in home disability care services brisbane"
+"ndis core support provider near me"
+"community participation support brisbane"</div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+            <span style="font-size: 12px; color: var(--text-dim);">Ready for Google Ads Editor bulk paste</span>
+            <button type="button" class="btn-secondary" onclick="copyConsole()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              Copy Match Group
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: DeepSeek RSA Headlines & Descriptions Generator -->
+        <div class="panel-box">
+          <div class="panel-header">
+            <h2 class="panel-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              DeepSeek RSA Ad Copy Synthesis
+            </h2>
+            <span class="panel-tag">API Engine</span>
+          </div>
+
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+            Automated Google Ads compliance validator: generates high-intent headlines strictly capped at &le;30 characters and descriptions at &le;90 characters.
+          </p>
+
+          <div style="margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span class="form-label" style="margin-bottom: 0;">RSA Headlines (&le; 30 Characters)</span>
+              <span style="font-size: 11px; color: var(--success); font-family: var(--mono);">100% Policy Compliant</span>
+            </div>
+            <div class="rsa-card-grid" id="headlineList">
+              <div class="rsa-item">
+                <span class="rsa-item-text">NDIS Support Services Brisbane</span>
+                <span class="char-badge">29/30</span>
+                <button class="copy-icon-btn" onclick="copyText('NDIS Support Services Brisbane')" title="Copy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+              </div>
+              <div class="rsa-item">
+                <span class="rsa-item-text">Registered NDIS Providers</span>
+                <span class="char-badge">24/30</span>
+                <button class="copy-icon-btn" onclick="copyText('Registered NDIS Providers')" title="Copy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+              </div>
+              <div class="rsa-item">
+                <span class="rsa-item-text">Compassionate In-Home Care</span>
+                <span class="char-badge">26/30</span>
+                <button class="copy-icon-btn" onclick="copyText('Compassionate In-Home Care')" title="Copy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span class="form-label" style="margin-bottom: 0;">RSA Descriptions (&le; 90 Characters)</span>
+              <span style="font-size: 11px; color: var(--success); font-family: var(--mono);">Verified Length</span>
+            </div>
+            <div class="rsa-card-grid" id="descList">
+              <div class="rsa-item">
+                <span class="rsa-item-text">Tailored disability care in Brisbane. Certified support workers available 24/7.</span>
+                <span class="char-badge">81/90</span>
+                <button class="copy-icon-btn" onclick="copyText('Tailored disability care in Brisbane. Certified support workers available 24/7.')" title="Copy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+              </div>
+              <div class="rsa-item">
+                <span class="rsa-item-text">Maximize your NDIS plan outcomes. Get trusted local assistance today with zero delay.</span>
+                <span class="char-badge">88/90</span>
+                <button class="copy-icon-btn" onclick="copyText('Maximize your NDIS plan outcomes. Get trusted local assistance today with zero delay.')" title="Copy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: MGEMS OPTIMIZER PRO (MULTI-LLM) -->
+    <section id="tab-optimizer-pro" class="tab-content">
+      <div class="panel-box" style="margin-bottom: 24px;">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            MGEMS Optimizer Pro: 4-Way Multi-LLM Synthesis
+          </h2>
+          <span class="panel-tag" style="background: rgba(168, 85, 247, 0.15); color: #d8b4fe;">Simultaneous Multi-Model</span>
+        </div>
+
+        <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 16px;">
+          Select target model, enter a raw prompt or objective, and generate four precision prompt variants simultaneously (<strong style="color: #fff;">Concise [1]</strong>, <strong style="color: #fff;">Smart [2]</strong>, <strong style="color: #fff;">Professional [3]</strong>, <strong style="color: #fff;">Detailed [4]</strong>). Press keys 1-4 to copy instantly.
+        </p>
+
+        <!-- Model Selector -->
+        <div class="model-selector">
+          <span class="model-chip active" onclick="selectModel(this, 'claude')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg> Claude 3.5 Sonnet
+          </span>
+          <span class="model-chip" onclick="selectModel(this, 'gemini')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9 12 2"/></svg> Gemini 2.5 Pro
+          </span>
+          <span class="model-chip" onclick="selectModel(this, 'deepseek')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> DeepSeek V3
+          </span>
+          <span class="model-chip" onclick="selectModel(this, 'chatgpt')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg> ChatGPT 4o
+          </span>
+        </div>
+
+        <!-- Raw Prompt Input -->
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label" for="promptInput">Raw Prompt / User Draft</label>
+          <textarea id="promptInput" class="input-field" rows="3" style="resize: vertical; font-family: var(--font);">write me a cold email sequence for high-ticket b2b agency clients who went silent after receiving a proposal</textarea>
+        </div>
+
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <button type="button" class="btn-action" onclick="optimizePrompt()" style="background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            Optimize Prompt (All 4 Styles)
+          </button>
+          <span style="font-size: 12px; color: var(--text-dim); font-family: var(--mono);">Keyboard: Press 1, 2, 3, or 4 to copy corresponding variant</span>
+        </div>
+      </div>
+
+      <!-- 4-Style Cards Grid -->
+      <div class="optimizer-styles-grid">
+        <!-- Style 1: Concise -->
+        <div class="style-card">
+          <div class="style-card-header">
+            <span class="style-badge" style="color: #38bdf8;">
+              <span class="key-shortcut">1</span> Concise
+            </span>
+            <span style="font-size: 11px; color: var(--text-dim); font-family: var(--mono);">Zero Fluff</span>
+          </div>
+          <div class="style-card-body">
+            <div id="styleText1" class="style-text">Generate a 3-touch B2B re-engagement email sequence for stalled proposal leads. Touch 1: Low-friction decision check. Touch 2: Single quantified case study win. Touch 3: Polite break-up with open calendar. Keep each email under 75 words. No generic 'checking in'.</div>
+          </div>
+          <div class="style-card-footer">
+            <span>~48 Words &bull; 62 Tokens</span>
+            <button class="btn-secondary" style="padding: 4px 10px; font-size: 11px;" onclick="copyStyle(1)">Copy [1]</button>
+          </div>
+        </div>
+
+        <!-- Style 2: Smart -->
+        <div class="style-card">
+          <div class="style-card-header">
+            <span class="style-badge" style="color: #2dd4bf;">
+              <span class="key-shortcut">2</span> Smart
+            </span>
+            <span style="font-size: 11px; color: var(--text-dim); font-family: var(--mono);">Reasoned Logic</span>
+          </div>
+          <div class="style-card-body">
+            <div id="styleText2" class="style-text">Act as an executive B2B sales strategist. Draft a psychology-backed 3-part email cadence for high-ticket agency prospects who went cold post-proposal. Isolate the primary bottleneck (budget, timing, internal alignment), provide asymmetrical value, and frame a frictionless binary CTA.</div>
+          </div>
+          <div class="style-card-footer">
+            <span>~53 Words &bull; 74 Tokens</span>
+            <button class="btn-secondary" style="padding: 4px 10px; font-size: 11px;" onclick="copyStyle(2)">Copy [2]</button>
+          </div>
+        </div>
+
+        <!-- Style 3: Professional -->
+        <div class="style-card">
+          <div class="style-card-header">
+            <span class="style-badge" style="color: #f59e0b;">
+              <span class="key-shortcut">3</span> Professional
+            </span>
+            <span style="font-size: 11px; color: var(--text-dim); font-family: var(--mono);">Executive Tone</span>
+          </div>
+          <div class="style-card-body">
+            <div id="styleText3" class="style-text">You are an enterprise partner relations director. Compose a formal 3-phase re-activation email campaign addressing executive stakeholders after proposal submission. Structure with executive summary, timeline risk mitigation, and structured next-step options that preserve high-status advisory positioning.</div>
+          </div>
+          <div class="style-card-footer">
+            <span>~49 Words &bull; 68 Tokens</span>
+            <button class="btn-secondary" style="padding: 4px 10px; font-size: 11px;" onclick="copyStyle(3)">Copy [3]</button>
+          </div>
+        </div>
+
+        <!-- Style 4: Detailed -->
+        <div class="style-card">
+          <div class="style-card-header">
+            <span class="style-badge" style="color: #a855f7;">
+              <span class="key-shortcut">4</span> Detailed
+            </span>
+            <span style="font-size: 11px; color: var(--text-dim); font-family: var(--mono);">Full Framework</span>
+          </div>
+          <div class="style-card-body">
+            <div id="styleText4" class="style-text">Develop an exhaustive 3-stage re-engagement email sequence for stalled post-proposal enterprise leads. For each email provide: 1) Subject line variants (A/B testing curiosity vs clarity), 2) Timing cadence (Day 3, Day 7, Day 14), 3) Core persuasive thesis, 4) Body copy with bracketed variables, and 5) Fallback handling rules.</div>
+          </div>
+          <div class="style-card-footer">
+            <span>~58 Words &bull; 81 Tokens</span>
+            <button class="btn-secondary" style="padding: 4px 10px; font-size: 11px;" onclick="copyStyle(4)">Copy [4]</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: MANIFEST V3 ARCHITECTURE -->
+    <section id="tab-architecture" class="tab-content">
+      <div class="panel-box">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+            Chrome Extension Manifest V3 Technical Blueprint
+          </h2>
+          <span class="panel-tag">Security & Sandboxing</span>
+        </div>
+
+        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px;">
+          Both extensions are built according to modern Chromium Manifest V3 specifications. Service workers handle token authentication, DOM injection occurs in isolated execution contexts, and API keys remain encrypted within client-side local extension storage.
+        </p>
+
+        <div class="arch-grid">
+          <div class="arch-card">
+            <div class="arch-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            </div>
+            <h3 class="arch-title">Content Script Injection</h3>
+            <p class="arch-desc">
+              Observes Google Keyword Planner DOM nodes (<code>ads.google.com/aw/keywordplanner</code>) and LLM interfaces (Claude, ChatGPT). Extracts active table rows and keyword volume without triggering Google Ads anti-scraping blocks.
+            </p>
+            <div class="arch-code">MutationObserver &bull; Isolated World &bull; Zero CSS Contamination</div>
+          </div>
+
+          <div class="arch-card">
+            <div class="arch-icon" style="background: rgba(168, 85, 247, 0.1); color: #a855f7;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line></svg>
+            </div>
+            <h3 class="arch-title">Service Worker & Offscreen Fetch</h3>
+            <p class="arch-desc">
+              Replaces legacy Manifest V2 background pages with event-driven background service workers. Executes streaming API calls to DeepSeek, OpenAI, Anthropic, and Google Gemini with auto-reconnection and exponential backoff.
+            </p>
+            <div class="arch-code">chrome.runtime &bull; Fetch API &bull; Stream Readers</div>
+          </div>
+
+          <div class="arch-card">
+            <div class="arch-icon" style="background: rgba(45, 212, 191, 0.1); color: #2dd4bf;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <h3 class="arch-title">Zero-Leakage Key Security</h3>
+            <p class="arch-desc">
+              All API keys for DeepSeek, Gemini, and OpenAI are stored exclusively inside <code>chrome.storage.local</code> with strict CSP sandboxing. No user telemetry or search queries ever leave the user's browser.
+            </p>
+            <div class="arch-code">chrome.storage.local &bull; Strict Content Security Policy</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: SCREENSHOTS & VISUAL INSPECTOR -->
+    <section id="tab-gallery" class="tab-content">
+      <div class="panel-box">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            Production Visual Gallery & Evidence
+          </h2>
+          <span class="panel-tag">5 High-Res Captures</span>
+        </div>
+
+        <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 8px;">
+          Click any card to open the high-resolution lightbox inspector. Verified live screenshots taken directly from production browser sessions.
+        </p>
+
+        <div class="gallery-grid">
+          <!-- Shot 1 -->
+          <div class="gallery-card" onclick="openLightbox('/images/apps/extensions/mgems-optimizer-results.png', 'MGEMS Optimizer Pro 4-Way Multi-LLM Output Grid')">
+            <div class="gallery-img-wrapper">
+              <img src="/images/apps/extensions/mgems-optimizer-results.png" alt="MGEMS Optimizer Pro Results" loading="lazy">
+              <div class="gallery-overlay">
+                <span class="zoom-hint">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                  Click to Expand
+                </span>
+              </div>
+            </div>
+            <div class="gallery-meta">
+              <div class="gallery-kicker">MGEMS Optimizer Pro</div>
+              <h3 class="gallery-title">4-Style Multi-Model Results Canvas</h3>
+              <p class="gallery-desc">Simultaneous generation of Concise, Smart, Professional, and Detailed variants across Claude, Gemini, DeepSeek, and ChatGPT.</p>
+            </div>
+          </div>
+
+          <!-- Shot 2 -->
+          <div class="gallery-card" onclick="openLightbox('/images/apps/extensions/mgems-keyword-planner.png', 'MGEMS Keyword Manager - Google Keyword Planner Extraction')">
+            <div class="gallery-img-wrapper">
+              <img src="/images/apps/extensions/mgems-keyword-planner.png" alt="Google Keyword Planner Extractor" loading="lazy">
+              <div class="gallery-overlay">
+                <span class="zoom-hint">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                  Click to Expand
+                </span>
+              </div>
+            </div>
+            <div class="gallery-meta">
+              <div class="gallery-kicker">MGEMS Keyword Manager</div>
+              <h3 class="gallery-title">Keyword Planner DOM Scraping</h3>
+              <p class="gallery-desc">Extracting search terms directly from Google Ads Keyword Planner into Broad, Phrase, and Exact match formats.</p>
+            </div>
+          </div>
+
+          <!-- Shot 3 -->
+          <div class="gallery-card" onclick="openLightbox('/images/apps/extensions/mgems-high-intent-keywords.png', 'MGEMS Keyword Manager - DeepSeek High Intent Keywords')">
+            <div class="gallery-img-wrapper">
+              <img src="/images/apps/extensions/mgems-high-intent-keywords.png" alt="High Intent Keyword Suggestions" loading="lazy">
+              <div class="gallery-overlay">
+                <span class="zoom-hint">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                  Click to Expand
+                </span>
+              </div>
+            </div>
+            <div class="gallery-meta">
+              <div class="gallery-kicker">MGEMS Keyword Manager</div>
+              <h3 class="gallery-title">DeepSeek High-Intent Suggestions</h3>
+              <p class="gallery-desc">Autonomous extraction of transactional buyer-intent queries filtering out unqualified informational clicks.</p>
+            </div>
+          </div>
+
+          <!-- Shot 4 -->
+          <div class="gallery-card" onclick="openLightbox('/images/apps/extensions/mgems-rsa-headlines.png', 'MGEMS Keyword Manager - Responsive Search Ad Headlines & Descriptions')">
+            <div class="gallery-img-wrapper">
+              <img src="/images/apps/extensions/mgems-rsa-headlines.png" alt="RSA Headlines and Descriptions" loading="lazy">
+              <div class="gallery-overlay">
+                <span class="zoom-hint">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                  Click to Expand
+                </span>
+              </div>
+            </div>
+            <div class="gallery-meta">
+              <div class="gallery-kicker">MGEMS Keyword Manager</div>
+              <h3 class="gallery-title">RSA Headlines & Copy Synthesis</h3>
+              <p class="gallery-desc">Character-checked Responsive Search Ad generation strictly enforcing 30-character headline and 90-character description constraints.</p>
+            </div>
+          </div>
+
+          <!-- Shot 5 -->
+          <div class="gallery-card" onclick="openLightbox('/images/apps/extensions/mgems-optimizer-popup.png', 'MGEMS Optimizer Pro Popup Interface')">
+            <div class="gallery-img-wrapper">
+              <img src="/images/apps/extensions/mgems-optimizer-popup.png" alt="MGEMS Optimizer Popup" loading="lazy">
+              <div class="gallery-overlay">
+                <span class="zoom-hint">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                  Click to Expand
+                </span>
+              </div>
+            </div>
+            <div class="gallery-meta">
+              <div class="gallery-kicker">MGEMS Optimizer Pro</div>
+              <h3 class="gallery-title">Quick-Launch Extension Popup</h3>
+              <p class="gallery-desc">Compact Manifest V3 popup interface for instantaneous prompt optimization without switching browser tabs.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Lightbox Modal -->
+  <div id="lightbox" class="modal-overlay" onclick="closeLightbox(event)">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeLightbox()">&times;</button>
+      <img id="modalImg" class="modal-img" src="" alt="Enlarged screenshot">
+      <div id="modalCaption" class="modal-caption"></div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <span id="toastMsg">Copied to clipboard</span>
+  </div>
+
+  <script>
+    // Tab Switching Logic
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      
+      event.currentTarget.classList.add('active');
+      const target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+    }
+
+    // Keyword Match Types Dataset
+    const sampleKeywords = {
+      ndis: [
+        'ndis disability support services brisbane',
+        'registered ndis provider brisbane',
+        'disability accommodation support brisbane',
+        'in home disability care services brisbane',
+        'ndis core support provider near me',
+        'community participation support brisbane'
+      ],
+      plumber: [
+        'emergency plumber 24 7 near me',
+        'blocked drain clearing sydney',
+        'hot water system repair same day',
+        'burst pipe emergency plumber local',
+        'licensed gas fitter and plumber',
+        'after hours plumbing service'
+      ],
+      ghl: [
+        'gohighlevel lead automation pipeline',
+        'ghl speed to lead missed call text back',
+        'automated appointment booking funnels',
+        'gohighlevel multi branch nurture workflow',
+        'crm sales opportunity kanban setup',
+        'omnichannel sms email follow up system'
+      ],
+      therapy: [
+        'mental health psychotherapy clinic local',
+        'evidence based trauma therapy private',
+        'emdr therapy certified practitioner',
+        'anxiety and depression counseling session',
+        'confidential telehealth therapy consultation',
+        'in person psychotherapy booking'
+      ]
+    };
+
+    let currentKeywords = sampleKeywords.ndis;
+    let currentMatchType = 'phrase';
+
+    function setKeyword(text) {
+      document.getElementById('seedInput').value = text;
+      if (text.includes('NDIS')) currentKeywords = sampleKeywords.ndis;
+      else if (text.includes('Plumber')) currentKeywords = sampleKeywords.plumber;
+      else if (text.includes('GoHighLevel')) currentKeywords = sampleKeywords.ghl;
+      else currentKeywords = sampleKeywords.therapy;
+
+      renderKeywords();
+      simulateDeepSeekKeywords();
+    }
+
+    function setMatchType(type) {
+      currentMatchType = type;
+      document.querySelectorAll('.match-tab').forEach(tab => tab.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      renderKeywords();
+    }
+
+    function renderKeywords() {
+      const consoleEl = document.getElementById('keywordConsole');
+      let formatted = [];
+      if (currentMatchType === 'phrase') {
+        formatted = currentKeywords.map(k => `"${k}"`);
+      } else if (currentMatchType === 'exact') {
+        formatted = currentKeywords.map(k => `[${k}]`);
+      } else {
+        formatted = currentKeywords.map(k => k);
+      }
+      consoleEl.textContent = formatted.join('\n');
+    }
+
+    function simulateExtraction() {
+      showToast('Keywords extracted from Google Keyword Planner DOM');
+      renderKeywords();
+    }
+
+    function simulateDeepSeekKeywords() {
+      const seed = document.getElementById('seedInput').value;
+      showToast('DeepSeek Intent AI generated 5 high-intent variations');
+
+      // Update headlines and descriptions dynamically
+      const headlines = document.getElementById('headlineList');
+      const descriptions = document.getElementById('descList');
+
+      if (seed.includes('Plumber')) {
+        headlines.innerHTML = `
+          <div class="rsa-item">
+            <span class="rsa-item-text">24/7 Emergency Plumber Near Me</span>
+            <span class="char-badge">30/30</span>
+            <button class="copy-icon-btn" onclick="copyText('24/7 Emergency Plumber Near Me')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+          </div>
+          <div class="rsa-item">
+            <span class="rsa-item-text">Fast Blocked Drain Repairs</span>
+            <span class="char-badge">26/30</span>
+            <button class="copy-icon-btn" onclick="copyText('Fast Blocked Drain Repairs')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+          </div>
+          <div class="rsa-item">
+            <span class="rsa-item-text">Same-Day Local Plumber 60m</span>
+            <span class="char-badge">27/30</span>
+            <button class="copy-icon-btn" onclick="copyText('Same-Day Local Plumber 60m')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+          </div>
+        `;
+        descriptions.innerHTML = `
+          <div class="rsa-item">
+            <span class="rsa-item-text">Licensed emergency plumbers on call 24/7. Zero call-out fee with repairs today!</span>
+            <span class="char-badge">81/90</span>
+            <button class="copy-icon-btn" onclick="copyText('Licensed emergency plumbers on call 24/7. Zero call-out fee with repairs today!')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+          </div>
+          <div class="rsa-item">
+            <span class="rsa-item-text">Burst pipes or blocked drains? We arrive within 60 minutes guaranteed. Call now.</span>
+            <span class="char-badge">80/90</span>
+            <button class="copy-icon-btn" onclick="copyText('Burst pipes or blocked drains? We arrive within 60 minutes guaranteed. Call now.')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+          </div>
+        `;
+      }
+    }
+
+    // Tab 2: Multi-LLM Optimizer Logic
+    function selectModel(el, model) {
+      document.querySelectorAll('.model-chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      showToast('Switched engine to ' + el.innerText.trim());
+    }
+
+    function optimizePrompt() {
+      showToast('Optimizing prompt across 4 styles...');
+      const input = document.getElementById('promptInput').value;
+      if (!input.trim()) return;
+
+      document.getElementById('styleText1').textContent = `Generate a razor-sharp, zero-fluff version for: "${input}". Provide maximum signal, direct instructions, and eliminate conversational pleasantries.`;
+      document.getElementById('styleText2').textContent = `Adopt the persona of an expert systems architect. Analyze the root objectives of: "${input}". Provide structured constraints, cognitive context, and clear evaluation rubrics.`;
+      document.getElementById('styleText3').textContent = `As an executive business strategist, formalize: "${input}". Frame with corporate stakeholder expectations, risk mitigation, and executive-level output deliverables.`;
+      document.getElementById('styleText4').textContent = `Provide an exhaustive end-to-end framework for: "${input}". Include step-by-step methodology, edge cases, error fallbacks, and parameter specifications.`;
+    }
+
+    // Keyboard Shortcuts (1-4)
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (['1', '2', '3', '4'].includes(e.key)) {
+        copyStyle(parseInt(e.key));
+      }
+    });
+
+    function copyStyle(num) {
+      const el = document.getElementById('styleText' + num);
+      if (el) {
+        copyText(el.innerText);
+        showToast(`Copied Style [${num}] to clipboard!`);
+      }
+    }
+
+    function copyConsole() {
+      const text = document.getElementById('keywordConsole').innerText;
+      copyText(text);
+      showToast('Copied keywords to clipboard');
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Copied to clipboard');
+      }).catch(() => {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Copied to clipboard');
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2600);
+    }
+
+    // Lightbox Modal
+    function openLightbox(src, caption) {
+      document.getElementById('modalImg').src = src;
+      document.getElementById('modalCaption').textContent = caption;
+      document.getElementById('lightbox').classList.add('open');
+    }
+
+    function closeLightbox(e) {
+      if (!e || e.target.id === 'lightbox' || e.target.classList.contains('modal-close')) {
+        document.getElementById('lightbox').classList.remove('open');
+      }
+    }
+  </script>
+</body>
+</html>
