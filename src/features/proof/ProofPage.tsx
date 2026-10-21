@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react'
+import { ArrowUpRight } from '@phosphor-icons/react'
 import { PageMeta } from '@/app/PageMeta'
 import type { PageRoute } from '@/app/routes'
 import { PageHeader } from '@/components/page/PageHeader'
-import { clientAccounts, communityQuotes, proofPage, videoTestimonials } from '@/content/proof'
+import { clientAccounts, communityQuotes, proofPage, verifiedCertifications, videoTestimonials } from '@/content/proof'
 import { isoDay, proofJsonLd } from '@/lib/seo'
 import { ClipPlayer } from './ClipPlayer'
 import './proof.css'
@@ -23,13 +24,33 @@ function Band({ id, title, count, nested, children }: { id: string; title: strin
   )
 }
 
-/** The three bands. Nested = inside a Home section, so every heading steps down one level. */
+/** The ledger bands. Nested = inside a Home section, so every heading steps down one level. */
 function ProofLedger({ nested }: { nested: boolean }) {
   const c = proofPage
   const Role = nested ? 'h4' : 'h3'
 
   return (
     <div className="pf-ledger">
+      <Band id="pf-certs" title={c.bands.certs} count={`${pad2(verifiedCertifications.length)} verified`} nested={nested}>
+        <div className="pf-certs">
+          {verifiedCertifications.map((cert) => (
+            <a key={cert.id} href={cert.href} target="_blank" rel="noopener noreferrer" className="pf-cert-row">
+              <span className="pf-cert-thumb">
+                <img src={cert.image} alt={cert.title} width={80} height={52} loading="lazy" decoding="async" />
+              </span>
+              <div className="pf-cert-info">
+                <Role>{cert.title}</Role>
+                <p className="pg-mono">{cert.issuer} · {cert.credentialId}</p>
+                <span className="pf-cert-date pg-mono">{cert.date}</span>
+              </div>
+              <div className="pf-cert-action">
+                <span className="pf-cert-link">Inspect <ArrowUpRight size={14} weight="bold" /></span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </Band>
+
       <Band id="pf-videos" title={c.bands.videos} count={`${pad2(videoTestimonials.length)} clips`} nested={nested}>
         <div className="pf-clips">
           {videoTestimonials.map((clip) => (

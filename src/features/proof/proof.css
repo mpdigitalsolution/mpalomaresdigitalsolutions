@@ -202,3 +202,112 @@
   font-family: var(--font-mono);
   font-size: 12px;
 }
+
+/* ---------- Verified Credentials Band ---------- */
+
+.pf-certs {
+  display: grid;
+  gap: 12px;
+}
+
+.pf-cert-row {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    background var(--dur-fast) var(--ease-spring),
+    border-color var(--dur-fast) var(--ease-spring),
+    transform var(--dur-fast) var(--ease-spring);
+}
+
+.pf-cert-row:hover {
+  background: var(--surface-3, var(--surface-2));
+  border-color: var(--border-accent, var(--line-strong));
+  transform: translateY(-2px);
+}
+
+.pf-cert-thumb {
+  width: 80px;
+  height: 54px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.pf-cert-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.pf-cert-info {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.pf-cert-info :is(h3, h4) {
+  margin: 0;
+  font-size: 15.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.pf-cert-info p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.pf-cert-date {
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+.pf-cert-action {
+  flex-shrink: 0;
+}
+
+.pf-cert-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  transition: all 0.2s ease;
+}
+
+.pf-cert-row:hover .pf-cert-link {
+  color: #60a5fa;
+  border-color: rgba(96, 165, 250, 0.4);
+  background: rgba(96, 165, 250, 0.1);
+}
+
+@container (max-width: 540px) {
+  .pf-cert-row {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+  .pf-cert-action {
+    display: none;
+  }
+}
+

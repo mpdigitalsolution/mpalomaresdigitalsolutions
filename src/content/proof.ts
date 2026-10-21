@@ -4,9 +4,94 @@ export const proofPage = {
   eyebrow: 'Proof',
   titleThin: 'Results you',
   titleBold: 'can check.',
-  bands: { videos: 'On camera', quotes: 'Client Feedback', clients: 'Client accounts' },
-  lede: 'Verified performance metrics, client accounts, and real testimonials from non-profit directors, real estate founders, and operations leaders.',
+  bands: { videos: 'On camera', quotes: 'Client Feedback', clients: 'Client accounts', certs: 'Certifications' },
+  lede: 'Verified performance metrics, client accounts, and real credentials from Google, Semrush, and client operations.',
 }
+
+export type VerifiedCert = {
+  id: string
+  title: string
+  issuer: string
+  credentialId: string
+  date: string
+  image: string
+  href: string
+}
+
+export const verifiedCertifications: VerifiedCert[] = [
+  {
+    id: 'cert-search',
+    title: 'Google Ads Search Certification',
+    issuer: 'Google',
+    credentialId: 'ID #166653442',
+    date: 'Nov 15, 2025 – Nov 15, 2026',
+    image: '/images/certificates/google-ads-search-cert.png',
+    href: '/demos/credentials/certificates.html#cert-search',
+  },
+  {
+    id: 'cert-analytics',
+    title: 'Google Analytics (GA4) Certification',
+    issuer: 'Google',
+    credentialId: 'ID #166654269',
+    date: 'Nov 15, 2025 – Nov 15, 2026',
+    image: '/images/certificates/google-analytics-cert.png',
+    href: '/demos/credentials/certificates.html#cert-analytics',
+  },
+  {
+    id: 'cert-ojt',
+    title: 'Certificate of Accomplishment — Google Ads Manager',
+    issuer: 'DontMessWithMarketing (Ian Baillo)',
+    credentialId: '60-Day Agency OJT Trainee',
+    date: 'Awarded Nov 30, 2024',
+    image: '/images/certificates/google-ads-manager-ojt.jpg',
+    href: '/demos/credentials/certificates.html#cert-ojt',
+  },
+  {
+    id: 'cert-semrush',
+    title: 'Crafting a Winning SEO Strategy: In-House Guide',
+    issuer: 'Semrush Academy (Kevin Indig)',
+    credentialId: 'Cert #68800561e8 (id-17)',
+    date: 'Valid through Jan 14, 2026',
+    image: '/images/certificates/semrush-seo-cert.png',
+    href: '/demos/credentials/certificates.html#cert-semrush',
+  },
+  {
+    id: 'cert-display',
+    title: 'Google Ads Display Certification',
+    issuer: 'Google',
+    credentialId: 'ID #166657144',
+    date: 'Nov 16, 2025 – Nov 16, 2026',
+    image: '/images/certificates/google-ads-display-cert.png',
+    href: '/demos/credentials/certificates.html#cert-display',
+  },
+  {
+    id: 'cert-shopping',
+    title: 'AI-Powered Shopping Ads Certification',
+    issuer: 'Google',
+    credentialId: 'ID #166656577',
+    date: 'Nov 16, 2025 – Nov 16, 2026',
+    image: '/images/certificates/google-ads-shopping-cert.png',
+    href: '/demos/credentials/certificates.html#cert-shopping',
+  },
+  {
+    id: 'cert-video',
+    title: 'Google Ads Video Certification',
+    issuer: 'Google',
+    credentialId: 'ID #166655536',
+    date: 'Nov 16, 2025 – Nov 16, 2026',
+    image: '/images/certificates/google-ads-video-cert.png',
+    href: '/demos/credentials/certificates.html#cert-video',
+  },
+  {
+    id: 'cert-apps',
+    title: 'Google Ads Apps Certification',
+    issuer: 'Google',
+    credentialId: 'ID #166654991',
+    date: 'Nov 16, 2025 – Nov 16, 2026',
+    image: '/images/certificates/google-ads-apps-cert.png',
+    href: '/demos/credentials/certificates.html#cert-apps',
+  },
+]
 
 /** Client names stay anonymised: the label is shown, the role and the work say what you do for them. */
 export const clientAccounts: ClientAccount[] = [
@@ -16,6 +101,13 @@ export const clientAccounts: ClientAccount[] = [
     work: 'Restructured and optimized Google Ad Grants search campaigns: eliminated keyword conflicts, achieved 14.00% CTR compliance, and scaled to 193+ monthly conversions.',
     tags: ['Google Ad Grants', 'PPC Turnaround', 'Ad Grants Compliance'],
     logo: { src: '/images/clients/alvaro.jpg', alt: 'Alvaro, Non-Profit Client', width: 64, height: 64 },
+  },
+  {
+    label: 'Mirror & Local Signage Retailer',
+    role: 'Founder & Retail Director',
+    work: 'Scaled Meta advertising across 102 campaigns: achieved ₱1.59M+ in purchase conversion value at an average 4.36x ROAS, with high-intent retargeting reaching up to 12.73x ROAS.',
+    tags: ['Meta Ads', 'E-Commerce ROAS', 'Dynamic Retargeting', 'Conversion Optimization'],
+    logo: { src: '/images/meta/meta-local-business.jpg', alt: 'Local Retailer Meta Ads Results', width: 64, height: 64 },
   },
   {
     label: 'Property Deals Real Estate',
