@@ -4,23 +4,23 @@ import type { Faq } from './schema'
 export const faqs = {
   whatYouBuild: {
     question: 'What do you actually build?',
-    answer: 'PLACEHOLDER - tell me what to put here: the kinds of work you take on and who it is usually for, in two sentences.',
+    answer: 'I engineer full-funnel Google Ads search campaigns, conversion-optimized GoHighLevel funnels, and autonomous n8n automation pipelines. Every build bridges traffic directly to sub-60-second CRM follow-ups with bulletproof GTM conversion tracking.',
   },
   startSpeed: {
     question: 'How fast can you start?',
-    answer: 'PLACEHOLDER - tell me what to put here: how soon you can begin small and large jobs, and the hours or time zones you overlap.',
+    answer: 'Typically within 2 to 4 business days once project scope and access are aligned. Based in Manila (GMT+8), I maintain consistent daily work overlap with clients across US, UK, and Australian time zones.',
   },
   needStack: {
     question: 'Do I need a specific platform?',
-    answer: 'PLACEHOLDER - tell me what to put here: which tools you work in, and what you do when a client stack is a poor fit.',
+    answer: 'Not necessarily. My core drivers are Google Ads, GoHighLevel, and n8n, but I frequently integrate with Twilio, Slack, Telegram, Supabase, Stripe, and custom webhooks. If your existing tools aren\'t a good fit, I will advise you honestly on the leanest, most reliable architecture.',
   },
   pricing: {
     question: 'How much do you charge?',
-    answer: 'PLACEHOLDER - tell me what to put here: how you price (fixed, hourly, retainer), what comes before a quote, and what is included.',
+    answer: 'Engagements are structured either as fixed-price project sprints (for complete funnel and pipeline builds) or monthly performance retainers (for ongoing Google Ads management and optimization). Every quote is transparent with zero hidden fees.',
   },
   afterWrite: {
     question: 'What happens after I write?',
-    answer: 'PLACEHOLDER - tell me what to put here: how fast you reply and what the visitor gets back (a plan, a call, a straight no).',
+    answer: 'I personally review every inquiry and reply within one business day. If we are a strong fit, we will schedule a brief 15-minute discovery call or exchange a targeted video audit. If I cannot help with your specific problem, I will tell you upfront and point you in the right direction.',
   },
 } satisfies Record<string, Faq>
 
