@@ -55,7 +55,7 @@ export const socials: SocialLink[] = [
 /** Off-site links the pages point at. Replace each `#` with a real URL. */
 export const externalLinks = {
   resource: '#',
-  showcase: '#',
+  showcase: '/demos/ghl/crm-architecture.html',
   company: '#',
 } as const
 

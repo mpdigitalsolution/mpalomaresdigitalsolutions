@@ -1,94 +1,91 @@
 import type { Faq, Image, ProductFilm, ProductTab } from './schema'
-import { externalLinks } from './site'
 
 /** The address shown in the browser-window bars around the film and the room screens. */
-export const showcaseHost = 'yourproduct.com'
+export const showcaseHost = 'crm.mpalomaresdigital.com'
 
 export const showcasePage = {
-  eyebrow: 'Showcase',
-  titleThin: 'One product,',
-  titleBold: 'shown in full detail.',
-  lede: 'PLACEHOLDER - tell me what to put here: two sentences on the product or project you feature, who it is for and the main things it does.',
-  footnote: 'PLACEHOLDER - tell me what to put here: one short line on how it was built or where it runs.',
-  cta: { label: 'Open Product Name', href: externalLinks.showcase, external: true },
-  roomsTitle: 'The five rooms',
+  eyebrow: 'Flagship Showcase',
+  titleThin: 'Client acquisition,',
+  titleBold: 'engineered from click to close.',
+  lede: 'The GoHighLevel All-in-One Client Acquisition & Operations Engine: an end-to-end system unifying high-converting landing funnels, instant 2-way SMS chat, visual pipeline stages, and autonomous follow-up automation.',
+  footnote: 'Configured on GoHighLevel CRM, Twilio SMS infrastructure, Stripe payment gateways, and custom n8n webhook nodes.',
+  cta: { label: 'Explore Interactive CRM Architecture', href: '/demos/ghl/crm-architecture.html', external: true },
+  roomsTitle: 'The five operating pillars',
 }
 
-/** A room capture (1600 wide) with 800 / 1200 copies: the rooms show at 343-970px (scripts/make-image-variants.py). */
-const room = (file: string, alt: string, height: number): Image => ({
-  src: `/images/showcase/${file}.webp`,
+/** A room capture with full aspect ratio support */
+const ghlRoom = (file: string, alt: string, width: number, height: number): Image => ({
+  src: `/images/ghl/${file}`,
   alt,
-  width: 1600,
+  width,
   height,
-  srcSet: `/images/showcase/800/${file}.webp 800w, /images/showcase/1200/${file}.webp 1200w, /images/showcase/${file}.webp 1600w`,
 })
 
 /** The product film: a short muted loop, no audio. Keep it small (a couple of MB). */
 export const showcaseFilm: ProductFilm = {
   src: '/media/showcase-film.mp4',
-  poster: { src: '/images/showcase/film-poster.webp', alt: 'Product Name film', width: 1280, height: 720 },
+  poster: { src: '/images/showcase/film-poster.webp', alt: 'GoHighLevel Engine Tour', width: 1280, height: 720 },
   pagePosters: { phone: '/images/showcase/film-poster-640.webp', wide: '/images/showcase/film-poster-960.webp' },
-  name: 'Product Name: a short tour',
-  description: 'PLACEHOLDER - tell me what to put here: one sentence on what the film shows, in the order it shows it.',
+  name: 'GoHighLevel Acquisition Engine: A Visual Walkthrough',
+  description: 'A rapid tour of multi-step intake funnels, 2-way omnichannel messaging, and automated pipeline updates.',
   duration: '0:10',
-  // The date the film was first published (YYYY-MM-DD), used in the page's structured data.
   published: '2026-01-01',
 }
 
 /** Number + unit. Use only figures you can state as fact. */
 export const showcaseStats: [string, string][] = [
-  ['00+', 'stat label one'],
-  ['00', 'stat label two'],
-  ['00', 'stat label three'],
-  ['5', 'rooms, one tab'],
+  ['<60s', 'speed to lead automated response'],
+  ['102', 'campaigns managed & synchronized'],
+  ['4.36x', 'average e-commerce ROAS achieved'],
+  ['5', 'integrated operational pillars'],
 ]
 
 /** The five rooms of the product, each with a caption and a screen. */
 export const productTabs: ProductTab[] = [
   {
     id: 'room-1',
-    label: 'Room One',
-    body: 'PLACEHOLDER - tell me what to put here: two sentences on what this part of the product does for the person using it.',
-    image: room('room-1', 'Screen of the first room', 1000),
+    label: 'Lead Capture Funnels',
+    body: 'Direct-response landing pages and multi-step intake forms built with instant field validation, dynamic triage branching, and mobile-optimized conversion funnels.',
+    image: ghlRoom('ghl-real-estate-website.jpg', 'Property Deals Luxury Real Estate Lead Capture Funnel', 1920, 935),
   },
   {
     id: 'room-2',
-    label: 'Room Two',
-    body: 'PLACEHOLDER - tell me what to put here: two sentences on what this part of the product does for the person using it.',
-    image: room('room-2', 'Screen of the second room', 1000),
+    label: 'Unified 2-Way Inbox',
+    body: 'Consolidates incoming SMS, email, Facebook Messenger, and Instagram direct messages into one uninterrupted conversation thread with automatic sub-minute response triggers.',
+    image: ghlRoom('ghl-sms-email-omnichannel.png', 'Omni-Channel 2-Way SMS and Email Messaging Hub', 1008, 636),
   },
   {
     id: 'room-3',
-    label: 'Room Three',
-    body: 'PLACEHOLDER - tell me what to put here: two sentences on what this part of the product does for the person using it.',
-    image: room('room-3', 'Screen of the third room', 1000),
+    label: 'Sales Deal Pipelines',
+    body: 'Visual drag-and-drop opportunity boards tracking leads through every buying stage—from new inquiry to qualification, discovery call, proposal sent, and closed revenue.',
+    image: ghlRoom('ghl-sales-pipeline-kanban.png', 'Multi-Stage Kanban Deal Pipeline and Opportunity Tracking', 1728, 577),
   },
   {
     id: 'room-4',
-    label: 'Room Four',
-    body: 'PLACEHOLDER - tell me what to put here: two sentences on what this part of the product does for the person using it.',
-    image: room('room-4', 'Screen of the fourth room', 1000),
+    label: 'Contact Intelligence',
+    body: 'Dynamic contact tagging, custom field capture, and smart list segmentation separating high-intent buyers, booked consultations, and cold leads for targeted reactivation.',
+    image: ghlRoom('ghl-contacts-smart-lists.png', 'Smart List Segmentation and Custom Field Contact Intelligence', 1920, 922),
   },
   {
     id: 'room-5',
-    label: 'Room Five',
-    body: 'PLACEHOLDER - tell me what to put here: two sentences on what this part of the product does for the person using it.',
-    image: room('room-5', 'Screen of the fifth room', 1000),
+    label: 'Automated Workflows',
+    body: 'Event-driven logic branches running missed-call text backs, calendar booking reminders, internal task assignments, and bidirectional webhook sync with external databases.',
+    image: ghlRoom('ghl-advanced-lead-nurture-system.png', 'Advanced Autonomous Lead Nurture and Follow-Up Workflow Logic', 1920, 922),
   },
 ]
 
 /** Three questions people ask about the product, answered the way the product itself answers them. */
 export const showcaseFaq: Faq[] = [
   {
-    question: 'Who is Product Name for?',
-    answer: 'PLACEHOLDER - tell me what to put here: who the product suits and who it does not, in two or three sentences.',
+    question: 'What businesses benefit most from this GoHighLevel ecosystem?',
+    answer: 'High-ticket service providers, real estate brokerages, healthcare and wellness clinics, home service contractors, and digital marketing agencies who need to eliminate lead response lag and automate appointment booking.',
   },
   {
-    question: 'Is there anything to install?',
-    answer: 'PLACEHOLDER - tell me what to put here: where it runs (browser, app store, desktop) and what a new user needs to start.',
+    question: 'How does it integrate with existing marketing and tools?',
+    answer: 'It connects natively with Google Ads, Meta Ads Manager, Stripe, and Google Calendar. For custom CRMs or bespoke databases, custom n8n webhook nodes facilitate two-way automated data synchronization with zero manual entry.',
   },
   {
-    question: 'What does Product Name cost?',
-    answer: 'PLACEHOLDER - tell me what to put here: the plans and prices as they are today, or that it is free, in two sentences.',
+    question: 'Can this system be deployed as a turnkey snapshot?',
+    answer: 'Yes. The entire infrastructure—including funnels, email/SMS nurture campaigns, custom fields, pipeline stages, and triggers—is packaged as a production snapshot that can be launched in under 48 hours.',
   },
 ]
