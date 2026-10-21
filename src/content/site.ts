@@ -45,18 +45,17 @@ export const certification: Credential = {
 
 /** Up to five fit the sidebar header. `icon` picks the glyph in components/brand/SocialIcon.tsx. */
 export const socials: SocialLink[] = [
-  { label: 'LinkedIn', href: '#', external: true, icon: 'linkedin' },
-  { label: 'GitHub', href: '#', external: true, icon: 'github' },
-  { label: 'X', href: '#', external: true, icon: 'x' },
-  { label: 'Facebook', href: '#', external: true, icon: 'facebook' },
-  { label: 'Discord', href: '#', external: true, icon: 'discord' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/marlonpalomares-googleads/', external: true, icon: 'linkedin' },
+  { label: 'GitHub', href: 'https://github.com/mpdigitalsolution', external: true, icon: 'github' },
+  { label: 'X', href: 'https://x.com/marlonpalo35054', external: true, icon: 'x' },
+  { label: 'Facebook', href: 'https://www.facebook.com/marlon.palomares.2024/', external: true, icon: 'facebook' },
 ]
 
 /** Off-site links the pages point at. Replace each `#` with a real URL. */
 export const externalLinks = {
-  resource: '#',
+  resource: 'https://github.com/mpdigitalsolution',
   showcase: '/demos/ghl/crm-architecture.html',
-  company: '#',
+  company: 'https://www.linkedin.com/in/marlonpalomares-googleads/',
 } as const
 
 export function mailtoHref(): string {
