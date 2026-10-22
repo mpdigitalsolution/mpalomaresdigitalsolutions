@@ -409,14 +409,42 @@ export const sideProjects: AiGroup[] = [
   },
 ]
 
+const experimentShot = (file: string, alt: string, width: number, height: number): Image => ({
+  src: `/images/experiments/${file}`,
+  alt,
+  width,
+  height,
+})
+
 export const experiments: AiGroup[] = [
   {
-    title: 'Experiments',
-    summary: 'PLACEHOLDER - tell me what to put here: one line on what these experiments are.',
+    title: 'LinkComment AI (Mgems Extension)',
+    summary: 'Autonomous in-browser LinkedIn engagement assistant powered by DeepSeek API, generating contextual multi-angle responses with live DOM injection.',
     builds: [
-      { name: 'Experiment 1', summary: 'PLACEHOLDER - tell me what to put here: one sentence on what it does.', stack: 'Stack A', status: 'Live' },
-      { name: 'Experiment 2', summary: 'PLACEHOLDER - tell me what to put here: one sentence on what it does.', stack: 'Stack B', status: 'Live' },
-      { name: 'Experiment 3', summary: 'PLACEHOLDER - tell me what to put here: one sentence on what it does.', stack: 'Stack C', status: 'Live' },
+      {
+        name: '4-Angle Decision Modal',
+        summary: 'Compares four distinct optimized response angles (Opinion, Support, Question, and Takeaway) generated from live LinkedIn post context with 1-click insertion or clipboard copying.',
+        stack: 'Chrome Extension (Manifest V3), DeepSeek API (deepseek-chat), TypeScript',
+        status: 'Under Development',
+        image: experimentShot('linkcomment-output-modal.png', 'LinkComment AI 4-Perspective Comment Generation Modal', 1920, 922),
+        href: '/images/experiments/linkcomment-output-modal.png',
+      },
+      {
+        name: 'In-Feed Composer Injection',
+        summary: 'Dynamically mounts a native "+ Generate" trigger directly into LinkedIn\'s active comment input toolbar via DOM MutationObserver, extracting thread context without disrupting feed scroll.',
+        stack: 'DOM MutationObserver, Content Scripts, CSS Injection',
+        status: 'Under Development',
+        image: experimentShot('linkcomment-feed-injection.png', 'LinkComment AI Injected Generate Action in LinkedIn Comment Feed', 1920, 922),
+        href: '/images/experiments/linkcomment-feed-injection.png',
+      },
+      {
+        name: 'Extension Control Hub & Telemetry',
+        summary: 'In-browser popup widget with DeepSeek backend health monitoring, adaptive tone style selection, daily generation quota tracking (13/50), and token micro-cost auditing ($0.0040 / $1.00).',
+        stack: 'Chrome Storage API, DeepSeek Chat Engine, Tailwind CSS',
+        status: 'Under Development',
+        image: experimentShot('linkcomment-popup-ui.png', 'Mgems AI Extension Settings Popup and Cost Telemetry', 390, 527),
+        href: '/images/experiments/linkcomment-popup-ui.png',
+      },
     ],
   },
 ]

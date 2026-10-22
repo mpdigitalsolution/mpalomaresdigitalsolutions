@@ -11,7 +11,7 @@
   justify-content: center;
   /* svh, not dvh: the hero must not resize while a phone's address bar slides away mid-scroll. */
   min-height: 100svh;
-  padding: 96px 24px;
+  padding: clamp(64px, 10vh, 96px) clamp(16px, 4vw, 24px);
   /* The parting lines travel sideways on scroll; clip them here so the page never scrolls sideways. */
   overflow-x: clip;
   text-align: center;
@@ -22,16 +22,21 @@
   flex-direction: column;
   align-items: center;
   margin: 0;
-  /* "MAKE IT YOURS." in Geist 700 at -0.05em is 7.20em wide: 13.05cqi fills ~94% of the column (7.20 x
-     13.05 = 94). The 2.3rem floor keeps the smallest phones' line readable (~265px at 320). To re-measure
-     for your own words: set the bold line in the browser, read its width in em (range width / font-size),
-     and use 94 / that width. Keep the thin line narrower than the bold one, or it overflows. */
-  font-size: clamp(2.3rem, 13.05cqi, 10rem);
-  line-height: 0.86;
-  letter-spacing: -0.05em;
+  /* Responsive fluid sizing: scales comfortably down to 320px without clipping long headlines */
+  font-size: clamp(1.55rem, 8.8cqi, 10rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
   text-transform: uppercase;
   white-space: nowrap;
   transform-origin: 50% 0;
+}
+
+@container (min-width: 600px) {
+  .hero__title {
+    font-size: clamp(2.3rem, 13.05cqi, 10rem);
+    line-height: 0.86;
+    letter-spacing: -0.05em;
+  }
 }
 
 .hero__layer {
@@ -61,20 +66,28 @@
 
 .hero__sub {
   max-width: 60ch; /* two lines on desktop */
-  margin: 40px 0 0;
+  margin: clamp(24px, 5vh, 40px) 0 0;
   color: var(--ink-2);
   font-family: var(--font-mono);
-  font-size: 15px;
-  line-height: 1.7;
-  letter-spacing: 0.06em;
+  font-size: clamp(13px, 1.4cqi, 15px);
+  line-height: 1.6;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   text-wrap: balance;
   animation: hero-rise var(--dur-slow) var(--ease-spring) 180ms both;
 }
 
 .hero__cta {
-  margin-top: 40px;
+  margin-top: clamp(24px, 4vh, 40px);
   animation: hero-rise var(--dur-slow) var(--ease-spring) 260ms both;
+}
+
+@container (max-width: 480px) {
+  .hero__cta.btn-line {
+    padding: 16px 24px;
+    width: min(100%, 320px);
+    justify-content: center;
+  }
 }
 
 /* Starts at 0.1, not 0: Chrome never counts a fully transparent first paint as the Largest Contentful

@@ -6,7 +6,7 @@
 
 .fl {
   --gutter: clamp(16px, 3.5vw, 56px);
-  --bar: 56px;
+  --bar: calc(56px + env(safe-area-inset-top, 0px));
   position: relative;
   height: 260svh;
   container-type: inline-size;
@@ -419,6 +419,11 @@
   background: var(--surface-2);
   color: var(--ink);
   box-shadow: inset 0 0 0 1px var(--line);
+  transition: background-color 140ms ease, transform var(--dur-press) ease-out;
+}
+.fl__pager > button:active {
+  transform: scale(0.92);
+  background: var(--surface-3);
 }
 
 .fl__bars {

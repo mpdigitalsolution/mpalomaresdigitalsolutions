@@ -336,3 +336,20 @@
     border-top: 1px solid var(--line);
   }
 }
+@container (max-width: 520px) {
+  .kt-window__bar {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 0 8px;
+  }
+}
+@container (max-width: 380px) {
+  .kt-stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .kt-stats > div + div {
+    padding-left: 0;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+}

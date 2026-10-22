@@ -7,12 +7,12 @@
 
 .sv {
   --gutter: clamp(16px, 3.5vw, 56px);
-  --stick: 72px; /* phones: under the 56px top bar */
+  --stick: calc(72px + env(safe-area-inset-top, 0px)); /* phones: under the sticky top bar */
   --step: 12px;
   position: relative;
   container-type: inline-size;
   padding-block: clamp(64px, 12vh, 120px);
-  scroll-margin-top: 56px;
+  scroll-margin-top: calc(56px + env(safe-area-inset-top, 0px));
 }
 
 /* ---------- Header ---------- */

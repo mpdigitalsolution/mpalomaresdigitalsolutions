@@ -16,7 +16,7 @@
    the other Home heads, no hairline after the eyebrow. The phone top bar is sticky, so a jump to
    the section lands below it. */
 .pg--section {
-  scroll-margin-top: 56px;
+  scroll-margin-top: calc(56px + env(safe-area-inset-top, 0px));
 }
 .pg--section .pg-eyebrow {
   font-size: 12px;

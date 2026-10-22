@@ -113,6 +113,8 @@ const groupItems = (groups: typeof sideProjects): WorkItem[] =>
       summary: build.summary,
       stack: build.stack,
       status: build.status,
+      image: build.image,
+      href: build.href,
     })),
   )
 
@@ -259,10 +261,16 @@ export const workChapters: WorkChapter[] = [
   {
     id: 'experiments',
     title: 'Experiments',
-    line: 'Small tests, each doing one thing well.',
+    line: 'In-browser AI assistants, DeepSeek API & DOM injection.',
     count: experimentItems.length,
     unit: 'tests',
-    description: 'PLACEHOLDER - tell me what to put here: one or two sentences on your experiments (under 160 characters).',
+    description: 'Experimental builds in active development: in-browser AI assistants, dynamic DOM injection, and multi-model micro-engines.',
+    tile: {
+      src: '/images/experiments/linkcomment-output-modal.png',
+      alt: 'LinkComment AI - Multi-Angle LinkedIn Comment Assistant',
+      width: 1920,
+      height: 922,
+    },
     marks: [siteMark, tools.toolF],
     items: experimentItems,
   },

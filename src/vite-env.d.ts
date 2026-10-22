@@ -20,7 +20,9 @@ declare module '@phosphor-icons/react' {
     alt?: string
   }
   export type Icon = ComponentType<IconProps>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export const IconContext: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export const IconBase: any
 
   export const Briefcase: Icon

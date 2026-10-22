@@ -10,7 +10,7 @@
   margin: 0 auto;
   padding: clamp(72px, 12vh, 128px) var(--gutter);
   /* The phone top bar is sticky, so a jump to #about lands below it. */
-  scroll-margin-top: 56px;
+  scroll-margin-top: calc(56px + env(safe-area-inset-top, 0px));
 }
 @media (min-width: 1024px) {
   .ab {
@@ -164,7 +164,7 @@
 
 .ab__creds {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
   gap: 14px 24px;
   margin-top: 36px;
 }
@@ -182,9 +182,14 @@
     background var(--dur-fast) var(--ease-spring),
     transform var(--dur-fast) var(--ease-spring);
 }
-a.ab__cred:hover {
+@media (hover: hover) and (pointer: fine) {
+  a.ab__cred:hover {
+    background: var(--surface-2);
+    transform: translateY(-1px);
+  }
+}
+a.ab__cred:active {
   background: var(--surface-2);
-  transform: translateY(-1px);
 }
 .ab__cred-mark {
   display: grid;

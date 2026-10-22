@@ -107,20 +107,20 @@ export function ContactForm({ nested = false }: { nested?: boolean }) {
       <div className="ct-row2">
         <label className="ct-field">
           <span>{f.first}</span>
-          <input type="text" {...field('firstName')} autoComplete="given-name" required maxLength={80} placeholder={f.phFirst} />
+          <input type="text" {...field('firstName')} autoComplete="given-name" enterKeyHint="next" required maxLength={80} placeholder={f.phFirst} />
         </label>
         <label className="ct-field">
           <span>{f.last}</span>
-          <input type="text" {...field('lastName')} autoComplete="family-name" required maxLength={80} placeholder={f.phLast} />
+          <input type="text" {...field('lastName')} autoComplete="family-name" enterKeyHint="next" required maxLength={80} placeholder={f.phLast} />
         </label>
       </div>
       <label className="ct-field">
         <span>{f.email}</span>
-        <input type="email" {...field('email')} autoComplete="email" required maxLength={254} placeholder={f.phEmail} />
+        <input type="email" {...field('email')} autoComplete="email" inputMode="email" enterKeyHint="next" required maxLength={254} placeholder={f.phEmail} />
       </label>
       <label className="ct-field">
         <span>{f.message}</span>
-        <textarea {...field('message')} required maxLength={1500} placeholder={f.phMessage} />
+        <textarea {...field('message')} enterKeyHint="send" required maxLength={1500} placeholder={f.phMessage} />
       </label>
       <div className="ct-actions">
         <button ref={sendRef} type="submit" className="ct-send" onAnimationEnd={(e) => e.currentTarget.classList.remove('is-shaking')}>

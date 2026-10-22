@@ -66,7 +66,7 @@ export type MethodStep = {
   inputs: string[]
 }
 
-export type BuildStatus = 'Live' | 'Beta' | 'Free' | 'Internal'
+export type BuildStatus = 'Live' | 'Beta' | 'Free' | 'Internal' | 'Under Development'
 
 /** A live demo page (funnel step or full sample site). */
 export type Demo = {
@@ -96,6 +96,8 @@ export type AiBuild = {
   summary: string
   stack: string
   status: BuildStatus
+  image?: Image
+  href?: string
 }
 
 export type AiGroup = {

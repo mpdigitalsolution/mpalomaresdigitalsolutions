@@ -220,10 +220,15 @@
   letter-spacing: 0.18em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: box-shadow 180ms ease;
+  transition: box-shadow 180ms ease, transform var(--dur-press) ease-out;
 }
-.ct-send:hover {
-  box-shadow: 0 0 0 4px var(--accent-soft);
+@media (hover: hover) and (pointer: fine) {
+  .ct-send:hover {
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+}
+.ct-send:active {
+  transform: scale(0.98);
 }
 .ct-send:focus-visible {
   outline: 2px solid var(--accent);
@@ -328,5 +333,13 @@
   }
   .ct-row2 {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .ct-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .ct-send {
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -2,7 +2,7 @@
 <html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
     <!-- data-static-meta: for crawlers that do not run JS. main.tsx removes them on boot so each route owns one title + description.
          Keep this head in step with content/site.ts and the Home entry in src/app/routes.ts. -->
     <title data-static-meta>Your Name | Your Headline Here</title>
@@ -12,7 +12,9 @@
     <link rel="preload" href="/fonts/geist-var.woff2" as="font" type="font/woff2" crossorigin />
     <!-- The phone bar's mark is the mobile LCP; dark is the default theme, so its mark loads first. -->
     <link rel="preload" href="/images/brand/mark-light-96.webp" as="image" fetchpriority="high" />
-    <meta name="theme-color" content="#0A0A0A" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F0F8FF" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0A0A0A" />
+    <meta name="color-scheme" content="dark light" />
 
     <meta property="og:type" content="website" />
     <!-- Link previews: absolute URLs on your domain. Re-render og-image.png with scripts/make-og-image.mjs. -->

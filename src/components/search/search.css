@@ -128,3 +128,16 @@
   color: var(--ink-3);
   font-size: 14px;
 }
+
+@media (max-width: 640px) {
+  .search {
+    width: calc(100vw - 24px);
+    max-height: calc(100dvh - 32px - env(safe-area-inset-top, 0px));
+    margin: max(16px, calc(env(safe-area-inset-top, 0px) + 12px)) auto auto;
+    border-radius: var(--radius-md);
+  }
+  .search__field {
+    height: 52px;
+    padding: 0 14px;
+  }
+}

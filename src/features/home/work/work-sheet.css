@@ -170,7 +170,7 @@ a.sh__shot:hover img {
 
 .sh__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
   gap: 36px 24px;
   margin: 0;
   padding: 0;
