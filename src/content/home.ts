@@ -251,11 +251,11 @@ export const workChapters: WorkChapter[] = [
   {
     id: 'side-projects',
     title: 'Side Projects',
-    line: 'Things built for fun that taught you something.',
+    line: 'Autonomous syndication, event-driven bridges & data hygiene.',
     count: sideProjectItems.length,
     unit: 'builds',
-    description: 'PLACEHOLDER - tell me what to put here: one or two sentences on your side projects (under 160 characters).',
-    marks: [tools.toolC, tools.toolD, tools.toolE],
+    description: 'Specialized automation scripts, growth syndication pipelines, and event-driven bridges built to solve real operational bottlenecks.',
+    marks: [tools.toolA, tools.toolD, tools.toolE],
     items: sideProjectItems,
   },
   {

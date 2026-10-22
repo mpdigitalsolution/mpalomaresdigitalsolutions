@@ -390,21 +390,51 @@ export const apps: AppBuild[] = [
 
 export const sideProjects: AiGroup[] = [
   {
-    title: 'Group One',
-    summary: 'PLACEHOLDER - tell me what to put here: one line on what this group of projects has in common.',
+    title: 'Content Distribution & Growth Engines',
+    summary: 'Autonomous pipelines that repurpose media and syndicate content across platforms with zero human intervention.',
     builds: [
-      { name: 'Side Project 1', summary: 'PLACEHOLDER - tell me what to put here: one sentence on what it does.', stack: 'Stack A, Stack B', status: 'Live' },
-      { name: 'Side Project 2', summary: 'PLACEHOLDER - tell me what to put here: one sentence on what it does.', stack: 'Stack A, Stack C', status: 'Internal' },
-      { name: 'Side Project 3', summary: 'PLACEHOLDER - tell me what to put here: one sentence on what it does.', stack: 'Stack B, Stack C', status: 'Internal' },
-      { name: 'Side Project 4', summary: 'PLACEHOLDER - tell me what to put here: one sentence on what it does.', stack: 'Stack A, Stack D', status: 'Internal' },
+      {
+        name: 'YouTube-to-X Autonomous Publisher',
+        summary: 'Listens for new video uploads, extracts transcripts via AI, generates high-engagement tweet threads, and auto-schedules posts to X with thumbnail links.',
+        stack: 'n8n, YouTube Data API, OpenAI GPT-4o, X API',
+        status: 'Live',
+      },
+      {
+        name: 'AI Video Transcriber & Social Cross-Poster',
+        summary: 'Ingests MP4 recordings from Google Drive, transcribes audio, parses insights via Zapier AI, and formats tailored updates simultaneously to Facebook Pages and LinkedIn.',
+        stack: 'Zapier, Whisper AI, Google Drive, LinkedIn & Meta Graph APIs',
+        status: 'Live',
+      },
+      {
+        name: 'Autonomous Lead Hygiene & NeverBounce Verifier',
+        summary: 'Intercepts incoming form submissions, validates deliverability via NeverBounce API, filters disposable domains, and tags high-deliverability contacts before CRM sync.',
+        stack: 'n8n, NeverBounce API, Webhooks, Google Sheets',
+        status: 'Live',
+      },
     ],
   },
   {
-    title: 'Group Two',
-    summary: 'PLACEHOLDER - tell me what to put here: one line on what this group of projects has in common.',
+    title: 'Operational Utilities & CRM Bridges',
+    summary: 'Event-driven middleware that bridges appointment calendars, messaging bots, and custom JavaScript transforms.',
     builds: [
-      { name: 'Side Project 5', summary: 'PLACEHOLDER - tell me what to put here: one sentence on what it does.', stack: 'Stack B, Stack D', status: 'Live' },
-      { name: 'Side Project 6', summary: 'PLACEHOLDER - tell me what to put here: one sentence on what it does.', stack: 'Stack C, Stack D', status: 'Live' },
+      {
+        name: 'Cal-to-CRM Multi-Step Booking Assistant',
+        summary: 'Triggers on new Google Calendar bookings, runs inline JavaScript to parse appointment metadata, dispatches personalized confirmation emails, and syncs to a master Sheets CRM.',
+        stack: 'Zapier, JavaScript (Code by Zapier), Google Calendar, Gmail, Google Sheets',
+        status: 'Live',
+      },
+      {
+        name: 'Telegram Real-Time Incident & Alert Bot',
+        summary: 'Webhook listener capturing critical workflow exceptions, payment webhook failures, and VIP inbound leads, dispatching instant push notifications to private Telegram channels.',
+        stack: 'n8n, Telegram Bot API, Webhooks, JSON Schema',
+        status: 'Live',
+      },
+      {
+        name: 'Facebook Messenger 24/7 AI Receptionist',
+        summary: 'Connects Meta Page Messenger to an LLM triage prompt that qualifies visitor intent, answers standard operational FAQs, and escalates warm leads to a human agent.',
+        stack: 'n8n, Meta Messenger API, DeepSeek / Claude, Webhooks',
+        status: 'Live',
+      },
     ],
   },
 ]
