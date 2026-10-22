@@ -1,7 +1,7 @@
 import type { Icon } from '@phosphor-icons/react'
 import { Briefcase, Compass, Cube, Envelope, FileText, House, SealCheck, ShieldCheck, Stack, User } from '@phosphor-icons/react'
 import { workCount } from '@/content/work'
-import { externalLinks, site } from '@/content/site'
+import { site } from '@/content/site'
 
 /**
  * The route registry: the one list that drives the router, the sidebar, the search palette
@@ -134,6 +134,17 @@ export const pages: PageRoute[] = [
   },
   {
     kind: 'page',
+    id: 'resource',
+    path: '/work',
+    label: 'Resources',
+    title: `Resources & Builds | ${SUFFIX}`,
+    description: 'Explore live systems, GoHighLevel funnels, n8n automations, and browser extensions.',
+    icon: Compass,
+    group: 'discover',
+    section: 'work',
+  },
+  {
+    kind: 'page',
     id: 'privacy',
     path: '/privacy',
     label: 'Privacy Policy',
@@ -152,17 +163,7 @@ export const pages: PageRoute[] = [
   },
 ]
 
-export const externals: ExternalRoute[] = [
-  {
-    kind: 'external',
-    id: 'resource',
-    href: externalLinks.resource,
-    label: 'Resources',
-    description: 'PLACEHOLDER - tell me what to put here: one line on the off-site link (a blog, a guide, a store), or delete this entry.',
-    icon: Compass,
-    group: 'discover',
-  },
-]
+export const externals: ExternalRoute[] = []
 
 /** Sidebar entries per group, in registry order (pages first, then external links). */
 export function navEntries(group: NavGroupId): NavEntry[] {
