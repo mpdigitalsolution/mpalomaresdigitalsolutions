@@ -83,7 +83,7 @@ export type AppBuild = {
   id: string
   name: string
   /** The label above the name. Widen the list for other kinds ("iOS app", "Web app"). */
-  kind: 'Mobile app' | 'Browser extension' | 'Chrome Extension' | 'Browser Extension'
+  kind: 'Mobile app' | 'Browser extension' | 'Chrome Extension' | 'Browser Extension' | 'Google Apps Script' | 'Automation Tool'
   tagline: string
   summary: string
   status?: BuildStatus

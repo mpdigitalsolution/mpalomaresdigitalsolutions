@@ -384,6 +384,21 @@ export const apps: AppBuild[] = [
     },
     href: '/demos/extensions/mgems-suite.html',
   },
+  {
+    id: 'gads-appscript-keyword-extractor',
+    name: 'Google Ads Keyword & Bid Extractor',
+    kind: 'Google Apps Script',
+    tagline: 'Automated Ad Grants compliance & opportunity scoring engine.',
+    summary: 'Proprietary Google Apps Script automation that processes raw Keyword Planner exports, enforces the strict $2.00 Ad Grants bid ceiling, eliminates single-word broad queries, runs healthcare policy checks, and calculates opportunity scores directly inside Google Sheets.',
+    status: 'Live',
+    image: {
+      src: '/images/app-script/gads-appscript-code-editor.png',
+      alt: 'Google Ads Keyword & Bid Extractor Apps Script Editor and Bidding Architecture',
+      width: 1920,
+      height: 922,
+    },
+    href: '/demos/tools/gads-keyword-extractor.html',
+  },
 ]
 
 /* ---------- Side projects and experiments (no pictures: the sheet lists them) ---------- */
@@ -434,6 +449,13 @@ export const sideProjects: AiGroup[] = [
         summary: 'Connects Meta Page Messenger to an LLM triage prompt that qualifies visitor intent, answers standard operational FAQs, and escalates warm leads to a human agent.',
         stack: 'n8n, Meta Messenger API, DeepSeek / Claude, Webhooks',
         status: 'Live',
+      },
+      {
+        name: 'Google Ads Keyword & Bid Extractor (Apps Script)',
+        summary: 'Spreadsheet automation processing raw Keyword Planner exports: enforces $2.00 Ad Grants bid limits, eliminates single-word broad terms, checks healthcare compliance, and calculates Opportunity Scores.',
+        stack: 'Google Apps Script, Google Sheets API, Google Ads Keyword Planner, JavaScript (V8 Engine)',
+        status: 'Live',
+        href: '/demos/tools/gads-keyword-extractor.html',
       },
     ],
   },

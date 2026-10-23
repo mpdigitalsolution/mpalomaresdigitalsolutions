@@ -1,0 +1,1168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Google Ads Keyword & Bid Extractor (Google Apps Script) | Marlon Palomares</title>
+  <meta name="description" content="Custom Google Apps Script automation that processes raw Keyword Planner exports, enforces $2.00 Ad Grants bid limits, eliminates single-word terms, and scores high-intent keywords inside Google Sheets.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d14;
+      --surface: #0f172a;
+      --card: #131d31;
+      --card-hover: #192742;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(56, 189, 248, 0.35);
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.2);
+      --accent: #2dd4bf;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+      --font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 100px;
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(56, 189, 248, 0.12), transparent),
+        radial-gradient(circle at 85% 65%, rgba(45, 212, 191, 0.06), transparent);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* Nav */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(9, 13, 20, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      height: 72px;
+      display: flex;
+      align-items: center;
+    }
+    .nav-container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 24px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      transition: all 0.2s ease;
+    }
+    .back-btn:hover {
+      color: var(--text);
+      border-color: var(--primary);
+      background: rgba(56, 189, 248, 0.08);
+    }
+    .nav-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .badge-pill {
+      font-size: 11px;
+      font-weight: 600;
+      font-family: var(--mono);
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--primary);
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+    }
+    .action-btn:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .action-btn-primary {
+      background: var(--primary);
+      color: #000;
+      font-weight: 700;
+      border-color: var(--primary);
+    }
+    .action-btn-primary:hover {
+      background: #7dd3fc;
+      color: #000;
+      box-shadow: 0 0 16px var(--primary-glow);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 40px 24px 0;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 30px 0 28px;
+      text-align: center;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      font-family: var(--mono);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 4.5vw, 50px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .hero h1 span.gradient {
+      background: linear-gradient(135deg, #38bdf8 0%, #2dd4bf 50%, #818cf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      max-width: 820px;
+      margin: 0 auto 32px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .stat-card:hover::before { opacity: 1; }
+    .stat-val {
+      font-size: 28px;
+      font-weight: 800;
+      font-family: var(--mono);
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .stat-val.primary { color: var(--primary); }
+    .stat-val.accent { color: var(--accent); }
+    .stat-val.success { color: var(--success); }
+    .stat-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+    .stat-desc {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* Interactive Showcase Section */
+    .showcase-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 56px;
+    }
+    .showcase-header {
+      padding: 24px 32px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.015);
+    }
+    .showcase-title-area h2 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+    }
+    .showcase-title-area p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+    .view-tabs {
+      display: inline-flex;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 4px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      gap: 4px;
+    }
+    .view-tab {
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .view-tab:hover {
+      color: var(--text);
+    }
+    .view-tab.active {
+      background: var(--card-hover);
+      color: var(--primary);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Tab Content Areas */
+    .tab-content {
+      display: none;
+      padding: 32px;
+    }
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stage Viewer */
+    .stage-card {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 28px;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .stage-card { grid-template-columns: 1fr; }
+    }
+    .stage-preview {
+      position: relative;
+      background: #000;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      cursor: zoom-in;
+      transition: border-color 0.2s;
+    }
+    .stage-preview:hover {
+      border-color: var(--border-accent);
+    }
+    .stage-preview img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .stage-preview:hover img {
+      transform: scale(1.015);
+    }
+    .preview-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(9, 13, 20, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-family: var(--mono);
+      font-weight: 600;
+      border: 1px solid var(--border);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .preview-hint {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      background: rgba(9, 13, 20, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Stage Meta & Explanations */
+    .stage-info {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .info-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+    .info-card h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .info-card p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+    .criteria-list {
+      list-style: none;
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .criteria-item {
+      font-size: 12.5px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      color: var(--text-muted);
+    }
+    .criteria-icon {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 11px;
+      margin-top: 2px;
+    }
+    .criteria-pass { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+    .criteria-fail { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+
+    /* Code Viewer */
+    .code-box {
+      background: #080c14;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: #e2e8f0;
+      overflow-x: auto;
+      max-height: 380px;
+    }
+    .code-kw { color: #f472b6; }
+    .code-str { color: #34d399; }
+    .code-com { color: #64748b; font-style: italic; }
+    .code-num { color: #38bdf8; }
+    .code-fn { color: #fbbf24; }
+
+    /* Features Grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 24px;
+      margin-bottom: 56px;
+    }
+    @media (max-width: 640px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      transition: all 0.2s;
+    }
+    .feature-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+    }
+    .feature-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .feature-card h3 {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Interactive Simulator */
+    .simulator-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 32px;
+      margin-bottom: 56px;
+    }
+    .sim-header {
+      margin-bottom: 24px;
+    }
+    .sim-header h2 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+    .sim-header p {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .sim-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .sim-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sim-group label {
+      font-size: 12px;
+      font-family: var(--mono);
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .sim-input, .sim-select {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-family: var(--font);
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .sim-input:focus, .sim-select:focus {
+      border-color: var(--primary);
+    }
+    .sim-result {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .sim-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .sim-pill {
+      font-size: 12px;
+      font-weight: 700;
+      font-family: var(--mono);
+      padding: 6px 14px;
+      border-radius: 999px;
+    }
+    .pill-pass { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .pill-reject { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .sim-score-box {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .sim-score-num {
+      font-size: 26px;
+      font-weight: 800;
+      font-family: var(--mono);
+      color: var(--primary);
+    }
+
+    /* Lightbox Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      max-width: 1400px;
+      width: 100%;
+      max-height: 94vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    }
+    .modal-header {
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-header h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .close-modal {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .close-modal:hover { color: #fff; }
+    .modal-body {
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+      background: #05080f;
+    }
+    .modal-body img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    }
+    .modal-footer {
+      padding: 14px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Footer CTA */
+    .cta-banner {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(45, 212, 191, 0.08));
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      padding: 44px 36px;
+      text-align: center;
+      position: relative;
+    }
+    .cta-banner h2 {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .cta-banner p {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 28px;
+    }
+    .cta-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="/work" class="back-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          Work Overview
+        </a>
+        <div class="nav-title">
+          <span>Keyword & Bid Extractor</span>
+          <span class="badge-pill">Google Apps Script</span>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="/demos/case-studies/google-ads-performance.html#nonprofit" class="action-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Google Ad Grants Case Study
+        </a>
+        <a href="/contact" class="action-btn action-btn-primary">
+          Contact Marlon
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Hero -->
+    <header class="hero">
+      <div class="hero-eyebrow">
+        <span>⚡ PPC Automation • Google Sheets V8 Engine</span>
+      </div>
+      <h1>
+        Google Ads Keyword & Bid Extractor<br>
+        <span class="gradient">Automated Ad Grants Compliance & Opportunity Scoring</span>
+      </h1>
+      <p>
+        A bespoke Google Apps Script architecture built to parse raw Google Ads Keyword Planner data, enforce strict Google Ad Grants bidding constraints ($2.00 max low bid, minimum 2-word count, low competition), verify healthcare policy compliance, and calculate instant commercial Opportunity Scores directly inside Google Sheets.
+      </p>
+    </header>
+
+    <!-- KPI Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-val primary">&le; $2.00</div>
+        <div class="stat-label">Ad Grants Bid Ceiling</div>
+        <div class="stat-desc">Hard-filtered Top of Page Bid (Low range)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val accent">&ge; 500</div>
+        <div class="stat-label">Min Monthly Volume</div>
+        <div class="stat-desc">Filters low-search volume inventory</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val success">&ge; 2 Words</div>
+        <div class="stat-label">Word Count Enforcement</div>
+        <div class="stat-desc">Eliminates single-word broad terms</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val primary">100%</div>
+        <div class="stat-label">Policy Verification</div>
+        <div class="stat-desc">Flags healthcare & restricted terms</div>
+      </div>
+    </div>
+
+    <!-- Main Interactive Tabs Viewer -->
+    <section class="showcase-section">
+      <div class="showcase-header">
+        <div class="showcase-title-area">
+          <h2>Interactive Workflow & Evidence Breakdown</h2>
+          <p>Inspect the complete automation lifecycle from raw export to script execution and scored output.</p>
+        </div>
+        <div class="view-tabs">
+          <button class="view-tab active" onclick="switchTab('tab-editor', 0)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            1. Apps Script Code Engine
+          </button>
+          <button class="view-tab" onclick="switchTab('tab-raw', 1)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            2. Raw Keyword Dump
+          </button>
+          <button class="view-tab" onclick="switchTab('tab-filtered', 2)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            3. Filtered & Scored Output
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 1: Apps Script Code Editor -->
+      <div class="tab-content active" id="tab-editor">
+        <div class="stage-card">
+          <div class="stage-preview" onclick="openModal(0)">
+            <span class="preview-badge">
+              <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#38bdf8;"></span>
+              Apps Script Editor: Bidding extractor.gs
+            </span>
+            <img src="/images/app-script/gads-appscript-code-editor.png" alt="Google Ads Keyword Extractor Apps Script Code Editor">
+            <span class="preview-hint">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              Click to inspect high-resolution code
+            </span>
+          </div>
+
+          <div class="stage-info">
+            <div class="info-card">
+              <h3>⚡ Engine Architecture</h3>
+              <p>
+                Written in modern JavaScript on the Google Apps Script V8 runtime. Compatible with both container-bound sheets and standalone cloud deployments via configurable spreadsheet ID.
+              </p>
+              <ul class="criteria-list">
+                <li class="criteria-item">
+                  <span class="criteria-icon criteria-pass">&#10003;</span>
+                  <span><strong>Custom UI Menu:</strong> Adds native <code>Google Ads Keyword Filter</code> button into Google Sheets.</span>
+                </li>
+                <li class="criteria-item">
+                  <span class="criteria-icon criteria-pass">&#10003;</span>
+                  <span><strong>Zero External Dependencies:</strong> Runs serverless on Google Cloud infrastructure.</span>
+                </li>
+                <li class="criteria-item">
+                  <span class="criteria-icon criteria-pass">&#10003;</span>
+                  <span><strong>Healthcare Policy Filter:</strong> Checks queries against restricted medical terminology.</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="info-card">
+              <h3>⚙️ Config Structure</h3>
+              <div class="code-box">
+<span class="code-kw">const</span> CONFIG = {
+  <span class="code-str">MIN_SEARCH_VOLUME</span>: <span class="code-num">500</span>,
+  <span class="code-str">MAX_BID_USD</span>: <span class="code-num">2.00</span>,
+  <span class="code-str">MIN_WORD_COUNT</span>: <span class="code-num">2</span>,
+  <span class="code-str">ALLOWED_COMPETITION</span>: [<span class="code-str">'low'</span>],
+  <span class="code-str">OUTPUT_SHEET_NAME</span>: <span class="code-str">'Filtered Keywords'</span>
+};
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Raw Keyword Dump -->
+      <div class="tab-content" id="tab-raw">
+        <div class="stage-card">
+          <div class="stage-preview" onclick="openModal(1)">
+            <span class="preview-badge">
+              <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#f59e0b;"></span>
+              Input: Raw Keyword Stats Export (Google Sheets)
+            </span>
+            <img src="/images/app-script/gads-keyword-planner-raw-sheet.png" alt="Raw Google Keyword Planner Export in Google Sheets">
+            <span class="preview-hint">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              Click to inspect raw dump
+            </span>
+          </div>
+
+          <div class="stage-info">
+            <div class="info-card">
+              <h3>🚨 The Unfiltered Problem</h3>
+              <p>
+                Direct exports from Google Keyword Planner contain massive volumes of noisy data that will waste budget or trigger Ad Grants account suspensions:
+              </p>
+              <ul class="criteria-list">
+                <li class="criteria-item">
+                  <span class="criteria-icon criteria-fail">&times;</span>
+                  <span><strong>Out-of-Budget CPCs:</strong> Bids ranging up to $26.63+ (incompatible with Ad Grants $2.00 cap).</span>
+                </li>
+                <li class="criteria-item">
+                  <span class="criteria-icon criteria-fail">&times;</span>
+                  <span><strong>Single-Word Terms:</strong> Banned under Google Ad Grants policy (triggers account suspension).</span>
+                </li>
+                <li class="criteria-item">
+                  <span class="criteria-icon criteria-fail">&times;</span>
+                  <span><strong>Noisy 30+ Columns:</strong> Difficult to isolate commercial opportunities quickly.</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="info-card">
+              <h3>📊 Input Metrics Parsed</h3>
+              <p>
+                The script dynamically indexes headers: Keyword, Avg. Monthly Searches, Competition, Top of page bid (low range), Top of page bid (high range), and 12-month historical monthly volumes.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Filtered & Scored Output -->
+      <div class="tab-content" id="tab-filtered">
+        <div class="stage-card">
+          <div class="stage-preview" onclick="openModal(2)">
+            <span class="preview-badge">
+              <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#10b981;"></span>
+              Output: Scored & Filtered Keywords Tab
+            </span>
+            <img src="/images/app-script/gads-filtered-keywords-sheet.png" alt="Filtered Keywords Tab with Opportunity Score and Policy Passed">
+            <span class="preview-hint">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              Click to inspect filtered output
+            </span>
+          </div>
+
+          <div class="stage-info">
+            <div class="info-card">
+              <h3>🎯 Clean, Compliant Targets</h3>
+              <p>
+                In a single click via the custom Google Sheets menu, the script generates a fresh <code>Filtered Keywords</code> tab with strict validation:
+              </p>
+              <ul class="criteria-list">
+                <li class="criteria-item">
+                  <span class="criteria-icon criteria-pass">&#10003;</span>
+                  <span><strong>Policy Status:</strong> Explicitly marked <code>PASSED</code> with policy notes.</span>
+                </li>
+                <li class="criteria-item">
+                  <span class="criteria-icon criteria-pass">&#10003;</span>
+                  <span><strong>Low Range Bids:</strong> Strictly capped at or below $2.00 (e.g. $0.26, $0.44, $0.81, $1.13).</span>
+                </li>
+                <li class="criteria-item">
+                  <span class="criteria-icon criteria-pass">&#10003;</span>
+                  <span><strong>Opportunity Score:</strong> Algorithmic rank balancing volume, bid efficiency, and competition.</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="info-card">
+              <h3>📈 Immediate ROI</h3>
+              <p>
+                Used directly in the Alvaro Non-Profit Turnaround to identify non-conflicting search terms, scaling interaction rate to 14.00% and 193 monthly conversions without policy warnings.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Deep-Dive Features -->
+    <div class="grid-2">
+      <div class="feature-card">
+        <div class="feature-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        </div>
+        <h3>Google Ad Grants Strict Compliance</h3>
+        <p>
+          Google Ad Grants requires non-profits to stay above a 5.00% account-wide CTR floor, prohibits single-word keywords, and caps bids at $2.00 unless smart bidding is activated. This tool codifies those requirements into programmatic rules, eliminating human error before campaigns launch.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        </div>
+        <h3>Automated Healthcare Policy Scanner</h3>
+        <p>
+          Google Ads strictly penalizes uncertified healthcare claims, prescription drug mentions, and clinical guarantees. The Apps Script contains a regex dictionary of policy-flagged medical terms, ensuring every harvested keyword is verified safe before adding to ad groups.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        </div>
+        <h3>Dynamic Opportunity Scoring Formula</h3>
+        <p>
+          Calculates a normalized score balancing search volume against top-of-page low bids. High-volume terms with low bids receive maximum score (e.g. <code>health of community</code>: 22,200 searches at $1.13 low bid &rarr; Opportunity Score 171), allowing immediate prioritization.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+        </div>
+        <h3>Native Spreadsheet Integration</h3>
+        <p>
+          No external API subscriptions or complex third-party setups needed. Team members simply paste Keyword Planner exports into Google Sheets, click the custom <code>Google Ads Keyword Filter &rarr; Optimize</code> menu, and receive formatted results in seconds.
+        </p>
+      </div>
+    </div>
+
+    <!-- Interactive Live Policy Simulator -->
+    <section class="simulator-wrap">
+      <div class="sim-header">
+        <h2>Live Ad Grants Compliance Simulator</h2>
+        <p>Test any keyword below to see how the Apps Script evaluates bidding caps, word count, and policy thresholds.</p>
+      </div>
+
+      <div class="sim-form">
+        <div class="sim-group">
+          <label>Keyword Query</label>
+          <input type="text" id="simKw" class="sim-input" value="community health support" oninput="runSim()">
+        </div>
+        <div class="sim-group">
+          <label>Avg Monthly Volume</label>
+          <input type="number" id="simVol" class="sim-input" value="1600" oninput="runSim()">
+        </div>
+        <div class="sim-group">
+          <label>Top of Page Bid (Low)</label>
+          <input type="number" id="simBid" class="sim-input" step="0.05" value="0.85" oninput="runSim()">
+        </div>
+        <div class="sim-group">
+          <label>Competition</label>
+          <select id="simComp" class="sim-select" onchange="runSim()">
+            <option value="low" selected>Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sim-result">
+        <div class="sim-status">
+          <span id="simBadge" class="sim-pill pill-pass">PASSED</span>
+          <span id="simFeedback" style="font-size: 13.5px; color: var(--text-muted);">Compliant with Google Ad Grants & Healthcare policy guidelines.</span>
+        </div>
+        <div class="sim-score-box">
+          <span style="font-size: 13px; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Calculated Score:</span>
+          <span id="simScore" class="sim-score-num">342</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom CTA Banner -->
+    <div class="cta-banner">
+      <h2>Explore the Case Study Behind This Tool</h2>
+      <p>
+        See how this Google Apps Script automation directly powered a 14.00% CTR turnaround for a non-profit client, eliminating keyword conflicts and delivering 193+ monthly conversions.
+      </p>
+      <div class="cta-buttons">
+        <a href="/demos/case-studies/google-ads-performance.html#nonprofit" class="action-btn action-btn-primary" style="padding: 10px 22px; font-size: 14px;">
+          View Non-Profit Ad Grants Case Study
+        </a>
+        <a href="/work" class="action-btn" style="padding: 10px 22px; font-size: 14px;">
+          Explore All Portfolio Builds
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Lightbox Modal -->
+  <div class="modal-backdrop" id="modalBackdrop" onclick="handleBackdropClick(event)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h4 id="modalTitle">Screenshot Inspector</h4>
+        <button class="close-modal" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <img id="modalImg" src="" alt="Enlarged Screenshot">
+      </div>
+      <div class="modal-footer">
+        <span id="modalCaption">Caption</span>
+        <button class="action-btn" onclick="closeModal()">Close Viewer</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modalSlides = [
+      {
+        title: "Google Apps Script Engine: Bidding extractor.gs in Apps Script Editor",
+        src: "/images/app-script/gads-appscript-code-editor.png",
+        caption: "Apps Script project 'Keyword Extractor Gads' with configuration thresholds for Ad Grants compliance ($2.00 max low bid, minimum 500 searches, no single-word terms)."
+      },
+      {
+        title: "Raw Keyword Planner Export in Google Sheets (Keyword Stats)",
+        src: "/images/app-script/gads-keyword-planner-raw-sheet.png",
+        caption: "Raw input dump from Google Keyword Planner containing unorganized keywords with high bids (up to $26+), single words, and untracked volume."
+      },
+      {
+        title: "Filtered Keywords Tab with Opportunity Score & Policy PASSED",
+        src: "/images/app-script/gads-filtered-keywords-sheet.png",
+        caption: "The processed Google Sheet output with custom menu 'Google Ads Keyword Filter', calculated Opportunity Scores, green PASSED policy flags, and verified sub-$2.00 bids."
+      }
+    ];
+
+    function switchTab(tabId, index) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.view-tab').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      document.querySelectorAll('.view-tab')[index].classList.add('active');
+    }
+
+    function openModal(index) {
+      const slide = modalSlides[index];
+      if (!slide) return;
+      document.getElementById('modalTitle').textContent = slide.title;
+      document.getElementById('modalImg').src = slide.src;
+      document.getElementById('modalCaption').textContent = slide.caption;
+      document.getElementById('modalBackdrop').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('modalBackdrop').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function handleBackdropClick(e) {
+      if (e.target.id === 'modalBackdrop') {
+        closeModal();
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // Simulator Logic
+    function runSim() {
+      const kw = document.getElementById('simKw').value.trim();
+      const vol = parseFloat(document.getElementById('simVol').value) || 0;
+      const bid = parseFloat(document.getElementById('simBid').value) || 0;
+      const comp = document.getElementById('simComp').value;
+
+      const badge = document.getElementById('simBadge');
+      const feedback = document.getElementById('simFeedback');
+      const score = document.getElementById('simScore');
+
+      const words = kw.split(/\s+/).filter(Boolean);
+
+      // Check restrictions
+      if (words.length < 2) {
+        badge.className = 'sim-pill pill-reject';
+        badge.textContent = 'REJECTED: SINGLE WORD';
+        feedback.textContent = 'Google Ad Grants policy strictly prohibits single-word broad queries.';
+        score.textContent = '0';
+        return;
+      }
+
+      if (bid > 2.00) {
+        badge.className = 'sim-pill pill-reject';
+        badge.textContent = 'REJECTED: BID > $2.00';
+        feedback.textContent = `Top of page bid ($${bid.toFixed(2)}) exceeds Google Ad Grants $2.00 bid cap.`;
+        score.textContent = '0';
+        return;
+      }
+
+      if (vol < 500) {
+        badge.className = 'sim-pill pill-reject';
+        badge.textContent = 'LOW VOLUME (< 500)';
+        feedback.textContent = 'Monthly search volume is below the configured threshold (default: 500).';
+        score.textContent = '0';
+        return;
+      }
+
+      const prohibitedHealth = ['cure', 'drug', 'prescription', 'miracle', 'substance'];
+      const hasProhibited = prohibitedHealth.some(term => kw.toLowerCase().includes(term));
+      if (hasProhibited) {
+        badge.className = 'sim-pill pill-reject';
+        badge.textContent = 'REJECTED: HEALTHCARE POLICY';
+        feedback.textContent = 'Flagged by healthcare policy regex for restricted prescription or medical claim terminology.';
+        score.textContent = '0';
+        return;
+      }
+
+      // Passed! Calculate Opportunity Score
+      badge.className = 'sim-pill pill-pass';
+      badge.textContent = 'PASSED COMPLIANT';
+      feedback.textContent = 'Fully compliant with Google Ad Grants bidding guidelines and policy checks.';
+
+      const compFactor = comp === 'low' ? 1.2 : comp === 'medium' ? 0.9 : 0.6;
+      const calculated = Math.round((vol / (bid + 0.15)) * compFactor / 10);
+      score.textContent = calculated.toLocaleString();
+    }
+
+    // Run initial simulation
+    runSim();
+  </script>
+</body>
+</html>

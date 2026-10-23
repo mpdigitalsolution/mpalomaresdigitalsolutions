@@ -229,8 +229,8 @@ export const workChapters: WorkChapter[] = [
     title: 'Apps and Extensions',
     line: 'Proprietary browser automation & multi-LLM keyword engines.',
     count: apps.length,
-    unit: 'extensions',
-    description: 'Chrome extensions integrating Google Keyword Planner, DeepSeek API, and multi-model prompt optimizers across Claude, Gemini, DeepSeek, and ChatGPT.',
+    unit: 'builds',
+    description: 'Chrome extensions and Google Apps Script automations integrating Google Keyword Planner, DeepSeek API, and multi-model prompt optimizers across Claude, Gemini, DeepSeek, and ChatGPT.',
     tile: {
       src: '/images/apps/extensions/mgems-optimizer-results.png',
       alt: 'MGEMS Chrome Extension Suite - Keyword Manager & Multi-LLM Optimizer',

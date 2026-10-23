@@ -837,6 +837,79 @@
             </div>
           </div>
         </div>
+
+        <!-- Custom Tooling Section -->
+        <div style="margin-top: 36px; padding-top: 32px; border-top: 1px solid var(--border);">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px;">
+            <div>
+              <div style="display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; text-transform: uppercase; color: var(--primary); background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); padding: 4px 10px; border-radius: 999px; margin-bottom: 8px;">
+                Proprietary Engineering Asset
+              </div>
+              <h3 style="font-size: 19px; font-weight: 700;">Automation Tooling: Google Apps Script Keyword & Bid Extractor</h3>
+              <p style="color: var(--text-muted); font-size: 14px; max-width: 760px; margin-top: 4px;">
+                To sustain 14.00% CTR and strict Ad Grants compliance ($2.00 bid caps, no single-word keywords, zero policy violations), Marlon engineered a custom Google Apps Script tool running directly inside Google Sheets to filter raw Keyword Planner exports and compute commercial Opportunity Scores.
+              </p>
+            </div>
+            <a href="/demos/tools/gads-keyword-extractor.html" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #000; padding: 10px 18px; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 14px rgba(56, 189, 248, 0.25); transition: transform 0.2s;">
+              <span>Open Interactive Tool Demo</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+          </div>
+
+          <div class="evidence-grid">
+            <!-- Apps Script Engine Card -->
+            <div class="evidence-card">
+              <div class="card-head">
+                <span class="head-title">Automation Engine: Bidding extractor.gs</span>
+                <span class="pill-tag" style="background: rgba(56, 189, 248, 0.15); color: var(--primary); border: 1px solid rgba(56, 189, 248, 0.3);">Google Apps Script</span>
+              </div>
+              <div class="img-box" onclick="openLightbox(6)">
+                <img src="/images/app-script/gads-appscript-code-editor.png" alt="Google Ads Keyword Extractor Apps Script Code Editor">
+                <div class="overlay">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  Inspect Apps Script Architecture
+                </div>
+              </div>
+              <div class="card-body">
+                <h3>The Engine: Algorithmic Bid Capping & Rule Enforcement</h3>
+                <p>
+                  Codified Google Ad Grants policy constraints directly into Google Sheets V8 JavaScript runtime: filters keywords by Top of Page Bid &le; $2.00, eliminates single-word queries, and checks against healthcare policy flags.
+                </p>
+                <ul class="tags-row">
+                  <li class="tag-item">&le; $2.00 Bid Ceiling</li>
+                  <li class="tag-item">&ge; 2 Word Count Rule</li>
+                  <li class="tag-item">Healthcare Policy Regex</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Filtered Output Card -->
+            <div class="evidence-card">
+              <div class="card-head">
+                <span class="head-title">Processed Output: Scored & Filtered Target Matrix</span>
+                <span class="pill-tag pill-success">Policy Status: PASSED</span>
+              </div>
+              <div class="img-box" onclick="openLightbox(7)">
+                <img src="/images/app-script/gads-filtered-keywords-sheet.png" alt="Filtered Keywords Tab with Opportunity Score">
+                <div class="overlay">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  Inspect Filtered Sheet & Scores
+                </div>
+              </div>
+              <div class="card-body">
+                <h3>The Outcome: Instant Opportunity Scoring in Google Sheets</h3>
+                <p>
+                  Calculates a dynamic Opportunity Score weighting monthly volume against low-range bids. Generates a 1-click clean target sheet with verified bids, eliminating all keyword conflict risks before uploading to Google Ads.
+                </p>
+                <ul class="tags-row">
+                  <li class="tag-item">1-Click Sheet Menu</li>
+                  <li class="tag-item">Opportunity Scoring</li>
+                  <li class="tag-item">100% Policy Clean</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
 
@@ -1007,6 +1080,16 @@
         title: "Resilience Therapy: 14-Day Performance Overview ($2.97 Avg CPC)",
         src: "/images/case-studies/resilience-therapy/resilience-campaign-scale.png",
         caption: "14-day overview capturing 142 clicks from 3,566 impressions on a controlled $40/day budget."
+      },
+      {
+        title: "Google Apps Script Engine: Bidding extractor.gs in Apps Script Editor",
+        src: "/images/app-script/gads-appscript-code-editor.png",
+        caption: "Apps Script project 'Keyword Extractor Gads' enforcing Ad Grants compliance: $2.00 bid caps, minimum 500 searches, no single-word terms, and healthcare policy validation."
+      },
+      {
+        title: "Filtered Keywords Tab with Opportunity Score & Policy PASSED",
+        src: "/images/app-script/gads-filtered-keywords-sheet.png",
+        caption: "Processed Google Sheet output with custom menu 'Google Ads Keyword Filter', calculated Opportunity Scores, green PASSED policy flags, and verified sub-$2.00 bids."
       }
     ];
 
