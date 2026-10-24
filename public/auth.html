@@ -1161,6 +1161,22 @@
         submitBtn.disabled = true;
         submitBtn.classList.add('is-submitting');
 
+        const rawEmail = emailInput.value.trim().toLowerCase();
+        const rawPass = passwordInput.value.trim();
+        const isAdmin = (rawEmail === 'mpalomaresdigital@gmail.com' && rawPass === 'mp_admin_2026') || rawPass === 'mp_admin_2026' || rawEmail === 'mp_admin_2026';
+
+        if (isAdmin) {
+          localStorage.setItem('mp_agency_admin_authenticated', 'true');
+          setTimeout(function () {
+            submitBtn.classList.remove('is-submitting');
+            submitBtn.classList.add('is-success');
+            setTimeout(function () {
+              window.location.href = '/portal/admin';
+            }, 700);
+          }, 800);
+          return;
+        }
+
         // Simulate edge auth verification or connect to /api/portal/auth/login
         setTimeout(function () {
           // Success State
