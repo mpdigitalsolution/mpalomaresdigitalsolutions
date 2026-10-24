@@ -142,13 +142,14 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
 
   // Handle Quick SSO Demo
   const handleQuickSSO = () => {
-    if (availableClients.length > 0) {
+    const firstClient = availableClients[0]
+    if (firstClient) {
       setSubmitting(true)
       setTimeout(() => {
         setSubmitting(false)
         setSignedInSuccess(true)
         setTimeout(() => {
-          setClientId(availableClients[0].id)
+          setClientId(firstClient.id)
         }, 600)
       }, 700)
     } else {
