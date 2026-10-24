@@ -1187,16 +1187,136 @@
         }, 800);
       });
 
-      document.getElementById('magicLinkBtn').addEventListener('click', function () {
-        const email = emailInput.value.trim();
-        if (!email || !emailRegex.test(email)) {
-          validateEmail();
-          emailInput.focus();
+      // 5. Credential Recovery Modal Logic
+      const recoveryModal = document.getElementById('recoveryModal');
+      const closeRecoveryBtn = document.getElementById('closeRecoveryBtn');
+      const cancelRecoveryBtn = document.getElementById('cancelRecoveryBtn');
+      const recoveryForm = document.getElementById('recoveryForm');
+      const modalRecoveryEmail = document.getElementById('modalRecoveryEmail');
+      const recoveryErrorBox = document.getElementById('recoveryErrorBox');
+      const recoverySuccessBox = document.getElementById('recoverySuccessBox');
+      const recoverySuccessText = document.getElementById('recoverySuccessText');
+      const submitRecoveryBtn = document.getElementById('submitRecoveryBtn');
+      const recoveryBackBtn = document.getElementById('recoveryBackBtn');
+
+      function openModal() {
+        const prefill = emailInput.value.trim();
+        modalRecoveryEmail.value = prefill.includes('@') ? prefill : '';
+        recoveryErrorBox.style.display = 'none';
+        recoverySuccessBox.style.display = 'none';
+        recoveryForm.style.display = 'flex';
+        recoveryModal.style.display = 'flex';
+        modalRecoveryEmail.focus();
+      }
+
+      function closeModal() {
+        recoveryModal.style.display = 'none';
+      }
+
+      document.getElementById('forgotLink').addEventListener('click', function (e) {
+        e.preventDefault();
+        openModal();
+      });
+
+      document.getElementById('magicLinkBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+        openModal();
+      });
+
+      closeRecoveryBtn.addEventListener('click', closeModal);
+      cancelRecoveryBtn.addEventListener('click', closeModal);
+      recoveryBackBtn.addEventListener('click', closeModal);
+
+      recoveryModal.addEventListener('click', function (e) {
+        if (e.target === recoveryModal) closeModal();
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && recoveryModal.style.display === 'flex') {
+          closeModal();
+        }
+      });
+
+      recoveryForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const email = modalRecoveryEmail.value.trim().toLowerCase();
+        if (!email || !email.includes('@')) {
+          recoveryErrorBox.textContent = 'Please enter a valid email address.';
+          recoveryErrorBox.style.display = 'block';
           return;
         }
-        alert('Magic login link dispatched to ' + email);
+
+        submitRecoveryBtn.disabled = true;
+        submitRecoveryBtn.textContent = 'Dispatching...';
+        recoveryErrorBox.style.display = 'none';
+
+        try {
+          const res = await fetch('https://portfolio-chatbot-worker.portfolio-chatbot-worker.workers.dev/api/portal/auth/recover', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email }),
+          });
+          const data = await res.json();
+
+          if (!res.ok) {
+            throw new Error(data.error || 'Failed to dispatch recovery link.');
+          }
+
+          recoveryForm.style.display = 'none';
+          recoverySuccessText.textContent = data.message || 'Credentials and 1-click access link have been dispatched to your email.';
+          recoverySuccessBox.style.display = 'block';
+        } catch (err) {
+          recoveryErrorBox.textContent = err.message || 'Error communicating with edge worker.';
+          recoveryErrorBox.style.display = 'block';
+        } finally {
+          submitRecoveryBtn.disabled = false;
+          submitRecoveryBtn.textContent = 'Send Recovery Link';
+        }
       });
     })();
   </script>
+
+  <!-- Frosted Credential Recovery Modal -->
+  <div id="recoveryModal" style="display: none; position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: #09090b; border: 1px solid #27272a; border-radius: 20px; padding: 28px; max-width: 440px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); position: relative; color: #f4f4f5;">
+      <button id="closeRecoveryBtn" type="button" style="position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 8px; background: #18181b; border: 1px solid #27272a; color: #a1a1aa; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px;">✕</button>
+      
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+        <div style="width: 40px; height: 40px; border-radius: 12px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); display: flex; align-items: center; justify-content: center; color: #34d399;">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+          </svg>
+        </div>
+        <div>
+          <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin: 0;">Recover Credentials</h3>
+          <p style="font-size: 11px; color: #a1a1aa; font-family: var(--font-mono); margin: 2px 0 0 0;">1-Click Access & Passkey Dispatch</p>
+        </div>
+      </div>
+
+      <p style="font-size: 12px; color: #a1a1aa; line-height: 1.5; margin-bottom: 20px;">
+        Enter your registered client or admin email address. Our edge delivery system will dispatch your workspace passkey and 1-click login link directly to your inbox.
+      </p>
+
+      <div id="recoverySuccessBox" style="display: none; padding: 16px; border-radius: 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; font-size: 12px; margin-bottom: 16px;">
+        <div style="font-weight: 700; margin-bottom: 4px;">Recovery Email Dispatched!</div>
+        <div id="recoverySuccessText" style="color: #d1d5db; line-height: 1.5;"></div>
+        <button id="recoveryBackBtn" type="button" style="margin-top: 12px; width: 100%; padding: 10px; border-radius: 8px; background: #10b981; border: none; color: #022c22; font-weight: 700; font-size: 12px; cursor: pointer;">Back to Sign In</button>
+      </div>
+
+      <form id="recoveryForm" style="display: flex; flex-direction: column; gap: 14px;">
+        <div>
+          <label for="modalRecoveryEmail" style="display: block; font-size: 12px; font-weight: 500; color: #e4e4e7; margin-bottom: 6px;">Your Registered Email</label>
+          <input type="email" id="modalRecoveryEmail" required placeholder="name@company.com or mpalomaresdigital@gmail.com" style="width: 100%; height: 42px; padding: 0 12px; border-radius: 10px; background: #18181b; border: 1px solid #27272a; color: #ffffff; font-size: 12px; outline: none; box-sizing: border-box;">
+        </div>
+
+        <div id="recoveryErrorBox" style="display: none; padding: 10px 12px; border-radius: 8px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; font-size: 11px;"></div>
+
+        <div style="display: flex; gap: 10px; margin-top: 6px;">
+          <button type="button" id="cancelRecoveryBtn" style="flex: 1; height: 42px; border-radius: 10px; background: #18181b; border: 1px solid #27272a; color: #d4d4d8; font-size: 12px; font-weight: 500; cursor: pointer;">Cancel</button>
+          <button type="submit" id="submitRecoveryBtn" style="flex: 1; height: 42px; border-radius: 10px; background: var(--accent); border: none; color: #022c22; font-size: 12px; font-weight: 700; cursor: pointer;">Send Recovery Link</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </body>
 </html>

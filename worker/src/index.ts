@@ -3,6 +3,7 @@ import type { Env } from './types'
 import {
   getClientByPasskey,
   getClientById,
+  getClientByEmail,
   getClientPortalData,
   updateOnboardingStep,
   signContract,
@@ -79,6 +80,45 @@ async function dispatchOutboundNotification(env: Env, text: string) {
   }
 }
 
+async function sendEmailViaResend(
+  env: Env,
+  options: { to: string; subject: string; html: string; text?: string }
+): Promise<{ success: boolean; id?: string; error?: string; simulated?: boolean }> {
+  if (!env.RESEND_API_KEY) {
+    console.info(`[Resend Simulated] To: ${options.to} | Subject: ${options.subject}`)
+    return { success: true, simulated: true }
+  }
+
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'Marlon Palomares Digital Solutions <onboarding@resend.dev>',
+        to: [options.to],
+        subject: options.subject,
+        html: options.html,
+        text: options.text || options.html.replace(/<[^>]*>?/gm, ''),
+      }),
+    })
+
+    if (!res.ok) {
+      const errBody = await res.text()
+      console.warn('Resend API returned error:', res.status, errBody)
+      return { success: false, error: errBody }
+    }
+
+    const data = (await res.json()) as { id: string }
+    return { success: true, id: data.id }
+  } catch (err: unknown) {
+    console.warn('Resend fetch exception:', err)
+    return { success: false, error: String(err) }
+  }
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url)
@@ -129,7 +169,7 @@ export default {
 
         const client = await getClientByPasskey(env.DB, body.passkey)
         if (!client) {
-          return jsonResponse({ error: 'Invalid passkey. Try "apex2026" or select demo mode.' }, 401)
+          return jsonResponse({ error: 'Invalid workspace passkey or email.' }, 401)
         }
 
         return jsonResponse({
@@ -143,6 +183,139 @@ export default {
             project_name: client.project_name,
             tier: client.tier,
           },
+        })
+      } catch (err: unknown) {
+        return jsonResponse({ error: String(err) }, 500)
+      }
+    }
+
+    // 2b. Password & Credential Recovery
+    if (url.pathname === '/api/portal/auth/recover' && request.method === 'POST') {
+      try {
+        const body = (await request.json()) as { email?: string }
+        const rawEmail = (body.email || '').trim().toLowerCase()
+
+        if (!rawEmail || !rawEmail.includes('@')) {
+          return jsonResponse({ error: 'Please enter a valid email address.' }, 400)
+        }
+
+        const ADMIN_EMAIL = 'mpalomaresdigital@gmail.com'
+        const MASTER_ADMIN_KEY = 'mp_admin_2026'
+
+        // Check if Admin
+        if (rawEmail === ADMIN_EMAIL.toLowerCase()) {
+          const adminUrl = 'https://mpalomaresdigitalsolutions.vercel.app/portal/admin'
+          const subject = '🔐 Agency Command Deck Access & Master Passkey'
+          const html = `
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 32px 24px; background: #09090b; color: #f4f4f5; border-radius: 16px; border: 1px solid #27272a;">
+              <div style="margin-bottom: 24px;">
+                <span style="background: rgba(168, 85, 247, 0.15); color: #c084fc; font-family: monospace; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 9999px; border: 1px solid rgba(168, 85, 247, 0.3);">
+                  MARLON PALOMARES ADMIN OS
+                </span>
+              </div>
+              <h1 style="font-size: 20px; font-weight: 700; color: #ffffff; margin-bottom: 12px; letter-spacing: -0.02em;">
+                Agency Command Deck Credentials
+              </h1>
+              <p style="font-size: 14px; color: #a1a1aa; line-height: 1.6; margin-bottom: 24px;">
+                Here is your requested Master Agency Passkey and direct access link for the restricted management console.
+              </p>
+
+              <div style="background: #18181b; border: 1px solid #3f3f46; border-radius: 12px; padding: 20px; margin-bottom: 28px;">
+                <div style="font-size: 11px; font-family: monospace; text-transform: uppercase; color: #a1a1aa; margin-bottom: 6px;">Master Passkey</div>
+                <div style="font-size: 22px; font-family: monospace; font-weight: 700; color: #34d399; letter-spacing: 0.05em;">${MASTER_ADMIN_KEY}</div>
+              </div>
+
+              <div style="margin-bottom: 32px;">
+                <a href="${adminUrl}" style="display: inline-block; background: #9333ea; color: #ffffff; font-weight: 700; font-size: 13px; text-decoration: none; padding: 12px 28px; border-radius: 10px; box-shadow: 0 4px 14px rgba(147, 51, 234, 0.4);">
+                  Open Agency Command Deck →
+                </a>
+              </div>
+
+              <p style="font-size: 11px; color: #71717a; border-top: 1px solid #27272a; padding-top: 20px; margin: 0;">
+                If you did not request this recovery email, please secure your Cloudflare account immediately.
+              </p>
+            </div>
+          `
+
+          await sendEmailViaResend(env, {
+            to: rawEmail,
+            subject,
+            html,
+          })
+
+          await dispatchOutboundNotification(
+            env,
+            `🔑 <b>Admin Passkey Recovery Dispatched</b>\nRecipient: <code>${rawEmail}</code>\nMaster passkey and deck URL sent via email.`
+          )
+
+          return jsonResponse({
+            success: true,
+            accountType: 'admin',
+            message: `Admin access credentials dispatched to ${rawEmail}.`,
+          })
+        }
+
+        // Check if Client in Cloudflare D1
+        const client = await getClientByEmail(env.DB, rawEmail)
+        if (!client) {
+          return jsonResponse(
+            {
+              error: 'No active workspace found for this email address. Please check your spelling or contact Marlon Palomares.',
+            },
+            404
+          )
+        }
+
+        // Generate 1-Click Direct Access Link
+        const portalUrl = `https://mpalomaresdigitalsolutions.vercel.app/portal?client=${client.id}&key=${encodeURIComponent(client.passkey)}`
+        const subject = `🔐 Your Client Portal Access Link & Passkey - ${client.company}`
+        const html = `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 32px 24px; background: #09090b; color: #f4f4f5; border-radius: 16px; border: 1px solid #27272a;">
+            <div style="margin-bottom: 24px;">
+              <span style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-family: monospace; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 9999px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                MP DIGITAL SOLUTIONS • CLIENT PORTAL
+              </span>
+            </div>
+            <h1 style="font-size: 20px; font-weight: 700; color: #ffffff; margin-bottom: 12px; letter-spacing: -0.02em;">
+              Hello ${client.name},
+            </h1>
+            <p style="font-size: 14px; color: #a1a1aa; line-height: 1.6; margin-bottom: 24px;">
+              You requested your login credentials for the <strong>${client.company}</strong> project workspace. You can sign in immediately using the 1-click magic link below or enter your workspace passkey.
+            </p>
+
+            <div style="margin-bottom: 28px;">
+              <a href="${portalUrl}" style="display: inline-block; background: #10b981; color: #022c22; font-weight: 700; font-size: 13px; text-decoration: none; padding: 12px 28px; border-radius: 10px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);">
+                Sign In to Workspace (1-Click) →
+              </a>
+            </div>
+
+            <div style="background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 18px; margin-bottom: 28px;">
+              <div style="font-size: 11px; font-family: monospace; text-transform: uppercase; color: #71717a; margin-bottom: 6px;">Workspace Passkey</div>
+              <div style="font-size: 18px; font-family: monospace; font-weight: 700; color: #34d399; letter-spacing: 0.05em;">${client.passkey}</div>
+              <div style="font-size: 11px; color: #a1a1aa; margin-top: 6px;">Workspace ID: <code style="color: #e4e4e7;">${client.id}</code></div>
+            </div>
+
+            <p style="font-size: 11px; color: #71717a; border-top: 1px solid #27272a; padding-top: 20px; margin: 0;">
+              Marlon Palomares Digital Solutions • High-Performance Edge Automations & Engineering
+            </p>
+          </div>
+        `
+
+        await sendEmailViaResend(env, {
+          to: rawEmail,
+          subject,
+          html,
+        })
+
+        await dispatchOutboundNotification(
+          env,
+          `🔑 <b>Client Credential Recovery Dispatched</b>\nClient: <b>${client.name}</b> (${client.company})\nEmail: <code>${rawEmail}</code>\nWorkspace: <code>${client.id}</code>`
+        )
+
+        return jsonResponse({
+          success: true,
+          accountType: 'client',
+          message: `Workspace credentials dispatched to ${rawEmail}.`,
         })
       } catch (err: unknown) {
         return jsonResponse({ error: String(err) }, 500)

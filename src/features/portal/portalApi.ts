@@ -47,6 +47,21 @@ export async function loginWithPasskey(passkey: string): Promise<ClientRecord> {
   return data.client
 }
 
+export async function recoverCredentials(
+  email: string
+): Promise<{ success: boolean; accountType: 'admin' | 'client'; message: string }> {
+  const res = await fetch(`${WORKER_BASE}/api/portal/auth/recover`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.error || 'Failed to dispatch credential recovery email.')
+  }
+  return res.json()
+}
+
 export async function completeOnboardingStep(
   clientId: string,
   stepId: string,

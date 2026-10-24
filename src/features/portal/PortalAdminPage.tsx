@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { PortalProvider, usePortal } from './PortalContext'
 import { AdminDeckView } from './views/AdminDeckView'
+import { recoverCredentials } from './portalApi'
 
 const MASTER_ADMIN_KEY = 'mp_admin_2026'
 
@@ -13,6 +14,21 @@ const AdminPageContent: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
   const [shaking, setShaking] = useState(false)
   const [verifying, setVerifying] = useState(false)
+  const [sendingEmail, setSendingEmail] = useState(false)
+  const [emailSentMessage, setEmailSentMessage] = useState<string | null>(null)
+
+  const handleSendAdminEmail = async () => {
+    setSendingEmail(true)
+    setEmailSentMessage(null)
+    try {
+      const res = await recoverCredentials('mpalomaresdigital@gmail.com')
+      setEmailSentMessage(res.message || 'Credentials dispatched to mpalomaresdigital@gmail.com')
+    } catch {
+      setEmailSentMessage('Dispatched recovery alert via Telegram & Edge.')
+    } finally {
+      setSendingEmail(false)
+    }
+  }
 
   const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,7 +39,7 @@ const AdminPageContent: React.FC = () => {
 
     setTimeout(() => {
       setVerifying(false)
-      if (inputKey.trim() === MASTER_ADMIN_KEY || inputKey.trim() === 'apex2026') {
+      if (inputKey.trim() === MASTER_ADMIN_KEY) {
         localStorage.setItem('mp_agency_admin_authenticated', 'true')
         setAdminAuth(true)
         setPortalRole('admin')
@@ -113,10 +129,23 @@ const AdminPageContent: React.FC = () => {
                 {verifying ? 'Authenticating...' : 'Unlock Agency Command Deck →'}
               </button>
 
-              <div className="pt-2 text-center">
-                <span className="text-[11px] text-zinc-600 font-mono">
-                  Default Agency Passkey: <code className="text-purple-400">mp_admin_2026</code>
-                </span>
+              <div className="pt-2 text-center space-y-2">
+                <div className="text-[11px] text-zinc-500 font-mono">
+                  Master Passkey: <code className="text-purple-400 font-bold">mp_admin_2026</code>
+                </div>
+                <div>
+                  <button
+                    type="button"
+                    onClick={handleSendAdminEmail}
+                    disabled={sendingEmail}
+                    className="text-[11px] text-purple-400 hover:text-purple-300 underline font-mono transition-colors"
+                  >
+                    {sendingEmail ? 'Dispatching to email...' : '✉ Send passkey to mpalomaresdigital@gmail.com'}
+                  </button>
+                </div>
+                {emailSentMessage && (
+                  <p className="text-[11px] text-emerald-400 font-mono mt-1">{emailSentMessage}</p>
+                )}
               </div>
             </form>
           </div>

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { usePortal } from '../PortalContext'
-import { loginWithPasskey, createAdminClient } from '../portalApi'
+import { loginWithPasskey, createAdminClient, recoverCredentials } from '../portalApi'
 import type { ClientRecord } from '../types'
 
 interface PortalAuthViewProps {
@@ -28,6 +28,42 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
   // Submit animation states
   const [submitting, setSubmitting] = useState(false)
   const [signedInSuccess, setSignedInSuccess] = useState(false)
+
+  // Recovery modal states
+  const [recoveryOpen, setRecoveryOpen] = useState(false)
+  const [recoveryEmail, setRecoveryEmail] = useState('')
+  const [recoveryLoading, setRecoveryLoading] = useState(false)
+  const [recoverySuccess, setRecoverySuccess] = useState<string | null>(null)
+  const [recoveryError, setRecoveryError] = useState<string | null>(null)
+
+  const openRecoveryModal = () => {
+    setRecoveryEmail(email.includes('@') ? email.trim() : '')
+    setRecoveryError(null)
+    setRecoverySuccess(null)
+    setRecoveryOpen(true)
+  }
+
+  const handleRecoverSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const target = recoveryEmail.trim().toLowerCase()
+    if (!target || !target.includes('@')) {
+      setRecoveryError('Please enter a valid email address.')
+      return
+    }
+
+    setRecoveryLoading(true)
+    setRecoveryError(null)
+    setRecoverySuccess(null)
+
+    try {
+      const res = await recoverCredentials(target)
+      setRecoverySuccess(res.message || 'Access credentials and 1-click login link sent to your email!')
+    } catch (err: unknown) {
+      setRecoveryError(err instanceof Error ? err.message : 'Failed to send recovery email.')
+    } finally {
+      setRecoveryLoading(false)
+    }
+  }
 
   // Sign up states
   const [company, setCompany] = useState('')
@@ -475,12 +511,7 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
 
                 <button
                   type="button"
-                  onClick={() => {
-                    const promptEmail = prompt('Enter your client email to receive a magic sign-in link:')
-                    if (promptEmail) {
-                      alert(`Magic onboarding link dispatched to ${promptEmail}`)
-                    }
-                  }}
+                  onClick={openRecoveryModal}
                   className="h-10 rounded-xl bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 hover:border-zinc-700 text-zinc-200 text-xs font-medium flex items-center justify-center gap-2 transition-all focus:outline-none focus:ring-[1.5px] focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-zinc-950"
                 >
                   <svg className="w-3.5 h-3.5 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -519,7 +550,7 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
                         if (emailError) setEmailError(null)
                       }}
                       onBlur={validateEmail}
-                      placeholder="name@company.com or apex2026"
+                      placeholder="name@company.com or your passkey"
                       autoComplete="email"
                       aria-invalid={emailError ? 'true' : 'false'}
                       aria-describedby={emailError ? 'emailError' : undefined}
@@ -549,7 +580,7 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
                     </label>
                     <button
                       type="button"
-                      onClick={() => alert('Demo passkeys available: apex2026 or resilience2026')}
+                      onClick={openRecoveryModal}
                       className="text-[11px] text-emerald-400 hover:text-emerald-300 hover:underline transition-colors"
                     >
                       Forgot password?
@@ -688,6 +719,133 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
           )}
         </div>
       </main>
+
+      {/* ───────────────────────────────────────────────────────────── */}
+      {/* FROSTED CREDENTIAL RECOVERY MODAL DIALOG                     */}
+      {/* ───────────────────────────────────────────────────────────── */}
+      {recoveryOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="recoveryModalTitle"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md transition-opacity"
+          onClick={() => setRecoveryOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md bg-zinc-950/95 border border-zinc-800 rounded-2xl p-6 sm:p-7 shadow-2xl relative text-left"
+          >
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={() => setRecoveryOpen(false)}
+              aria-label="Close recovery dialog"
+              className="absolute top-4 right-4 w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition-colors"
+            >
+              ✕
+            </button>
+
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                </svg>
+              </div>
+              <div>
+                <h3 id="recoveryModalTitle" className="text-base font-bold text-zinc-100">
+                  Recover Credentials
+                </h3>
+                <p className="text-xs text-zinc-400 font-mono">
+                  1-Click Access & Passkey Dispatch
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-zinc-300 leading-relaxed mb-5">
+              Enter your registered client or admin email address. Our edge delivery system will dispatch your workspace passkey and a 1-click magic sign-in link directly to your inbox.
+            </p>
+
+            {recoverySuccess ? (
+              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-200 text-xs space-y-2 mb-2">
+                <div className="flex items-center gap-2 font-bold text-emerald-400">
+                  <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Recovery Email Dispatched!</span>
+                </div>
+                <p className="text-zinc-300 leading-relaxed">
+                  {recoverySuccess} Please check your inbox (and spam folder) for your credentials and direct access link.
+                </p>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setRecoveryOpen(false)}
+                    className="w-full py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs transition-colors"
+                  >
+                    Back to Sign In
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleRecoverSubmit} className="space-y-4">
+                <div>
+                  <label htmlFor="recoveryEmailInput" className="block text-xs font-medium text-zinc-200 mb-1.5">
+                    Your Registered Email
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="recoveryEmailInput"
+                      type="email"
+                      required
+                      value={recoveryEmail}
+                      onChange={(e) => {
+                        setRecoveryEmail(e.target.value)
+                        if (recoveryError) setRecoveryError(null)
+                      }}
+                      placeholder="e.g. name@company.com or mpalomaresdigital@gmail.com"
+                      className="w-full h-11 pl-9 pr-4 rounded-xl bg-zinc-900 border border-zinc-800 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500 focus:ring-[1.5px] focus:ring-emerald-500"
+                    />
+                    <svg className="w-4 h-4 text-zinc-500 absolute left-3 top-3.5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                    </svg>
+                  </div>
+                </div>
+
+                {recoveryError && (
+                  <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs">
+                    {recoveryError}
+                  </div>
+                )}
+
+                <div className="flex gap-2.5 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setRecoveryOpen(false)}
+                    className="flex-1 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs text-zinc-300 font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={recoveryLoading}
+                    className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs transition-colors disabled:opacity-50 shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2"
+                  >
+                    {recoveryLoading ? (
+                      <>
+                        <span className="w-3.5 h-3.5 border-2 border-zinc-950/30 border-t-zinc-950 rounded-full animate-spin" />
+                        <span>Sending Link...</span>
+                      </>
+                    ) : (
+                      <span>Send Recovery Link</span>
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
 
       <style>{`
         @keyframes floatCard {

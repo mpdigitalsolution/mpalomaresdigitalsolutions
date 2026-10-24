@@ -31,6 +31,15 @@ export async function getClientById(
   return client || null
 }
 
+export async function getClientByEmail(
+  db: D1Database,
+  email: string
+): Promise<ClientRecord | null> {
+  const stmt = db.prepare('SELECT * FROM clients WHERE LOWER(email) = LOWER(?) LIMIT 1')
+  const client = await stmt.bind(email.trim()).first<ClientRecord>()
+  return client || null
+}
+
 export async function getClientPortalData(
   db: D1Database,
   clientId: string

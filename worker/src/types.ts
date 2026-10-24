@@ -7,6 +7,7 @@ export interface Env {
   TELEGRAM_CHAT_ID?: string
   NOTIFICATION_WEBHOOK_URL?: string
   STRIPE_WEBHOOK_SECRET?: string
+  RESEND_API_KEY?: string
 }
 
 export interface ClientRecord {
