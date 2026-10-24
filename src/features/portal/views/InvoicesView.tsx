@@ -3,8 +3,20 @@ import { usePortal } from '../PortalContext'
 import type { InvoiceRecord } from '../types'
 
 export const InvoicesView: React.FC = () => {
-  const { invoices, client } = usePortal()
+  const { invoices, client, handlePayInvoice } = usePortal()
   const [selectedInvoice, setSelectedInvoice] = useState<InvoiceRecord | null>(null)
+  const [settling, setSettling] = useState(false)
+
+  const onSimulateSettlement = async () => {
+    if (!selectedInvoice) return
+    setSettling(true)
+    try {
+      await handlePayInvoice(selectedInvoice.id)
+      setSelectedInvoice(null)
+    } finally {
+      setSettling(false)
+    }
+  }
 
   const totalPaid = invoices
     .filter((i) => i.status === 'paid')
@@ -145,6 +157,18 @@ export const InvoicesView: React.FC = () => {
               >
                 Pay via Stripe Checkout (Credit Card / Apple Pay)
               </a>
+
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={onSimulateSettlement}
+                  disabled={settling}
+                  className="w-full py-2 px-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-emerald-400 border border-emerald-500/30 text-xs font-semibold transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>{settling ? 'Updating D1 Database...' : 'Instant Demo Settlement (Marks Paid in D1)'}</span>
+                </button>
+              </div>
 
               <div className="p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/80 text-[11px] text-zinc-400 space-y-1">
                 <div className="font-semibold text-zinc-300">Domestic & International Wire Transfer:</div>

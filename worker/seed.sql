@@ -98,3 +98,60 @@ INSERT INTO approvals (id, client_id, deliverable_name, deliverable_type, versio
 );
 
 UPDATE approvals SET decided_at = '2026-10-23 11:20:00', client_notes = 'Approved without revisions. Pipeline tags match our CRM spec.' WHERE id = 'app_2';
+
+
+-- 2. Second Client: Resilience Therapy Clinic
+INSERT INTO clients (id, name, company, email, passkey, avatar_url, project_name, tier, status)
+VALUES (
+  'client_resilience',
+  'Dr. Marcus Vance',
+  'Resilience Therapy Clinic',
+  'marcus@resiliencetherapy.com',
+  'resilience2026',
+  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+  'AI Telehealth Triage & Appointment Automation',
+  'Clinical Growth Retainer',
+  'active'
+);
+
+INSERT INTO onboarding_steps (id, client_id, step_number, title, description, status, form_type, completed_at) VALUES
+('ob_r1', 'client_resilience', 1, 'Clinical Intake Workflow Scoping', 'Define HIPAA compliant triage routes and therapist calendar allocation rules.', 'completed', 'none', '2026-10-18 10:00:00'),
+('ob_r2', 'client_resilience', 2, 'EHR & Stripe Terminal Integration', 'Establish encrypted webhook connectors for SimplePractice and Stripe billing.', 'completed', 'api_credentials', '2026-10-19 16:30:00'),
+('ob_r3', 'client_resilience', 3, 'Execute Clinical Services Agreement', 'Sign the business associate agreement (BAA) and automation SLA contract.', 'completed', 'none', '2026-10-20 11:15:00'),
+('ob_r4', 'client_resilience', 4, 'Setup Milestone Settlement', 'Initial deployment deposit processed.', 'completed', 'none', '2026-10-21 09:00:00'),
+('ob_r5', 'client_resilience', 5, 'Production Go-Live Verification', 'Live test bookings and SMS reminders check.', 'in_progress', 'scheduler', NULL);
+
+INSERT INTO contracts (id, client_id, title, version, status, markdown_content, signer_name, signer_signature, signer_ip, signed_at) VALUES (
+  'cnt_resil_01',
+  'client_resilience',
+  'Clinical Automation & Business Associate Agreement (BAA)',
+  '1.0',
+  'signed',
+  '# CLINICAL AUTOMATION & BAA\n\nAgreement between Resilience Therapy Clinic and Marlon Palomares Digital Solutions.',
+  'Dr. Marcus Vance',
+  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="50"><text x="10" y="35" font-family="cursive" font-size="28" fill="%2310b981">Marcus Vance</text></svg>',
+  '198.51.100.42',
+  '2026-10-20 11:15:00'
+);
+
+INSERT INTO invoices (id, client_id, invoice_number, description, amount_cents, currency, status, due_date, paid_at, stripe_payment_url) VALUES
+('inv_r01', 'client_resilience', 'INV-2026-071', 'EHR Synchronization & Telehealth Pipeline Build', 320000, 'USD', 'paid', '2026-10-21', '2026-10-21 09:00:00', 'https://buy.stripe.com/test_demo_invoice_71');
+
+INSERT INTO chat_messages (id, client_id, sender, sender_name, message_text, created_at) VALUES
+('msg_r1', 'client_resilience', 'system', 'Portal Automation', 'Resilience Therapy Clinic workspace initialized on Cloudflare D1.', '2026-10-18 10:00:00'),
+('msg_r2', 'client_resilience', 'client', 'Dr. Marcus Vance', 'Hi Marlon, SimplePractice API tokens have been connected. Looking forward to testing the SMS appointment reminders!', '2026-10-21 14:20:00'),
+('msg_r3', 'client_resilience', 'agency', 'Marlon Palomares', 'Hello Dr. Vance! The n8n calendar trigger is active and passing test events. Go-live verification is scheduled for this Friday.', '2026-10-22 09:10:00');
+
+INSERT INTO approvals (id, client_id, deliverable_name, deliverable_type, version, description, preview_url, status, decided_at, client_notes) VALUES
+(
+  'app_r1',
+  'client_resilience',
+  'SimplePractice to GHL Two-Way Patient Sync',
+  'n8n_workflow',
+  'v2.0',
+  'Automated real-time patient status synchronization and no-show recovery trigger.',
+  'https://mpalomaresdigitalsolutions.vercel.app/#work',
+  'approved',
+  '2026-10-22 17:00:00',
+  'Verified working in staging.'
+);

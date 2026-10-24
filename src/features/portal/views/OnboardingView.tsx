@@ -4,6 +4,11 @@ import { usePortal } from '../PortalContext'
 export const OnboardingView: React.FC = () => {
   const { onboardingSteps, handleCompleteStep, setActiveTab } = usePortal()
   const [activeFormStep, setActiveFormStep] = useState<string | null>(null)
+  const [expandedStepId, setExpandedStepId] = useState<string | null>(() => {
+    const firstIncomplete = onboardingSteps.find((s) => s.status !== 'completed')
+    return firstIncomplete?.id || null
+  })
+
   const [apiCredentials, setApiCredentials] = useState({
     crmType: 'GoHighLevel',
     apiKey: '',
@@ -24,6 +29,47 @@ export const OnboardingView: React.FC = () => {
     }
   }
 
+  const toggleAccordion = (id: string) => {
+    setExpandedStepId((prev) => (prev === id ? null : id))
+  }
+
+  const getSubTasksForStep = (stepNumber: number) => {
+    switch (stepNumber) {
+      case 1:
+        return [
+          'Review automation architecture blueprint and edge routing logic',
+          'Confirm SLA response thresholds (24-hour critical response)',
+          'Establish dedicated Telegram / Slack agency communication bridge',
+        ]
+      case 2:
+        return [
+          'Provide GoHighLevel CRM location API key or HubSpot private app token',
+          'Configure inbound patient webhook endpoints',
+          'Validate token encryption at rest on Cloudflare D1',
+        ]
+      case 3:
+        return [
+          'Review Master Services Agreement scope of work',
+          'Review Data Protection & HIPAA BAA security annexes',
+          'Execute digital signature with cryptographic audit seal',
+        ]
+      case 4:
+        return [
+          'Review Phase 1 architecture retainer invoice',
+          'Submit settlement via Stripe (Credit Card / Apple Pay) or Wire transfer',
+          'Receive automated tax receipt and sprint capacity allocation',
+        ]
+      case 5:
+        return [
+          'Schedule 45-minute live technical walkthrough with Marlon',
+          'Conduct end-to-end sandbox form submission test',
+          'Deploy production webhooks to live CRM pipeline',
+        ]
+      default:
+        return ['Standard milestone verification and acceptance checklist']
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -35,23 +81,29 @@ export const OnboardingView: React.FC = () => {
       </div>
 
       {/* Steps List */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         {onboardingSteps.map((step) => {
           const isCompleted = step.status === 'completed'
           const isInProgress = step.status === 'in_progress'
+          const isExpanded = expandedStepId === step.id
+          const subTasks = getSubTasksForStep(step.step_number)
 
           return (
             <div
               key={step.id}
-              className={`p-5 rounded-xl border transition-all ${
+              className={`rounded-2xl border transition-all overflow-hidden ${
                 isCompleted
-                  ? 'bg-zinc-900/40 border-zinc-800/60'
+                  ? 'bg-zinc-900/30 border-zinc-800/60'
                   : isInProgress
                   ? 'bg-zinc-900/90 border-emerald-500/40 shadow-lg shadow-emerald-500/5'
-                  : 'bg-zinc-950/40 border-zinc-900 opacity-70'
+                  : 'bg-zinc-950/40 border-zinc-900 opacity-80'
               }`}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              {/* Accordion Summary Row */}
+              <div
+                onClick={() => toggleAccordion(step.id)}
+                className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer select-none hover:bg-zinc-900/40 transition-colors"
+              >
                 <div className="flex items-start gap-4">
                   <div
                     className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 font-mono text-xs font-bold ${
@@ -82,54 +134,103 @@ export const OnboardingView: React.FC = () => {
                     <p className="text-xs text-zinc-400 mt-1 max-w-2xl leading-relaxed">
                       {step.description}
                     </p>
-                    {step.completed_at && (
-                      <p className="text-[10px] text-zinc-500 font-mono mt-1">
-                        Completed: {new Date(step.completed_at).toLocaleDateString()}
-                      </p>
-                    )}
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="sm:self-center shrink-0">
-                  {isCompleted ? (
-                    <span className="text-xs font-medium text-emerald-400 flex items-center gap-1.5">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Verified
-                    </span>
-                  ) : step.step_number === 3 ? (
-                    <button
-                      onClick={() => setActiveTab('contracts')}
-                      className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-md shadow-emerald-500/10"
-                    >
-                      Sign Agreement &rarr;
-                    </button>
-                  ) : step.step_number === 4 ? (
-                    <button
-                      onClick={() => setActiveTab('invoices')}
-                      className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-semibold text-xs transition-colors flex items-center gap-1.5"
-                    >
-                      View Invoice &rarr;
-                    </button>
-                  ) : step.form_type === 'api_credentials' ? (
-                    <button
-                      onClick={() => setActiveFormStep(step.id)}
-                      className="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-medium text-xs transition-colors border border-zinc-700"
-                    >
-                      Submit Credentials
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleCompleteStep(step.id)}
-                      className="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-medium text-xs transition-colors border border-zinc-700"
-                    >
-                      Mark Complete
-                    </button>
-                  )}
+                <div className="flex items-center gap-3 self-end sm:self-center">
+                  <span className="text-[11px] font-medium text-zinc-500 hover:text-zinc-300">
+                    {isExpanded ? 'Collapse' : 'Details'}
+                  </span>
+                  <svg
+                    className={`w-4 h-4 text-zinc-400 transform transition-transform ${
+                      isExpanded ? 'rotate-180 text-emerald-400' : ''
+                    }`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
                 </div>
               </div>
+
+              {/* Accordion Expandable Content */}
+              {isExpanded && (
+                <div className="px-6 pb-6 pt-2 border-t border-zinc-800/50 bg-zinc-950/40 space-y-4">
+                  <div>
+                    <div className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider font-mono mb-2">
+                      Milestone Scope & Requirements
+                    </div>
+                    <ul className="space-y-1.5 text-xs text-zinc-300">
+                      {subTasks.map((task, idx) => (
+                        <li key={idx} className="flex items-start gap-2">
+                          <span className={`mt-0.5 text-xs ${isCompleted ? 'text-emerald-400' : 'text-zinc-500'}`}>
+                            {isCompleted ? '✓' : '•'}
+                          </span>
+                          <span>{task}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {step.completed_at && (
+                    <div className="text-[11px] text-zinc-500 font-mono">
+                      Completed: {new Date(step.completed_at).toLocaleString()}
+                    </div>
+                  )}
+
+                  {/* Actions Bar */}
+                  <div className="pt-3 border-t border-zinc-800/50 flex flex-wrap items-center justify-between gap-3">
+                    <div className="text-[11px] text-zinc-400 font-mono">
+                      Status: <span className={isCompleted ? 'text-emerald-400' : 'text-amber-400'}>{step.status.toUpperCase()}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {isCompleted ? (
+                        <button
+                          type="button"
+                          onClick={() => handleCompleteStep(step.id)}
+                          className="px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs transition-colors"
+                        >
+                          Reopen Step
+                        </button>
+                      ) : step.step_number === 3 ? (
+                        <button
+                          type="button"
+                          onClick={() => setActiveTab('contracts')}
+                          className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs transition-colors flex items-center gap-1.5 shadow-md shadow-emerald-500/20"
+                        >
+                          Open & Sign Agreement &rarr;
+                        </button>
+                      ) : step.step_number === 4 ? (
+                        <button
+                          type="button"
+                          onClick={() => setActiveTab('invoices')}
+                          className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-bold text-xs transition-colors flex items-center gap-1.5"
+                        >
+                          View & Settle Invoice &rarr;
+                        </button>
+                      ) : step.form_type === 'api_credentials' ? (
+                        <button
+                          type="button"
+                          onClick={() => setActiveFormStep(step.id)}
+                          className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs transition-colors shadow-md shadow-emerald-500/20"
+                        >
+                          Submit API Credentials
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => handleCompleteStep(step.id)}
+                          className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs transition-colors shadow-md shadow-emerald-500/20"
+                        >
+                          Mark Milestone Complete
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )
         })}

@@ -8,6 +8,7 @@ import {
   signContract,
   postChatMessage,
   submitApprovalDecision,
+  payInvoice,
 } from './db'
 
 interface ChatMessage {
@@ -257,6 +258,42 @@ export default {
         )
 
         return jsonResponse({ success })
+      } catch (err: unknown) {
+        return jsonResponse({ error: String(err) }, 500)
+      }
+    }
+
+    // 7.5 Pay Invoice (Simulation & Direct Settlement)
+    if (url.pathname === '/api/portal/invoices/pay' && request.method === 'POST') {
+      try {
+        const body = (await request.json()) as {
+          clientId: string
+          invoiceId: string
+        }
+
+        if (!body.clientId || !body.invoiceId) {
+          return jsonResponse({ error: 'Missing clientId or invoiceId' }, 400)
+        }
+
+        const invoice = await payInvoice(env.DB, body.clientId, body.invoiceId)
+        if (!invoice) {
+          return jsonResponse({ error: 'Invoice not found or already settled' }, 404)
+        }
+
+        // Post system announcement to chat
+        const formattedAmount = (invoice.amount_cents / 100).toLocaleString('en-US', {
+          style: 'currency',
+          currency: invoice.currency || 'USD',
+        })
+        await postChatMessage(
+          env.DB,
+          body.clientId,
+          'system',
+          'Billing Operations',
+          `💳 Invoice ${invoice.invoice_number} (${formattedAmount}) was settled. Receipt generated.`
+        )
+
+        return jsonResponse({ success: true, invoice })
       } catch (err: unknown) {
         return jsonResponse({ error: String(err) }, 500)
       }

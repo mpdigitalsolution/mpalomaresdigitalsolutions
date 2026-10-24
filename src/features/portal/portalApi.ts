@@ -2,6 +2,7 @@ import type {
   ClientRecord,
   PortalDashboardData,
   ChatMessageRecord,
+  InvoiceRecord,
 } from './types'
 
 const WORKER_BASE = 'https://portfolio-chatbot-worker.portfolio-chatbot-worker.workers.dev'
@@ -117,4 +118,15 @@ export async function decideDeliverableApproval(
   })
   const data = await res.json().catch(() => ({}))
   return !!data.success
+}
+
+export async function settleInvoice(clientId: string, invoiceId: string): Promise<InvoiceRecord> {
+  const res = await fetch(`${WORKER_BASE}/api/portal/invoices/pay`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ clientId, invoiceId }),
+  })
+  if (!res.ok) throw new Error('Invoice payment failed')
+  const data = await res.json()
+  return data.invoice
 }

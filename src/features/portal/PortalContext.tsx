@@ -9,15 +9,20 @@ import type {
   ApprovalRecord,
 } from './types'
 import {
+  fetchClients,
   fetchPortalDashboard,
   completeOnboardingStep,
   signContractDocument,
   sendChatMessage,
   decideDeliverableApproval,
+  settleInvoice,
 } from './portalApi'
 
 interface PortalContextType {
   client: ClientRecord | null
+  clientId: string
+  setClientId: (id: string) => void
+  availableClients: ClientRecord[]
   loading: boolean
   error: string | null
   activeTab: 'overview' | 'onboarding' | 'contracts' | 'invoices' | 'chat' | 'approvals' | 'assets'
@@ -27,17 +32,21 @@ interface PortalContextType {
   invoices: InvoiceRecord[]
   messages: ChatMessageRecord[]
   approvals: ApprovalRecord[]
-  refreshData: () => Promise<void>
+  refreshData: (silent?: boolean) => Promise<void>
   handleCompleteStep: (stepId: string, submittedData?: Record<string, unknown>) => Promise<void>
   handleSignContract: (contractId: string, signerName: string, signature: string) => Promise<void>
   handleSendMessage: (messageText: string) => Promise<void>
   handleApprovalDecision: (approvalId: string, status: 'approved' | 'revisions_requested', notes?: string) => Promise<void>
+  handlePayInvoice: (invoiceId: string) => Promise<void>
 }
 
 const PortalContext = createContext<PortalContextType | null>(null)
 
 export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [clientId] = useState<string>('client_demo')
+  const [clientId, setClientIdState] = useState<string>(() => {
+    return localStorage.getItem('mp_portal_client_id') || 'client_demo'
+  })
+  const [availableClients, setAvailableClients] = useState<ClientRecord[]>([])
   const [activeTab, setActiveTab] = useState<
     'overview' | 'onboarding' | 'contracts' | 'invoices' | 'chat' | 'approvals' | 'assets'
   >('overview')
@@ -50,9 +59,22 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
-  const refreshData = useCallback(async () => {
+  const setClientId = (newId: string) => {
+    setClientIdState(newId)
+    localStorage.setItem('mp_portal_client_id', newId)
+    setLoading(true)
+  }
+
+  // Fetch list of available clients
+  useEffect(() => {
+    fetchClients().then((cls) => {
+      if (cls && cls.length > 0) setAvailableClients(cls)
+    }).catch(console.warn)
+  }, [])
+
+  const refreshData = useCallback(async (silent = false) => {
     try {
-      setLoading(true)
+      if (!silent) setLoading(true)
       setError(null)
       const data: PortalDashboardData = await fetchPortalDashboard(clientId)
       setClient(data.client)
@@ -63,28 +85,39 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setApprovals(data.approvals || [])
     } catch (err: unknown) {
       console.error('Portal refresh error:', err)
-      setError(err instanceof Error ? err.message : 'Failed to connect to edge portal')
+      if (!silent) {
+        setError(err instanceof Error ? err.message : 'Failed to connect to edge portal')
+      }
     } finally {
-      setLoading(false)
+      if (!silent) setLoading(false)
     }
   }, [clientId])
 
+  // Initial and client change fetch
   useEffect(() => {
-    refreshData()
+    refreshData(false)
+  }, [refreshData])
+
+  // Background interval sync (Task 2: 15-second background polling)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refreshData(true)
+    }, 15000)
+    return () => clearInterval(interval)
   }, [refreshData])
 
   // Step Completion
   const handleCompleteStep = async (stepId: string, submittedData?: Record<string, unknown>) => {
     if (!client) return
-    // Optimistic UI update
     setOnboardingSteps((prev) =>
       prev.map((s) => (s.id === stepId ? { ...s, status: 'completed', completed_at: new Date().toISOString() } : s))
     )
     try {
       await completeOnboardingStep(client.id, stepId, 'completed', submittedData)
+      await refreshData(true)
     } catch (err) {
       console.error(err)
-      refreshData()
+      refreshData(false)
     }
   }
 
@@ -92,7 +125,6 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const handleSignContract = async (contractId: string, signerName: string, signature: string) => {
     if (!client) return
     const now = new Date().toISOString()
-    // Optimistic
     setContracts((prev) =>
       prev.map((c) =>
         c.id === contractId
@@ -108,10 +140,10 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     )
     try {
       await signContractDocument(client.id, contractId, signerName, signature)
-      await refreshData()
+      await refreshData(true)
     } catch (err) {
       console.error(err)
-      refreshData()
+      refreshData(false)
     }
   }
 
@@ -134,7 +166,7 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setMessages((prev) => prev.map((m) => (m.id === tempMsg.id ? realMsg : m)))
     } catch (err) {
       console.error(err)
-      refreshData()
+      refreshData(true)
     }
   }
 
@@ -160,10 +192,26 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     )
     try {
       await decideDeliverableApproval(client.id, approvalId, status, notes)
-      await refreshData()
+      await refreshData(true)
     } catch (err) {
       console.error(err)
-      refreshData()
+      refreshData(false)
+    }
+  }
+
+  // Settle invoice (Task 4)
+  const handlePayInvoice = async (invoiceId: string) => {
+    if (!client) return
+    const now = new Date().toISOString()
+    setInvoices((prev) =>
+      prev.map((i) => (i.id === invoiceId ? { ...i, status: 'paid', paid_at: now } : i))
+    )
+    try {
+      await settleInvoice(client.id, invoiceId)
+      await refreshData(true)
+    } catch (err) {
+      console.error(err)
+      refreshData(false)
     }
   }
 
@@ -171,6 +219,9 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     <PortalContext.Provider
       value={{
         client,
+        clientId,
+        setClientId,
+        availableClients,
         loading,
         error,
         activeTab,
@@ -185,6 +236,7 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         handleSignContract,
         handleSendMessage,
         handleApprovalDecision,
+        handlePayInvoice,
       }}
     >
       {children}
