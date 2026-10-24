@@ -81,7 +81,7 @@ interface PortalContextType {
     passkey: string
     projectName: string
     tier: string
-  }) => Promise<void>
+  }) => Promise<ClientRecord>
   logout: () => void
 }
 
@@ -378,10 +378,11 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     passkey: string
     projectName: string
     tier: string
-  }) => {
+  }): Promise<ClientRecord> => {
     const created = await createAdminClient(data)
     setAvailableClients((prev) => [created, ...prev])
     await refreshData(true)
+    return created
   }
 
   return (

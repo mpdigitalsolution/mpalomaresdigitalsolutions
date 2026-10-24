@@ -316,8 +316,8 @@ export async function recordClientInviteSent(
   await db.batch([
     db.prepare('UPDATE clients SET invite_sent_at = ? WHERE id = ?').bind(now, clientId),
     db.prepare(
-      `INSERT INTO chat_messages (id, client_id, sender_name, role, content, created_at)
-       VALUES (?, ?, 'Marlon Palomares', 'assistant', ?, ?)`
+      `INSERT INTO chat_messages (id, client_id, sender, sender_name, message_text, created_at)
+       VALUES (?, ?, 'agency', 'Marlon Palomares', ?, ?)`
     ).bind(
       msgId,
       clientId,

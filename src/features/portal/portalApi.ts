@@ -70,12 +70,13 @@ export async function recoverCredentials(
 }
 
 export async function sendClientOnboardingInvite(
-  clientId: string
+  clientId: string,
+  email?: string
 ): Promise<{ success: boolean; emailId: string; inviteSentAt: string; message: string }> {
   const res = await fetch(`${WORKER_BASE}/api/portal/admin/send-invite`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ clientId }),
+    body: JSON.stringify({ clientId, email }),
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))

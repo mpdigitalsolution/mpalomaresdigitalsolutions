@@ -769,14 +769,40 @@ export default {
     // 12b. Agency Admin: Dispatch 1-Click Onboarding Email via Resend & Record to D1
     if (url.pathname === '/api/portal/admin/send-invite' && request.method === 'POST') {
       try {
-        const body = (await request.json()) as { clientId?: string }
-        if (!body.clientId) {
-          return jsonResponse({ error: 'Missing clientId parameter' }, 400)
+        const body = (await request.json()) as { clientId?: string; email?: string }
+        const targetId = (body.clientId || '').trim()
+        const targetEmail = (body.email || '').trim().toLowerCase()
+
+        if (!targetId && !targetEmail) {
+          return jsonResponse({ error: 'Missing clientId or email parameter' }, 400)
         }
 
-        const client = await getClientById(env.DB, body.clientId)
+        // 1. Direct lookup by clientId
+        let client = targetId ? await getClientById(env.DB, targetId) : null
+
+        // 2. Fallback lookup by email
+        if (!client && targetEmail) {
+          client = await getClientByEmail(env.DB, targetEmail)
+        }
+        if (!client && targetId && targetId.includes('@')) {
+          client = await getClientByEmail(env.DB, targetId)
+        }
+
+        // 3. Fallback lookup by slugified company name
+        if (!client && targetId) {
+          const cleanSlug = targetId.replace(/^client_/, '').toLowerCase()
+          if (cleanSlug.length >= 2) {
+            const found = await env.DB.prepare(
+              'SELECT * FROM clients WHERE LOWER(company) LIKE ? OR LOWER(email) LIKE ? LIMIT 1'
+            )
+              .bind(`%${cleanSlug}%`, `%${cleanSlug}%`)
+              .first<ClientRecord>()
+            if (found) client = found
+          }
+        }
+
         if (!client) {
-          return jsonResponse({ error: 'Client workspace not found' }, 404)
+          return jsonResponse({ error: 'Client workspace not found in D1' }, 404)
         }
 
         const oneClickUrl = `https://mpalomaresdigitalsolutions.vercel.app/portal?client=${client.id}&key=${encodeURIComponent(client.passkey)}`

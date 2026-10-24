@@ -50,7 +50,7 @@ export const AdminDeckView: React.FC = () => {
     setInviteEmailError(null)
 
     try {
-      const res = await sendClientOnboardingInvite(activeInvite.clientId)
+      const res = await sendClientOnboardingInvite(activeInvite.clientId, activeInvite.email)
       setInviteEmailSuccess(res.message || `Onboarding email dispatched to ${activeInvite.email}!`)
       refreshData(true)
     } catch (err: unknown) {
@@ -130,17 +130,17 @@ export const AdminDeckView: React.FC = () => {
     e.preventDefault()
     setSubmitting(true)
     try {
-      await handleCreateClient(cliForm)
+      const created = await handleCreateClient(cliForm)
       setClientModal(false)
       // Open Invite & Email Template modal
       setInviteEmailSuccess(null)
       setInviteEmailError(null)
       setActiveInvite({
-        name: cliForm.name,
-        company: cliForm.company,
-        email: cliForm.email,
-        passkey: cliForm.passkey,
-        clientId: `client_${cliForm.company.toLowerCase().replace(/[^a-z0-9]/g, '')}`,
+        name: created.name,
+        company: created.company,
+        email: created.email,
+        passkey: created.passkey,
+        clientId: created.id,
       })
       setInviteModal(true)
       // Reset form
