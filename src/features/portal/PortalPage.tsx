@@ -11,6 +11,7 @@ import { ApprovalsView } from './views/ApprovalsView'
 import { AssetHubView } from './views/AssetHubView'
 import { AdminDeckView } from './views/AdminDeckView'
 import { LiveTelemetryView } from './views/LiveTelemetryView'
+import { PortalAuthView } from './views/PortalAuthView'
 
 const PortalContent: React.FC = () => {
   const { activeTab, loading, error, client } = usePortal()
@@ -53,7 +54,12 @@ const PortalContent: React.FC = () => {
 }
 
 const PortalInner: React.FC = () => {
-  const { mobileNavOpen, setMobileNavOpen } = usePortal()
+  const { clientId, client, loading, mobileNavOpen, setMobileNavOpen } = usePortal()
+
+  // If unauthenticated or no client workspace selected, show the Sign In / Profile Access Gate!
+  if (!clientId || (!client && !loading)) {
+    return <PortalAuthView />
+  }
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col md:flex-row antialiased relative">

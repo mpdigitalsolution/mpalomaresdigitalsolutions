@@ -3,7 +3,7 @@ import { usePortal } from '../PortalContext'
 import { loginWithPasskey } from '../portalApi'
 
 export const PortalHeader: React.FC = () => {
-  const { client, clientId, setClientId, availableClients, loading, refreshData, setMobileNavOpen } = usePortal()
+  const { client, clientId, setClientId, availableClients, loading, refreshData, setMobileNavOpen, logout } = usePortal()
   const [switcherOpen, setSwitcherOpen] = useState(false)
   const [passkeyInput, setPasskeyInput] = useState('')
   const [loginError, setLoginError] = useState<string | null>(null)
@@ -76,8 +76,8 @@ export const PortalHeader: React.FC = () => {
         </button>
       </div>
 
-      {/* Right: Cloudflare Edge Status & Refresh */}
-        <div className="flex items-center gap-3">
+      {/* Right: Cloudflare Edge Status, Refresh, and Sign Out */}
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={() => setSwitcherOpen(true)}
             className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700 text-xs font-medium transition-colors"
@@ -100,6 +100,17 @@ export const PortalHeader: React.FC = () => {
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
+          </button>
+
+          <button
+            onClick={() => logout()}
+            title="Log Out & Switch Profile"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-rose-400 hover:border-rose-500/30 text-xs font-medium transition-colors"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span className="hidden sm:inline">Log Out</span>
           </button>
         </div>
       </header>

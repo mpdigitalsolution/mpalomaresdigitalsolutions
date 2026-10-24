@@ -14,6 +14,7 @@ export const PortalSidebar: React.FC = () => {
     approvals,
     messages,
     adminData,
+    logout,
   } = usePortal()
 
   const pendingOnboarding = onboardingSteps.filter((s) => s.status !== 'completed').length
@@ -229,7 +230,17 @@ export const PortalSidebar: React.FC = () => {
       </nav>
 
       {/* Footer Info & Main Site Link */}
-      <div className="p-4 border-t border-zinc-800/60 bg-zinc-950/60">
+      <div className="p-4 border-t border-zinc-800/60 bg-zinc-950/60 space-y-2">
+        <button
+          onClick={() => logout()}
+          className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-zinc-400 hover:text-rose-400 hover:border-rose-500/30 transition-colors"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          Log Out / Switch Profile
+        </button>
+
         <Link
           to="/"
           className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-zinc-400 hover:text-white hover:border-zinc-700 transition-colors"

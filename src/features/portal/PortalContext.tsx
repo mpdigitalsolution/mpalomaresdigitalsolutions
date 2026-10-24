@@ -82,13 +82,21 @@ interface PortalContextType {
     projectName: string
     tier: string
   }) => Promise<void>
+  logout: () => void
 }
 
 const PortalContext = createContext<PortalContextType | null>(null)
 
 export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [clientId, setClientIdState] = useState<string>(() => {
-    return localStorage.getItem('mp_portal_client_id') || 'client_demo'
+    try {
+      const urlParams = new URLSearchParams(window.location.search)
+      const urlClient = urlParams.get('client') || (urlParams.get('demo') ? 'client_demo' : null)
+      if (urlClient) return urlClient
+    } catch {
+      // ignore
+    }
+    return localStorage.getItem('mp_portal_client_id') || ''
   })
   const [portalRole, setPortalRoleState] = useState<'client' | 'admin'>(() => {
     return (localStorage.getItem('mp_portal_role') as 'client' | 'admin') || 'client'
@@ -103,8 +111,19 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [messages, setMessages] = useState<ChatMessageRecord[]>([])
   const [approvals, setApprovals] = useState<ApprovalRecord[]>([])
   const [adminData, setAdminData] = useState<AgencyAdminData | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
+  const [loading, setLoading] = useState<boolean>(() => {
+    return !!(localStorage.getItem('mp_portal_client_id'))
+  })
   const [error, setError] = useState<string | null>(null)
+
+  const logout = useCallback(() => {
+    localStorage.removeItem('mp_portal_client_id')
+    localStorage.removeItem('mp_portal_role')
+    setClientIdState('')
+    setClient(null)
+    setActiveTabState('overview')
+    setPortalRoleState('client')
+  }, [])
 
   const setPortalRole = (role: 'client' | 'admin') => {
     setPortalRoleState(role)
@@ -122,6 +141,10 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }
 
   const setClientId = (newId: string) => {
+    if (!newId) {
+      logout()
+      return
+    }
     if (newId === clientId) {
       refreshData(false)
       return
@@ -138,6 +161,11 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, [])
 
   const refreshData = useCallback(async (silent = false) => {
+    if (!clientId) {
+      setLoading(false)
+      setClient(null)
+      return
+    }
     try {
       if (!silent) setLoading(true)
       setError(null)
@@ -164,16 +192,22 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // Initial and client change fetch
   useEffect(() => {
-    refreshData(false)
-  }, [refreshData])
+    if (clientId) {
+      refreshData(false)
+    } else {
+      setLoading(false)
+      setClient(null)
+    }
+  }, [clientId, refreshData])
 
   // Background interval sync (Task 2: 15-second background polling)
   useEffect(() => {
+    if (!clientId) return
     const interval = setInterval(() => {
       refreshData(true)
     }, 15000)
     return () => clearInterval(interval)
-  }, [refreshData])
+  }, [clientId, refreshData])
 
   // Step Completion
   const handleCompleteStep = async (stepId: string, submittedData?: Record<string, unknown>) => {
@@ -354,6 +388,7 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         handleCreateInvoice,
         handleCreateDeliverable,
         handleCreateClient,
+        logout,
       }}
     >
       {children}
