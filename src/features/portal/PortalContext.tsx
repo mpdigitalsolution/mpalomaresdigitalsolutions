@@ -93,13 +93,22 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const urlParams = new URLSearchParams(window.location.search)
       const urlClient = urlParams.get('client') || urlParams.get('workspace')
       if (urlClient) {
+        if (urlClient === 'client_demo' || urlClient === 'client_resilience') {
+          localStorage.removeItem('mp_portal_client_id')
+          return ''
+        }
         localStorage.setItem('mp_portal_client_id', urlClient)
         return urlClient
       }
     } catch {
       // ignore
     }
-    return localStorage.getItem('mp_portal_client_id') || ''
+    const stored = localStorage.getItem('mp_portal_client_id') || ''
+    if (stored === 'client_demo' || stored === 'client_resilience') {
+      localStorage.removeItem('mp_portal_client_id')
+      return ''
+    }
+    return stored
   })
   const [portalRole, setPortalRoleState] = useState<'client' | 'admin'>(() => {
     return (localStorage.getItem('mp_portal_role') as 'client' | 'admin') || 'client'
@@ -193,9 +202,14 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setApprovals(dashData.approvals || [])
       if (aData) setAdminData(aData)
     } catch (err: unknown) {
-      console.error('Portal refresh error:', err)
+      console.warn('Portal refresh notice:', err)
+      // If client workspace not found or purged from D1, automatically clear obsolete session
+      // so user immediately and seamlessly sees the clean Sign In / Register view.
+      localStorage.removeItem('mp_portal_client_id')
+      setClientIdState('')
+      setClient(null)
       if (!silent) {
-        setError(err instanceof Error ? err.message : 'Failed to connect to edge portal')
+        setError(null)
       }
     } finally {
       if (!silent) setLoading(false)

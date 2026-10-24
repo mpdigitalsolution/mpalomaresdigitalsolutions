@@ -31,8 +31,17 @@ const PortalContent: React.FC = () => {
         <div className="w-12 h-12 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center justify-center mb-3 text-lg font-bold">
           !
         </div>
-        <h3 className="text-sm font-semibold text-zinc-200">Edge Sync Notice</h3>
+        <h3 className="text-sm font-semibold text-zinc-200">Session Notice</h3>
         <p className="text-xs text-zinc-400 max-w-sm mt-1">{error}</p>
+        <button
+          onClick={() => {
+            localStorage.removeItem('mp_portal_client_id')
+            window.location.href = '/portal'
+          }}
+          className="mt-4 px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-zinc-200 hover:text-white hover:border-zinc-700 transition-colors"
+        >
+          Return to Sign In →
+        </button>
       </div>
     )
   }
