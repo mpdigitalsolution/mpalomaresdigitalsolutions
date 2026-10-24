@@ -844,30 +844,30 @@
 
       <!-- Middle: 3 Small Frosted Product Cards -->
       <div class="frosted-cards-container">
-        <!-- 1. Invoice paid toast -->
-        <div class="frosted-card card-1" role="status" aria-label="Invoice settlement toast">
+        <!-- 1. Edge Webhook SLA -->
+        <div class="frosted-card card-1" role="status" aria-label="Edge Webhook SLA Telemetry">
           <div class="invoice-toast">
             <div class="toast-icon">
               <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
             <div class="toast-meta">
               <div class="toast-title">
-                <span>Invoice paid</span>
-                <span class="toast-badge">$2,450.00</span>
+                <span>Edge Webhook SLA</span>
+                <span class="toast-badge">99.9% Uptime</span>
               </div>
-              <div class="toast-sub">INV-2026-088 • Auto-settled via Stripe</div>
+              <div class="toast-sub">Sub-25ms routing across APAC & US Edge</div>
             </div>
           </div>
         </div>
 
-        <!-- 2. Collected this month with 7-bar chart -->
-        <div class="frosted-card card-2" role="region" aria-label="Collected revenue metric">
+        <!-- 2. Zero-Egress Database with 7-bar breathing chart -->
+        <div class="frosted-card card-2" role="region" aria-label="Database throughput metric">
           <div class="chart-card">
             <div class="chart-left">
-              <span class="chart-label">Collected this month</span>
-              <span class="chart-amount">$14,850</span>
+              <span class="chart-label">Tenant Isolation</span>
+              <span class="chart-amount" style="font-size: 18px;">Zero-Egress D1</span>
             </div>
             <div class="chart-bars" aria-label="7-day activity bar chart">
               <div class="bar" style="height: 18px;"></div>
@@ -881,17 +881,17 @@
           </div>
         </div>
 
-        <!-- 3. 3 teammates online avatar stack -->
-        <div class="frosted-card card-3" role="status" aria-label="Team presence status">
+        <!-- 3. Engineering Desk Status -->
+        <div class="frosted-card card-3" role="status" aria-label="Engineering Desk presence">
           <div class="team-card">
             <div class="team-info">
               <span class="online-indicator"></span>
-              <span class="team-text">3 teammates online</span>
+              <span class="team-text">Engineering Desk Online</span>
             </div>
             <div class="avatar-stack" aria-label="Active team members">
-              <div class="avatar" style="background-image: url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80');" title="Sarah Lin"></div>
-              <div class="avatar" style="background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80');" title="Dr. Marcus Vance"></div>
-              <div class="avatar" style="background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80');" title="Marlon Palomares"></div>
+              <span style="font-size: 10px; font-family: var(--font-mono); padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9);">
+                Ready to Dispatch
+              </span>
             </div>
           </div>
         </div>
@@ -900,10 +900,10 @@
       <!-- Bottom: Customer quote with name and role -->
       <div class="quote-wrap">
         <blockquote class="quote-text">
-          "The edge telemetry and automated billing transformed our entire client delivery workflow."
+          "Custom n8n pipelines, high-converting GoHighLevel infrastructure, and edge-native AI automations engineered for scalable operations."
         </blockquote>
-        <div class="quote-author">Dr. Marcus Vance</div>
-        <div class="quote-role">Clinical Director, Resilience Therapy</div>
+        <div class="quote-author">Marlon Palomares</div>
+        <div class="quote-role">Founder & Lead Systems Architect</div>
       </div>
     </aside>
 
@@ -1169,13 +1169,7 @@
 
           // Redirect to portal dashboard after brief success confirmation
           setTimeout(function () {
-            // Check if credentials match demo client
-            const email = emailInput.value.trim().toLowerCase();
-            if (email.includes('resilience') || passwordInput.value.includes('resilience')) {
-              window.location.href = '/portal?client=client_resilience';
-            } else {
-              window.location.href = '/portal?client=client_demo';
-            }
+            window.location.href = '/portal';
           }, 700);
         }, 1200);
       });
@@ -1188,7 +1182,7 @@
           submitBtn.classList.remove('is-submitting');
           submitBtn.classList.add('is-success');
           setTimeout(function () {
-            window.location.href = '/portal?client=client_demo';
+            window.location.href = '/portal';
           }, 600);
         }, 800);
       });

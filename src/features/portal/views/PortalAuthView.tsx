@@ -112,24 +112,17 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
       try {
         clientRecord = await loginWithPasskey(credentialsToTest)
       } catch {
-        // Fallback check against available clients
+        // Fallback check against loaded available clients
         const found = availableClients.find(
           (c) =>
             c.email.toLowerCase() === email.trim().toLowerCase() ||
-            c.passkey === credentialsToTest ||
-            credentialsToTest.toLowerCase().includes('apex') ||
-            credentialsToTest.toLowerCase().includes('resilience')
+            c.passkey === credentialsToTest
         )
         if (found) clientRecord = found
       }
 
       if (!clientRecord) {
-        // Check for demo shortcuts
-        if (email.toLowerCase().includes('resilience') || credentialsToTest.toLowerCase().includes('resilience')) {
-          clientRecord = availableClients.find((c) => c.id === 'client_resilience') || null
-        } else {
-          clientRecord = availableClients.find((c) => c.id === 'client_demo') || null
-        }
+        throw new Error('Workspace not found or passkey incorrect. Please check your credentials or contact Marlon Palomares.')
       }
 
       // Success animation
@@ -137,15 +130,11 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
       setSignedInSuccess(true)
 
       setTimeout(() => {
-        if (clientRecord) {
-          setClientId(clientRecord.id)
-        } else {
-          setClientId('client_demo')
-        }
+        setClientId(clientRecord!.id)
       }, 700)
     } catch (err: unknown) {
       setSubmitting(false)
-      setPasswordError(err instanceof Error ? err.message : 'Invalid credentials. Try apex2026.')
+      setPasswordError(err instanceof Error ? err.message : 'Invalid credentials. Please verify your workspace passkey.')
       setPasswordShaking(true)
       setTimeout(() => setPasswordShaking(false), 400)
     }
@@ -153,14 +142,20 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
 
   // Handle Quick SSO Demo
   const handleQuickSSO = () => {
-    setSubmitting(true)
-    setTimeout(() => {
-      setSubmitting(false)
-      setSignedInSuccess(true)
+    if (availableClients.length > 0) {
+      setSubmitting(true)
       setTimeout(() => {
-        setClientId('client_demo')
-      }, 600)
-    }, 700)
+        setSubmitting(false)
+        setSignedInSuccess(true)
+        setTimeout(() => {
+          setClientId(availableClients[0].id)
+        }, 600)
+      }, 700)
+    } else {
+      setEmailError('No provisioned client workspace found yet. Use Sign up tab to create one.')
+      setEmailShaking(true)
+      setTimeout(() => setEmailShaking(false), 400)
+    }
   }
 
   // Handle Sign up submission
@@ -244,44 +239,44 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
 
         {/* Middle: 3 Frosted Product Cards with Staggered 7s Float Loop */}
         <div className="relative z-10 flex flex-col gap-4 max-w-sm my-auto">
-          {/* Card 1: Invoice paid toast with amount */}
+          {/* Card 1: Edge Webhook SLA */}
           <div
             className="p-4 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-xl shadow-xl transition-transform animate-[floatCard_7s_ease-in-out_infinite]"
             style={{ animationDelay: '0s' }}
             role="status"
-            aria-label="Invoice settlement toast"
+            aria-label="Edge Webhook SLA Telemetry"
           >
             <div className="flex items-center gap-3.5">
               <div className="w-9 h-9 rounded-xl bg-emerald-500/25 border border-emerald-400/40 flex items-center justify-center text-emerald-200 shrink-0">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M5 13l4 4L19 7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-white">Invoice paid</span>
+                  <span className="text-xs font-bold text-white">Edge Webhook SLA</span>
                   <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 font-semibold">
-                    $2,450.00
+                    99.9% Uptime
                   </span>
                 </div>
-                <span className="text-[11px] text-white/70 mt-0.5">INV-2026-088 • Auto-settled via Stripe</span>
+                <span className="text-[11px] text-white/70 mt-0.5">Sub-25ms routing across APAC & US Edge</span>
               </div>
             </div>
           </div>
 
-          {/* Card 2: Collected this month number with 7-bar breathing chart */}
+          {/* Card 2: Zero-Egress Database with 7-bar breathing chart */}
           <div
             className="p-4 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-xl shadow-xl transition-transform animate-[floatCard_7s_ease-in-out_infinite] self-end w-[92%]"
             style={{ animationDelay: '-2.3s' }}
             role="region"
-            aria-label="Collected revenue metric"
+            aria-label="Database throughput metric"
           >
             <div className="flex items-center justify-between gap-4">
               <div className="flex flex-col">
                 <span className="text-[10px] uppercase font-mono tracking-wider text-white/65">
-                  Collected this month
+                  Tenant Isolation
                 </span>
-                <span className="text-xl font-bold text-white tracking-tight">$14,850</span>
+                <span className="text-xl font-bold text-white tracking-tight">Zero-Egress D1</span>
               </div>
 
               {/* 7-bar chart with breathing animation */}
@@ -300,46 +295,34 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
             </div>
           </div>
 
-          {/* Card 3: 3 teammates online avatar stack */}
+          {/* Card 3: Engineering Desk Status */}
           <div
             className="p-4 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-xl shadow-xl transition-transform animate-[floatCard_7s_ease-in-out_infinite] w-[88%]"
             style={{ animationDelay: '-4.6s' }}
             role="status"
-            aria-label="Team presence status"
+            aria-label="Engineering Desk presence"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-300 shadow-[0_0_8px_#34d399]" />
-                <span className="text-xs font-bold text-white">3 teammates online</span>
+                <span className="text-xs font-bold text-white">Engineering Desk Online</span>
               </div>
-              <div className="flex items-center -space-x-2">
-                <img
-                  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80"
-                  alt="Sarah Lin"
-                  className="w-7 h-7 rounded-full border-2 border-emerald-900 object-cover"
-                />
-                <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
-                  alt="Dr. Marcus Vance"
-                  className="w-7 h-7 rounded-full border-2 border-emerald-900 object-cover"
-                />
-                <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
-                  alt="Marlon Palomares"
-                  className="w-7 h-7 rounded-full border-2 border-emerald-900 object-cover"
-                />
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/15 text-white/90">
+                  Ready to Dispatch
+                </span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom: Customer quote with name and role */}
+        {/* Bottom: Agency Value Proposition Quote */}
         <div className="relative z-10 border-t border-white/15 pt-5">
           <blockquote className="text-xs sm:text-sm text-white/90 italic leading-relaxed">
-            "The edge telemetry and automated billing transformed our entire client delivery workflow."
+            "Custom n8n pipelines, high-converting GoHighLevel infrastructure, and edge-native AI automations engineered for scalable operations."
           </blockquote>
-          <div className="mt-2 text-xs font-semibold text-white">Dr. Marcus Vance</div>
-          <div className="text-[11px] text-white/65">Clinical Director, Resilience Therapy</div>
+          <div className="mt-2 text-xs font-semibold text-white">Marlon Palomares</div>
+          <div className="text-[11px] text-white/65">Founder & Lead Systems Architect</div>
         </div>
       </aside>
 
@@ -378,7 +361,7 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Apex Health Partners"
+                    placeholder="e.g. Acme Corporation"
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     className="w-full h-10 px-3 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-zinc-100 focus:outline-none focus:border-emerald-500 focus:ring-[1.5px] focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-zinc-950"
@@ -390,7 +373,7 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Sarah Lin"
+                    placeholder="e.g. Jane Doe"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full h-10 px-3 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-zinc-100 focus:outline-none focus:border-emerald-500 focus:ring-[1.5px] focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-zinc-950"

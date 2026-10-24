@@ -178,50 +178,14 @@ export const PortalHeader: React.FC = () => {
                   )
                 })
               ) : (
-                <div className="space-y-2">
-                  <button
-                    onClick={() => {
-                      setClientId('client_demo')
-                      setSwitcherOpen(false)
-                    }}
-                    className={`w-full p-3 rounded-xl border text-left flex items-center justify-between ${
-                      clientId === 'client_demo'
-                        ? 'bg-emerald-500/10 border-emerald-500/40'
-                        : 'bg-zinc-950/60 border-zinc-800'
-                    }`}
+                <div className="p-4 rounded-xl border border-zinc-800 bg-zinc-950/60 text-center">
+                  <p className="text-xs text-zinc-400">No client workspaces provisioned yet.</p>
+                  <a
+                    href="/portal/admin"
+                    className="inline-block mt-2 text-[11px] font-mono text-emerald-400 hover:text-emerald-300"
                   >
-                    <div>
-                      <div className="text-xs font-bold text-zinc-200">Apex Health Partners</div>
-                      <div className="text-[11px] text-zinc-400">Sarah Lin • Enterprise Retainer</div>
-                    </div>
-                    {clientId === 'client_demo' && (
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">
-                        Active
-                      </span>
-                    )}
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setClientId('client_resilience')
-                      setSwitcherOpen(false)
-                    }}
-                    className={`w-full p-3 rounded-xl border text-left flex items-center justify-between ${
-                      clientId === 'client_resilience'
-                        ? 'bg-emerald-500/10 border-emerald-500/40'
-                        : 'bg-zinc-950/60 border-zinc-800'
-                    }`}
-                  >
-                    <div>
-                      <div className="text-xs font-bold text-zinc-200">Resilience Therapy Clinic</div>
-                      <div className="text-[11px] text-zinc-400">Dr. Marcus Vance • Clinical Retainer</div>
-                    </div>
-                    {clientId === 'client_resilience' && (
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">
-                        Active
-                      </span>
-                    )}
-                  </button>
+                    + Onboard in Admin Deck
+                  </a>
                 </div>
               )}
             </div>
@@ -229,7 +193,7 @@ export const PortalHeader: React.FC = () => {
             {/* Passkey Login Form */}
             <form onSubmit={handlePasskeyLogin} className="mt-5 pt-4 border-t border-zinc-800 space-y-3">
               <label className="block text-xs font-medium text-zinc-300">
-                Or Enter Client Passkey (e.g. <code className="text-emerald-400">apex2026</code> or <code className="text-emerald-400">resilience2026</code>)
+                Or Enter Client Workspace Passkey
               </label>
               <div className="flex gap-2">
                 <input

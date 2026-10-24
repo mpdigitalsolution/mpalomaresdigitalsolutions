@@ -38,7 +38,7 @@ export const AdminDeckView: React.FC = () => {
 
   // Invoice Form
   const [invForm, setInvForm] = useState({
-    clientId: availableClients[0]?.id || 'client_demo',
+    clientId: availableClients[0]?.id || '',
     invoiceNumber: `INV-2026-${Math.floor(100 + Math.random() * 900)}`,
     description: '',
     amountDollars: '1500',
@@ -48,7 +48,7 @@ export const AdminDeckView: React.FC = () => {
 
   // Deliverable Form
   const [delivForm, setDelivForm] = useState({
-    clientId: availableClients[0]?.id || 'client_demo',
+    clientId: availableClients[0]?.id || '',
     deliverableName: '',
     deliverableType: 'n8n_workflow',
     version: 'v1.0',
@@ -132,12 +132,12 @@ export const AdminDeckView: React.FC = () => {
   }
 
   const metrics = adminData?.metrics || {
-    activeClients: availableClients.length || 2,
-    estimatedMRRCents: 565000,
-    totalCollectedCents: 395000,
-    totalOutstandingCents: 245000,
-    pendingContracts: 1,
-    pendingApprovals: 1,
+    activeClients: availableClients.length || 0,
+    estimatedMRRCents: 0,
+    totalCollectedCents: 0,
+    totalOutstandingCents: 0,
+    pendingContracts: 0,
+    pendingApprovals: 0,
   }
 
   return (
@@ -236,54 +236,77 @@ export const AdminDeckView: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800/60">
-              {(adminData?.clients || availableClients).map((c) => (
-                <tr key={c.id} className="hover:bg-zinc-900/40 transition-colors">
-                  <td className="px-5 py-4">
-                    <div className="font-semibold text-zinc-200">{c.company}</div>
-                    <div className="text-[11px] text-zinc-400">{c.name} • {c.email}</div>
-                  </td>
-                  <td className="px-5 py-4 text-zinc-300 max-w-xs truncate">{c.project_name}</td>
-                  <td className="px-5 py-4">
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                      {c.tier}
-                    </span>
-                  </td>
-                  <td className="px-5 py-4 font-mono text-zinc-400">{c.passkey}</td>
-                  <td className="px-5 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => {
-                          setActiveInvite({
-                            name: c.name,
-                            company: c.company,
-                            email: c.email,
-                            passkey: c.passkey || 'apex2026',
-                            clientId: c.id,
-                          })
-                          setInviteModal(true)
-                        }}
-                        className="px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 text-emerald-400 text-xs font-medium transition-colors flex items-center gap-1.5"
-                        title="Generate 1-Click Client Onboarding Link & Email Template"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                        </svg>
-                        <span>Invite Link</span>
-                      </button>
+              {(adminData?.clients || availableClients).length > 0 ? (
+                (adminData?.clients || availableClients).map((c) => (
+                  <tr key={c.id} className="hover:bg-zinc-900/40 transition-colors">
+                    <td className="px-5 py-4">
+                      <div className="font-semibold text-zinc-200">{c.company}</div>
+                      <div className="text-[11px] text-zinc-400">{c.name} • {c.email}</div>
+                    </td>
+                    <td className="px-5 py-4 text-zinc-300 max-w-xs truncate">{c.project_name}</td>
+                    <td className="px-5 py-4">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        {c.tier}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4 font-mono text-zinc-400">{c.passkey}</td>
+                    <td className="px-5 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => {
+                            setActiveInvite({
+                              name: c.name,
+                              company: c.company,
+                              email: c.email,
+                              passkey: c.passkey || 'solis2026',
+                              clientId: c.id,
+                            })
+                            setInviteModal(true)
+                          }}
+                          className="px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 text-emerald-400 text-xs font-medium transition-colors flex items-center gap-1.5"
+                          title="Generate 1-Click Client Onboarding Link & Email Template"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                          </svg>
+                          <span>Invite Link</span>
+                        </button>
 
-                      <button
-                        onClick={() => {
-                          setClientId(c.id)
-                          setActiveTab('overview')
-                        }}
-                        className="px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-300 hover:text-white text-xs font-medium transition-colors"
-                      >
-                        Client View &rarr;
-                      </button>
+                        <button
+                          onClick={() => {
+                            setClientId(c.id)
+                            setActiveTab('overview')
+                          }}
+                          className="px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-300 hover:text-white text-xs font-medium transition-colors"
+                        >
+                          Client View &rarr;
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="py-14 text-center">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-3">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
                     </div>
+                    <h4 className="text-sm font-bold text-zinc-100">No client workspaces provisioned yet</h4>
+                    <p className="text-xs text-zinc-400 mt-1 max-w-sm mx-auto">
+                      All demo data has been cleared. Onboard your first real client workspace to generate their private 1-click onboarding link and kickstart automations.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setClientModal(true)}
+                      className="mt-4 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs shadow-lg shadow-emerald-500/20 transition-colors inline-flex items-center gap-2"
+                    >
+                      <span>+ Onboard Your First Client</span>
+                    </button>
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

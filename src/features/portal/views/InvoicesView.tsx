@@ -55,7 +55,7 @@ export const InvoicesView: React.FC = () => {
 
         <div className="p-5 rounded-xl bg-zinc-900/60 border border-zinc-800">
           <div className="text-xs font-medium text-zinc-400">Billing Entity</div>
-          <div className="mt-2 text-sm font-semibold text-zinc-200">{client?.company || 'Apex Health Partners'}</div>
+          <div className="mt-2 text-sm font-semibold text-zinc-200">{client?.company || 'Client Organization'}</div>
           <div className="mt-1 text-[10px] text-zinc-500 font-mono">Currency: USD ($)</div>
         </div>
       </div>

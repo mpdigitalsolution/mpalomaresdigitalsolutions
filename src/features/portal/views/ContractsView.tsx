@@ -150,7 +150,7 @@ export const ContractsView: React.FC = () => {
           <div className="p-4 rounded-lg bg-zinc-900/60 border border-zinc-800/60 flex justify-between items-center text-xs">
             <div>
               <span className="text-zinc-500">CLIENT:</span>{' '}
-              <strong className="text-zinc-200">{client?.company || 'Apex Health Partners'}</strong>
+              <strong className="text-zinc-200">{client?.company || 'Client Organization'}</strong>
             </div>
             <div>
               <span className="text-zinc-500">AGENCY:</span>{' '}
@@ -230,7 +230,7 @@ export const ContractsView: React.FC = () => {
                   type="text"
                   value={signerName}
                   onChange={(e) => setSignerName(e.target.value)}
-                  placeholder="e.g. Sarah Lin"
+                  placeholder="e.g. Authorized Signatory"
                   className="w-full max-w-sm px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 text-xs text-zinc-100 focus:outline-none focus:border-emerald-500"
                 />
               </div>
@@ -279,7 +279,7 @@ export const ContractsView: React.FC = () => {
                   className="mt-0.5 rounded border-zinc-700 bg-zinc-950 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-zinc-900"
                 />
                 <label htmlFor="agree-checkbox" className="text-xs text-zinc-400 select-none">
-                  I confirm that I am authorized to bind {client?.company || 'Apex Health Partners'} and that this digital signature is legally binding under the Electronic Signatures in Global and National Commerce Act (ESIGN).
+                  I confirm that I am authorized to bind {client?.company || 'Client Organization'} and that this digital signature is legally binding under the Electronic Signatures in Global and National Commerce Act (ESIGN).
                 </label>
               </div>
 
