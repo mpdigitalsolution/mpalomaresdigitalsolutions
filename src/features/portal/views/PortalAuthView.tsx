@@ -165,7 +165,17 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
       let clientRecord: ClientRecord | null = null
 
       try {
-        clientRecord = await loginWithPasskey(credentialsToTest)
+        const loginRes = await loginWithPasskey(credentialsToTest, email.trim())
+        if (loginRes.role === 'admin') {
+          localStorage.setItem('mp_agency_admin_authenticated', 'true')
+          setSubmitting(false)
+          setSignedInSuccess(true)
+          setTimeout(() => {
+            window.location.href = '/portal/admin'
+          }, 700)
+          return
+        }
+        clientRecord = loginRes.client
       } catch {
         // Fallback check against loaded available clients
         const found = availableClients.find(

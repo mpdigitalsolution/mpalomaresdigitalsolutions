@@ -159,21 +159,53 @@ export default {
       }
     }
 
-    // 2. Client Authentication (Passkey or Email)
+    // 2. Client & Admin Authentication (Passkey, Email, or Password)
     if (url.pathname === '/api/portal/auth/login' && request.method === 'POST') {
       try {
-        const body = (await request.json()) as { passkey?: string }
-        if (!body.passkey) {
-          return jsonResponse({ error: 'Passkey or email is required' }, 400)
+        const body = (await request.json()) as { passkey?: string; email?: string; password?: string }
+        const testKey = (body.passkey || body.password || '').trim()
+        const testEmail = (body.email || body.passkey || '').trim().toLowerCase()
+
+        // 1. Check if Agency Admin
+        const ADMIN_EMAIL = 'mpalomaresdigital@gmail.com'
+        const MASTER_ADMIN_KEY = 'mp_admin_2026'
+
+        const isAdmin =
+          testKey === MASTER_ADMIN_KEY ||
+          testEmail === MASTER_ADMIN_KEY ||
+          (testEmail === ADMIN_EMAIL && (testKey === MASTER_ADMIN_KEY || !testKey))
+
+        if (isAdmin) {
+          return jsonResponse({
+            success: true,
+            role: 'admin',
+            redirectUrl: '/portal/admin',
+            client: {
+              id: 'admin_marlon',
+              name: 'Marlon Palomares',
+              company: 'MP Digital Solutions',
+              email: ADMIN_EMAIL,
+              avatar_url: null,
+              project_name: 'Agency Operations OS',
+              tier: 'Agency Administrator',
+            },
+          })
         }
 
-        const client = await getClientByPasskey(env.DB, body.passkey)
+        // 2. Check if Client in Cloudflare D1
+        const credentialLookup = testKey || testEmail
+        if (!credentialLookup) {
+          return jsonResponse({ error: 'Passkey or email is required.' }, 400)
+        }
+
+        const client = await getClientByPasskey(env.DB, credentialLookup)
         if (!client) {
           return jsonResponse({ error: 'Invalid workspace passkey or email.' }, 401)
         }
 
         return jsonResponse({
           success: true,
+          role: 'client',
           client: {
             id: client.id,
             name: client.name,

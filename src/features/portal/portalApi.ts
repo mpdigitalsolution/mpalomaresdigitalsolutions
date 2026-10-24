@@ -33,18 +33,25 @@ export async function fetchPortalDashboard(clientId: string): Promise<PortalDash
   return res.json()
 }
 
-export async function loginWithPasskey(passkey: string): Promise<ClientRecord> {
+export interface LoginResponse {
+  success: boolean
+  role?: 'client' | 'admin'
+  redirectUrl?: string
+  client: ClientRecord
+}
+
+export async function loginWithPasskey(passkey: string, email?: string): Promise<LoginResponse> {
   const res = await fetch(`${WORKER_BASE}/api/portal/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ passkey }),
+    body: JSON.stringify({ passkey, email }),
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
     throw new Error(err.error || 'Invalid credentials')
   }
-  const data = await res.json()
-  return data.client
+  const data = (await res.json()) as LoginResponse
+  return data
 }
 
 export async function recoverCredentials(

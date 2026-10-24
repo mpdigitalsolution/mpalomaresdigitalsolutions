@@ -15,8 +15,12 @@ export const PortalHeader: React.FC = () => {
     setAuthenticating(true)
     setLoginError(null)
     try {
-      const authenticatedClient = await loginWithPasskey(passkeyInput.trim())
-      setClientId(authenticatedClient.id)
+      const res = await loginWithPasskey(passkeyInput.trim())
+      if (res.role === 'admin') {
+        window.location.href = '/portal/admin'
+        return
+      }
+      setClientId(res.client.id)
       setSwitcherOpen(false)
       setPasskeyInput('')
     } catch (err: unknown) {
