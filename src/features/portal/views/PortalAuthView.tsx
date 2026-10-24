@@ -8,11 +8,10 @@ interface PortalAuthViewProps {
 }
 
 export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
-  const { setClientId, setPortalRole, availableClients } = usePortal()
+  const { setClientId, availableClients } = usePortal()
 
-  // Mode: 'login' | 'signup' | 'demo'
-  const [mode, setMode] = useState<'login' | 'signup' | 'demo'>('login')
-  const [portalTarget, setPortalTarget] = useState<'client' | 'admin'>('client')
+  // Mode: 'login' | 'signup'
+  const [mode, setMode] = useState<'login' | 'signup'>('login')
 
   // Form states
   const [email, setEmail] = useState('')
@@ -138,11 +137,6 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
       setSignedInSuccess(true)
 
       setTimeout(() => {
-        if (portalTarget === 'admin') {
-          setPortalRole('admin')
-        } else {
-          setPortalRole('client')
-        }
         if (clientRecord) {
           setClientId(clientRecord.id)
         } else {
@@ -476,34 +470,9 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
             <div>
               {/* Form Header */}
               <div className="mb-6">
-                <div className="flex items-center justify-between mb-2">
-                  <h1 className="text-2xl font-bold tracking-tight text-zinc-100">Welcome back</h1>
-                  {/* Subtle Role Toggle */}
-                  <div className="flex items-center gap-1 p-0.5 rounded-lg bg-zinc-900 border border-zinc-800 text-[10px] font-mono">
-                    <button
-                      type="button"
-                      onClick={() => setPortalTarget('client')}
-                      className={`px-2 py-0.5 rounded transition-colors ${
-                        portalTarget === 'client' ? 'bg-emerald-500/20 text-emerald-400 font-bold' : 'text-zinc-500'
-                      }`}
-                    >
-                      Client
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPortalTarget('admin')}
-                      className={`px-2 py-0.5 rounded transition-colors ${
-                        portalTarget === 'admin' ? 'bg-purple-500/20 text-purple-300 font-bold' : 'text-zinc-500'
-                      }`}
-                    >
-                      Admin
-                    </button>
-                  </div>
-                </div>
+                <h1 className="text-2xl font-bold tracking-tight text-zinc-100 mb-1">Welcome back</h1>
                 <p className="text-xs text-zinc-400">
-                  {portalTarget === 'admin'
-                    ? 'Sign in to the Marlon Palomares Agency Command Deck'
-                    : 'Sign in to your client operations workspace'}
+                  Sign in to your client operations workspace
                 </p>
               </div>
 
@@ -523,15 +492,17 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    setEmail('sarah.lin@apexhealth.io')
-                    setPassword('apex2026')
+                    const promptEmail = prompt('Enter your client email to receive a magic sign-in link:')
+                    if (promptEmail) {
+                      alert(`Magic onboarding link dispatched to ${promptEmail}`)
+                    }
                   }}
                   className="h-10 rounded-xl bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 hover:border-zinc-700 text-zinc-200 text-xs font-medium flex items-center justify-center gap-2 transition-all focus:outline-none focus:ring-[1.5px] focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-zinc-950"
                 >
                   <svg className="w-3.5 h-3.5 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                   </svg>
-                  <span className="truncate">Fill Demo Keys</span>
+                  <span className="truncate">Email me a link</span>
                 </button>
               </div>
 
@@ -720,31 +691,14 @@ export const PortalAuthView: React.FC<PortalAuthViewProps> = () => {
                 </button>
               </div>
 
-              {/* Quick Demo Switcher helper */}
+              {/* Client support footer link */}
               <div className="mt-8 pt-6 border-t border-zinc-900 text-center">
-                <span className="text-[11px] text-zinc-500 block mb-2 font-mono">Demo workspaces:</span>
-                <div className="flex items-center justify-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEmail('sarah.lin@apexhealth.io')
-                      setPassword('apex2026')
-                    }}
-                    className="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-400 hover:text-emerald-400 hover:border-emerald-500/30 transition-colors font-mono"
-                  >
-                    Apex Health (apex2026)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEmail('marcus@resiliencetherapy.com')
-                      setPassword('resilience2026')
-                    }}
-                    className="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-400 hover:text-emerald-400 hover:border-emerald-500/30 transition-colors font-mono"
-                  >
-                    Resilience (resilience2026)
-                  </button>
-                </div>
+                <p className="text-[11px] text-zinc-500">
+                  Need a dedicated client workspace?{' '}
+                  <a href="/#contact" className="text-zinc-400 hover:text-emerald-400 transition-colors">
+                    Contact Marlon Palomares →
+                  </a>
+                </p>
               </div>
             </div>
           )}

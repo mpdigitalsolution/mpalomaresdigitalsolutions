@@ -7,7 +7,6 @@ export const PortalSidebar: React.FC = () => {
     activeTab,
     setActiveTab,
     portalRole,
-    setPortalRole,
     onboardingSteps,
     contracts,
     invoices,
@@ -176,29 +175,18 @@ export const PortalSidebar: React.FC = () => {
           </div>
         </div>
 
-        {/* Role Switcher Pill */}
-        <div className="mt-3 grid grid-cols-2 p-0.5 rounded-lg bg-zinc-900 border border-zinc-800 text-[11px] font-medium">
-          <button
-            onClick={() => setPortalRole('client')}
-            className={`py-1 rounded-md transition-all ${
-              portalRole === 'client'
-                ? 'bg-zinc-800 text-emerald-400 font-semibold shadow-sm'
-                : 'text-zinc-500 hover:text-zinc-300'
-            }`}
-          >
-            Client View
-          </button>
-          <button
-            onClick={() => setPortalRole('admin')}
-            className={`py-1 rounded-md transition-all ${
-              portalRole === 'admin'
-                ? 'bg-zinc-800 text-emerald-400 font-semibold shadow-sm'
-                : 'text-zinc-500 hover:text-zinc-300'
-            }`}
-          >
-            Admin Deck
-          </button>
-        </div>
+        {/* Agency Admin Status Tag (only shown in admin mode) */}
+        {portalRole === 'admin' && (
+          <div className="mt-3 px-2.5 py-1 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-300 text-[10px] font-mono flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+              Agency Master Mode
+            </span>
+            <a href="/portal" className="text-zinc-400 hover:text-white underline">
+              Exit to Portal
+            </a>
+          </div>
+        )}
       </div>
 
       {/* Navigation Links */}

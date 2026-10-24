@@ -9,7 +9,6 @@ import { InvoicesView } from './views/InvoicesView'
 import { ChatView } from './views/ChatView'
 import { ApprovalsView } from './views/ApprovalsView'
 import { AssetHubView } from './views/AssetHubView'
-import { AdminDeckView } from './views/AdminDeckView'
 import { LiveTelemetryView } from './views/LiveTelemetryView'
 import { PortalAuthView } from './views/PortalAuthView'
 
@@ -48,7 +47,7 @@ const PortalContent: React.FC = () => {
       {activeTab === 'approvals' && <ApprovalsView />}
       {activeTab === 'assets' && <AssetHubView />}
       {activeTab === 'telemetry' && <LiveTelemetryView />}
-      {activeTab === 'admin' && <AdminDeckView />}
+      {activeTab === 'admin' && <OverviewDashboardView />}
     </div>
   )
 }

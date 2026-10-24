@@ -6,6 +6,7 @@ import { ShowcasePage } from '@/features/showcase/ShowcasePage'
 import { LegalPage } from '@/features/legal/LegalPage'
 import { ProofPage } from '@/features/proof/ProofPage'
 import { PortalPage } from '@/features/portal/PortalPage'
+import { PortalAdminPage } from '@/features/portal/PortalAdminPage'
 import { AppShell } from './AppShell'
 import { RouteStage } from './RouteStage'
 import { notFoundTitle, pages, type PageRoute } from './routes'
@@ -41,6 +42,14 @@ function routeFor(page: PageRoute): RouteObject {
 
 /** Every route comes from the registry in routes.ts. */
 export const router = createBrowserRouter([
+  {
+    path: '/portal/admin',
+    element: <PortalAdminPage />,
+  },
+  {
+    path: '/admin',
+    element: <Navigate to="/portal/admin" replace />,
+  },
   {
     path: '/portal',
     element: <PortalPage />,

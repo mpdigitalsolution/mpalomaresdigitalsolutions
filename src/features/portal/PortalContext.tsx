@@ -91,8 +91,11 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [clientId, setClientIdState] = useState<string>(() => {
     try {
       const urlParams = new URLSearchParams(window.location.search)
-      const urlClient = urlParams.get('client') || (urlParams.get('demo') ? 'client_demo' : null)
-      if (urlClient) return urlClient
+      const urlClient = urlParams.get('client') || urlParams.get('workspace')
+      if (urlClient) {
+        localStorage.setItem('mp_portal_client_id', urlClient)
+        return urlClient
+      }
     } catch {
       // ignore
     }
@@ -103,7 +106,16 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   })
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [availableClients, setAvailableClients] = useState<ClientRecord[]>([])
-  const [activeTab, setActiveTabState] = useState<PortalTab>('overview')
+  const [activeTab, setActiveTabState] = useState<PortalTab>(() => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.get('tab') as PortalTab) return urlParams.get('tab') as PortalTab
+      if (urlParams.get('key') || urlParams.get('onboarding')) return 'onboarding'
+    } catch {
+      // ignore
+    }
+    return 'overview'
+  })
   const [client, setClient] = useState<ClientRecord | null>(null)
   const [onboardingSteps, setOnboardingSteps] = useState<OnboardingStepRecord[]>([])
   const [contracts, setContracts] = useState<ContractRecord[]>([])
