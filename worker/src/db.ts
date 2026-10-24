@@ -140,19 +140,19 @@ export async function submitApprovalDecision(
 export async function payInvoice(
   db: D1Database,
   clientId: string,
-  invoiceId: string
+  invoiceIdOrNumber: string
 ): Promise<InvoiceRecord | null> {
   const now = new Date().toISOString()
   const stmt = db.prepare(
     `UPDATE invoices 
      SET status = 'paid', paid_at = ? 
-     WHERE id = ? AND client_id = ?`
+     WHERE (id = ? OR invoice_number = ?) AND client_id = ?`
   )
-  const res = await stmt.bind(now, invoiceId, clientId).run()
+  const res = await stmt.bind(now, invoiceIdOrNumber, invoiceIdOrNumber, clientId).run()
   if (res.success && (res.meta.changes ?? 0) > 0) {
     const updated = await db
-      .prepare('SELECT * FROM invoices WHERE id = ? AND client_id = ?')
-      .bind(invoiceId, clientId)
+      .prepare('SELECT * FROM invoices WHERE (id = ? OR invoice_number = ?) AND client_id = ?')
+      .bind(invoiceIdOrNumber, invoiceIdOrNumber, clientId)
       .first<InvoiceRecord>()
     return updated || null
   }

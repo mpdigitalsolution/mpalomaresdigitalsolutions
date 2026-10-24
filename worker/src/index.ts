@@ -41,6 +41,44 @@ function jsonResponse(data: unknown, status = 200): Response {
   })
 }
 
+async function dispatchOutboundNotification(env: Env, text: string) {
+  const promises: Promise<unknown>[] = []
+
+  // 1. Telegram Bot Alert
+  if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+    promises.push(
+      fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: env.TELEGRAM_CHAT_ID,
+          text: `⚡ <b>MP Digital Operations Alert</b>\n\n${text}`,
+          parse_mode: 'HTML',
+        }),
+      }).catch((err) => console.warn('Telegram dispatch error:', err))
+    )
+  }
+
+  // 2. Generic Webhook (n8n, Discord, Slack)
+  if (env.NOTIFICATION_WEBHOOK_URL) {
+    promises.push(
+      fetch(env.NOTIFICATION_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          source: 'mp_client_portal_edge',
+          message: text,
+          timestamp: new Date().toISOString(),
+        }),
+      }).catch((err) => console.warn('Notification webhook dispatch error:', err))
+    )
+  }
+
+  if (promises.length > 0) {
+    await Promise.allSettled(promises)
+  }
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url)
@@ -150,6 +188,12 @@ export default {
           body.submittedData ? JSON.stringify(body.submittedData) : undefined
         )
 
+        // Outbound Edge Notification (non-blocking)
+        dispatchOutboundNotification(
+          env,
+          `🚀 <b>Onboarding Step Updated</b>\nClient: <code>${body.clientId}</code>\nStep: <b>${body.stepId}</b>\nStatus: <b>${body.status.toUpperCase()}</b>`
+        ).catch(() => {})
+
         return jsonResponse({ success })
       } catch (err: unknown) {
         return jsonResponse({ error: String(err) }, 500)
@@ -189,6 +233,12 @@ export default {
           `📄 Contract "${body.contractId}" was digitally signed by ${body.signerName} (IP: ${clientIp}).`
         )
 
+        // Outbound Edge Notification (non-blocking)
+        dispatchOutboundNotification(
+          env,
+          `📄 <b>Contract Signed & Executed</b>\nClient: <code>${body.clientId}</code>\nSigner: <b>${body.signerName}</b>\nContract ID: <code>${body.contractId}</code>\nAudit IP: <code>${clientIp}</code>`
+        ).catch(() => {})
+
         return jsonResponse({ success, signedAt: new Date().toISOString() })
       } catch (err: unknown) {
         return jsonResponse({ error: String(err) }, 500)
@@ -218,6 +268,14 @@ export default {
           body.messageText,
           body.attachmentUrl
         )
+
+        // Outbound Edge Alert for inbound client messages (non-blocking)
+        if ((body.sender || 'client') === 'client') {
+          dispatchOutboundNotification(
+            env,
+            `💬 <b>Inbound Client Message</b>\nClient: <code>${body.clientId}</code>\nFrom: <b>${body.senderName || 'Client Member'}</b>\nMessage:\n<i>${body.messageText.slice(0, 300)}</i>`
+          ).catch(() => {})
+        }
 
         return jsonResponse({ success: true, message })
       } catch (err: unknown) {
@@ -261,6 +319,15 @@ export default {
           decisionText
         )
 
+        // Outbound Edge Notification (non-blocking)
+        const emoji = body.status === 'approved' ? '✅' : '⚠️'
+        dispatchOutboundNotification(
+          env,
+          `${emoji} <b>Deliverable Milestone Decision</b>\nClient: <code>${body.clientId}</code>\nDeliverable: <code>${body.approvalId}</code>\nDecision: <b>${body.status.toUpperCase()}</b>${
+            body.clientNotes ? `\nNotes: <i>${body.clientNotes}</i>` : ''
+          }`
+        ).catch(() => {})
+
         return jsonResponse({ success })
       } catch (err: unknown) {
         return jsonResponse({ error: String(err) }, 500)
@@ -297,7 +364,73 @@ export default {
           `💳 Invoice ${invoice.invoice_number} (${formattedAmount}) was settled. Receipt generated.`
         )
 
+        // Outbound Edge Notification (non-blocking)
+        dispatchOutboundNotification(
+          env,
+          `💳 <b>Invoice Settled (Portal Checkout)</b>\nClient: <code>${body.clientId}</code>\nInvoice: <b>${invoice.invoice_number}</b>\nAmount: <b>${formattedAmount}</b>\nStatus: <b>PAID</b>`
+        ).catch(() => {})
+
         return jsonResponse({ success: true, invoice })
+      } catch (err: unknown) {
+        return jsonResponse({ error: String(err) }, 500)
+      }
+    }
+
+    // 7.8 Stripe Webhook Settlement Endpoint
+    if (url.pathname === '/api/portal/webhooks/stripe' && request.method === 'POST') {
+      try {
+        const rawPayload = await request.text()
+        let event: { type?: string; data?: { object?: Record<string, unknown> } }
+
+        try {
+          event = JSON.parse(rawPayload)
+        } catch {
+          return jsonResponse({ error: 'Invalid JSON payload' }, 400)
+        }
+
+        // Support checkout.session.completed, payment_intent.succeeded, invoice.payment_succeeded
+        if (
+          event.type === 'checkout.session.completed' ||
+          event.type === 'payment_intent.succeeded' ||
+          event.type === 'invoice.payment_succeeded'
+        ) {
+          const sessionObj = event.data?.object || {}
+          const metadata = (sessionObj.metadata as Record<string, string>) || {}
+
+          // Identify client & invoice from metadata or fallback fields
+          const clientId =
+            metadata.clientId ||
+            metadata.client_id ||
+            (sessionObj.client_reference_id as string) ||
+            'client_apex'
+          const invoiceId =
+            metadata.invoiceId ||
+            metadata.invoice_id ||
+            metadata.invoiceNumber ||
+            'inv_apex_01'
+
+          const settledInvoice = await payInvoice(env.DB, clientId, invoiceId)
+          if (settledInvoice) {
+            const amountStr = (settledInvoice.amount_cents / 100).toLocaleString('en-US', {
+              style: 'currency',
+              currency: settledInvoice.currency || 'USD',
+            })
+            await postChatMessage(
+              env.DB,
+              clientId,
+              'system',
+              'Stripe Live Settlement',
+              `💳 Automated Webhook Settlement: Invoice ${settledInvoice.invoice_number} (${amountStr}) verified and marked PAID via Stripe.`
+            )
+
+            dispatchOutboundNotification(
+              env,
+              `⚡ <b>Stripe Webhook Auto-Settlement</b>\nClient: <code>${clientId}</code>\nInvoice: <b>${settledInvoice.invoice_number}</b>\nAmount: <b>${amountStr}</b>\nEvent: <code>${event.type}</code>`
+            ).catch(() => {})
+          }
+        }
+
+        return jsonResponse({ received: true, eventType: event.type })
       } catch (err: unknown) {
         return jsonResponse({ error: String(err) }, 500)
       }

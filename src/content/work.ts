@@ -41,6 +41,13 @@ export const featuredProject = {
 
 export const caseStudies: { id: string; title: string; summary: string; link: LinkRef; image?: Image }[] = [
   {
+    id: 'case-study-client-portal',
+    title: 'Cloudflare Edge Client Operations Portal OS (D1 + R2 + React 19)',
+    summary: 'Architected and deployed an edge-native enterprise client operations OS on Cloudflare Workers, D1 distributed SQL, and R2 object storage. Features 1-click passkey authentication, interactive legal signature canvas (ESIGN compliant), Stripe billing webhook auto-settlement, real-time 2-way client chat, deliverable approvals queue, and sub-25ms edge telemetry.',
+    image: { src: '/images/case-studies/non-profit/After.jpg', alt: 'Cloudflare Edge Client Portal OS', width: 1280, height: 640 },
+    link: { label: 'Launch Live Client Portal Workspace', href: '/portal', external: false },
+  },
+  {
     id: 'case-study-google-ads-mastery',
     title: 'Google Ads & Telemetry Turnaround: Non-Profit & Healthcare',
     summary: 'Dual-track search engine turnaround: rescued an Ad Grants non-profit account to 14.00% CTR compliance and 193+ monthly conversions, while rebuilding broken booking telemetry for Resilience Therapy via GTM to achieve 40.00% local CTR at $2.97 CPC.',

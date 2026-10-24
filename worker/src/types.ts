@@ -3,6 +3,10 @@ export interface Env {
   ALLOWED_ORIGINS?: string
   DB: D1Database
   ASSETS_BUCKET: R2Bucket
+  TELEGRAM_BOT_TOKEN?: string
+  TELEGRAM_CHAT_ID?: string
+  NOTIFICATION_WEBHOOK_URL?: string
+  STRIPE_WEBHOOK_SECRET?: string
 }
 
 export interface ClientRecord {
