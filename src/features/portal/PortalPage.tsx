@@ -13,9 +13,9 @@ import { AdminDeckView } from './views/AdminDeckView'
 import { LiveTelemetryView } from './views/LiveTelemetryView'
 
 const PortalContent: React.FC = () => {
-  const { activeTab, loading, error } = usePortal()
+  const { activeTab, loading, error, client } = usePortal()
 
-  if (loading) {
+  if (loading && !client) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-12 text-center min-h-[50vh]">
         <div className="w-10 h-10 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4" />
@@ -25,7 +25,7 @@ const PortalContent: React.FC = () => {
     )
   }
 
-  if (error) {
+  if (error && !client) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-12 text-center min-h-[50vh]">
         <div className="w-12 h-12 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center justify-center mb-3 text-lg font-bold">

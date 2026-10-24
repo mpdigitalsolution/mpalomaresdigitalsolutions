@@ -122,9 +122,12 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }
 
   const setClientId = (newId: string) => {
+    if (newId === clientId) {
+      refreshData(false)
+      return
+    }
     setClientIdState(newId)
     localStorage.setItem('mp_portal_client_id', newId)
-    setLoading(true)
   }
 
   // Fetch list of available clients
