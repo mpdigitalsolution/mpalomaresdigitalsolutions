@@ -87,3 +87,19 @@ export interface PortalDashboardData {
   messages: ChatMessageRecord[]
   approvals: ApprovalRecord[]
 }
+
+
+export interface AgencyAdminData {
+  clients: ClientRecord[]
+  invoices: InvoiceRecord[]
+  contracts: ContractRecord[]
+  approvals: ApprovalRecord[]
+  metrics: {
+    activeClients: number
+    estimatedMRRCents: number
+    totalCollectedCents: number
+    totalOutstandingCents: number
+    pendingContracts: number
+    pendingApprovals: number
+  }
+}

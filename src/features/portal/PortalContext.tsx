@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import type {
   ClientRecord,
-  PortalDashboardData,
   OnboardingStepRecord,
   ContractRecord,
   InvoiceRecord,
   ChatMessageRecord,
   ApprovalRecord,
+  AgencyAdminData,
 } from './types'
 import {
   fetchClients,
@@ -16,28 +16,72 @@ import {
   sendChatMessage,
   decideDeliverableApproval,
   settleInvoice,
+  fetchAgencyAdminData,
+  createAdminInvoice,
+  createAdminDeliverable,
+  createAdminClient,
 } from './portalApi'
+
+export type PortalTab =
+  | 'overview'
+  | 'onboarding'
+  | 'contracts'
+  | 'invoices'
+  | 'chat'
+  | 'approvals'
+  | 'assets'
+  | 'telemetry'
+  | 'admin'
 
 interface PortalContextType {
   client: ClientRecord | null
   clientId: string
   setClientId: (id: string) => void
   availableClients: ClientRecord[]
+  portalRole: 'client' | 'admin'
+  setPortalRole: (role: 'client' | 'admin') => void
+  mobileNavOpen: boolean
+  setMobileNavOpen: (open: boolean) => void
   loading: boolean
   error: string | null
-  activeTab: 'overview' | 'onboarding' | 'contracts' | 'invoices' | 'chat' | 'approvals' | 'assets'
-  setActiveTab: (tab: 'overview' | 'onboarding' | 'contracts' | 'invoices' | 'chat' | 'approvals' | 'assets') => void
+  activeTab: PortalTab
+  setActiveTab: (tab: PortalTab) => void
   onboardingSteps: OnboardingStepRecord[]
   contracts: ContractRecord[]
   invoices: InvoiceRecord[]
   messages: ChatMessageRecord[]
   approvals: ApprovalRecord[]
+  adminData: AgencyAdminData | null
   refreshData: (silent?: boolean) => Promise<void>
   handleCompleteStep: (stepId: string, submittedData?: Record<string, unknown>) => Promise<void>
   handleSignContract: (contractId: string, signerName: string, signature: string) => Promise<void>
   handleSendMessage: (messageText: string) => Promise<void>
   handleApprovalDecision: (approvalId: string, status: 'approved' | 'revisions_requested', notes?: string) => Promise<void>
   handlePayInvoice: (invoiceId: string) => Promise<void>
+  handleCreateInvoice: (data: {
+    clientId: string
+    invoiceNumber: string
+    description: string
+    amountCents: number
+    dueDate: string
+    stripePaymentUrl?: string
+  }) => Promise<void>
+  handleCreateDeliverable: (data: {
+    clientId: string
+    deliverableName: string
+    deliverableType: string
+    version: string
+    description: string
+    previewUrl?: string
+  }) => Promise<void>
+  handleCreateClient: (data: {
+    name: string
+    company: string
+    email: string
+    passkey: string
+    projectName: string
+    tier: string
+  }) => Promise<void>
 }
 
 const PortalContext = createContext<PortalContextType | null>(null)
@@ -46,18 +90,36 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [clientId, setClientIdState] = useState<string>(() => {
     return localStorage.getItem('mp_portal_client_id') || 'client_demo'
   })
+  const [portalRole, setPortalRoleState] = useState<'client' | 'admin'>(() => {
+    return (localStorage.getItem('mp_portal_role') as 'client' | 'admin') || 'client'
+  })
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [availableClients, setAvailableClients] = useState<ClientRecord[]>([])
-  const [activeTab, setActiveTab] = useState<
-    'overview' | 'onboarding' | 'contracts' | 'invoices' | 'chat' | 'approvals' | 'assets'
-  >('overview')
+  const [activeTab, setActiveTabState] = useState<PortalTab>('overview')
   const [client, setClient] = useState<ClientRecord | null>(null)
   const [onboardingSteps, setOnboardingSteps] = useState<OnboardingStepRecord[]>([])
   const [contracts, setContracts] = useState<ContractRecord[]>([])
   const [invoices, setInvoices] = useState<InvoiceRecord[]>([])
   const [messages, setMessages] = useState<ChatMessageRecord[]>([])
   const [approvals, setApprovals] = useState<ApprovalRecord[]>([])
+  const [adminData, setAdminData] = useState<AgencyAdminData | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+
+  const setPortalRole = (role: 'client' | 'admin') => {
+    setPortalRoleState(role)
+    localStorage.setItem('mp_portal_role', role)
+    if (role === 'admin') {
+      setActiveTabState('admin')
+    } else if (activeTab === 'admin') {
+      setActiveTabState('overview')
+    }
+  }
+
+  const setActiveTab = (tab: PortalTab) => {
+    setActiveTabState(tab)
+    setMobileNavOpen(false) // auto close on mobile tab click
+  }
 
   const setClientId = (newId: string) => {
     setClientIdState(newId)
@@ -76,13 +138,17 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     try {
       if (!silent) setLoading(true)
       setError(null)
-      const data: PortalDashboardData = await fetchPortalDashboard(clientId)
-      setClient(data.client)
-      setOnboardingSteps(data.onboardingSteps || [])
-      setContracts(data.contracts || [])
-      setInvoices(data.invoices || [])
-      setMessages(data.messages || [])
-      setApprovals(data.approvals || [])
+      const [dashData, aData] = await Promise.all([
+        fetchPortalDashboard(clientId),
+        fetchAgencyAdminData().catch(() => null),
+      ])
+      setClient(dashData.client)
+      setOnboardingSteps(dashData.onboardingSteps || [])
+      setContracts(dashData.contracts || [])
+      setInvoices(dashData.invoices || [])
+      setMessages(dashData.messages || [])
+      setApprovals(dashData.approvals || [])
+      if (aData) setAdminData(aData)
     } catch (err: unknown) {
       console.error('Portal refresh error:', err)
       if (!silent) {
@@ -150,11 +216,13 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   // Chat message send
   const handleSendMessage = async (messageText: string) => {
     if (!client || !messageText.trim()) return
+    const sender = portalRole === 'admin' ? 'agency' : 'client'
+    const senderName = portalRole === 'admin' ? 'Marlon Palomares' : client.name
     const tempMsg: ChatMessageRecord = {
       id: `temp_${Date.now()}`,
       client_id: client.id,
-      sender: 'client',
-      sender_name: client.name,
+      sender,
+      sender_name: senderName,
       message_text: messageText,
       attachment_url: null,
       read_at: null,
@@ -162,7 +230,7 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
     setMessages((prev) => [...prev, tempMsg])
     try {
-      const realMsg = await sendChatMessage(client.id, 'client', client.name, messageText)
+      const realMsg = await sendChatMessage(client.id, sender, senderName, messageText)
       setMessages((prev) => prev.map((m) => (m.id === tempMsg.id ? realMsg : m)))
     } catch (err) {
       console.error(err)
@@ -199,7 +267,7 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }
 
-  // Settle invoice (Task 4)
+  // Settle invoice
   const handlePayInvoice = async (invoiceId: string) => {
     if (!client) return
     const now = new Date().toISOString()
@@ -215,6 +283,44 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }
 
+  // Admin Actions
+  const handleCreateInvoice = async (data: {
+    clientId: string
+    invoiceNumber: string
+    description: string
+    amountCents: number
+    dueDate: string
+    stripePaymentUrl?: string
+  }) => {
+    await createAdminInvoice(data)
+    await refreshData(true)
+  }
+
+  const handleCreateDeliverable = async (data: {
+    clientId: string
+    deliverableName: string
+    deliverableType: string
+    version: string
+    description: string
+    previewUrl?: string
+  }) => {
+    await createAdminDeliverable(data)
+    await refreshData(true)
+  }
+
+  const handleCreateClient = async (data: {
+    name: string
+    company: string
+    email: string
+    passkey: string
+    projectName: string
+    tier: string
+  }) => {
+    const created = await createAdminClient(data)
+    setAvailableClients((prev) => [created, ...prev])
+    await refreshData(true)
+  }
+
   return (
     <PortalContext.Provider
       value={{
@@ -222,6 +328,10 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         clientId,
         setClientId,
         availableClients,
+        portalRole,
+        setPortalRole,
+        mobileNavOpen,
+        setMobileNavOpen,
         loading,
         error,
         activeTab,
@@ -231,12 +341,16 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         invoices,
         messages,
         approvals,
+        adminData,
         refreshData,
         handleCompleteStep,
         handleSignContract,
         handleSendMessage,
         handleApprovalDecision,
         handlePayInvoice,
+        handleCreateInvoice,
+        handleCreateDeliverable,
+        handleCreateClient,
       }}
     >
       {children}

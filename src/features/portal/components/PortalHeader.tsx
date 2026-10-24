@@ -3,7 +3,7 @@ import { usePortal } from '../PortalContext'
 import { loginWithPasskey } from '../portalApi'
 
 export const PortalHeader: React.FC = () => {
-  const { client, clientId, setClientId, availableClients, loading, refreshData } = usePortal()
+  const { client, clientId, setClientId, availableClients, loading, refreshData, setMobileNavOpen } = usePortal()
   const [switcherOpen, setSwitcherOpen] = useState(false)
   const [passkeyInput, setPasskeyInput] = useState('')
   const [loginError, setLoginError] = useState<string | null>(null)
@@ -28,13 +28,24 @@ export const PortalHeader: React.FC = () => {
 
   return (
     <>
-      <header className="h-16 border-b border-zinc-800/80 bg-zinc-950/70 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30">
-        {/* Left: Active Project Meta + Switcher Trigger */}
-        <button
-          onClick={() => setSwitcherOpen(true)}
-          className="flex items-center gap-3 text-left group p-1 -m-1 rounded-xl hover:bg-zinc-900/60 transition-colors"
-          title="Click to Switch Client Workspace"
-        >
+      <header className="h-16 border-b border-zinc-800/80 bg-zinc-950/70 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30">
+        {/* Left: Mobile Drawer Trigger + Active Project Meta */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <button
+            onClick={() => setMobileNavOpen(true)}
+            className="md:hidden p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white transition-colors"
+            title="Open Navigation Menu"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
+          <button
+            onClick={() => setSwitcherOpen(true)}
+            className="flex items-center gap-2.5 text-left group p-1 -m-1 rounded-xl hover:bg-zinc-900/60 transition-colors"
+            title="Click to Switch Client Workspace"
+          >
           {client?.avatar_url ? (
             <img
               src={client.avatar_url}
@@ -63,8 +74,9 @@ export const PortalHeader: React.FC = () => {
             </p>
           </div>
         </button>
+      </div>
 
-        {/* Right: Cloudflare Edge Status & Refresh */}
+      {/* Right: Cloudflare Edge Status & Refresh */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => setSwitcherOpen(true)}

@@ -9,13 +9,15 @@ import { InvoicesView } from './views/InvoicesView'
 import { ChatView } from './views/ChatView'
 import { ApprovalsView } from './views/ApprovalsView'
 import { AssetHubView } from './views/AssetHubView'
+import { AdminDeckView } from './views/AdminDeckView'
+import { LiveTelemetryView } from './views/LiveTelemetryView'
 
 const PortalContent: React.FC = () => {
   const { activeTab, loading, error } = usePortal()
 
   if (loading) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
+      <div className="flex-1 flex flex-col items-center justify-center p-12 text-center min-h-[50vh]">
         <div className="w-10 h-10 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4" />
         <h3 className="text-sm font-semibold text-zinc-200">Connecting to Cloudflare Edge...</h3>
         <p className="text-xs text-zinc-500 font-mono mt-1">Authenticating D1 multi-tenant session</p>
@@ -25,7 +27,7 @@ const PortalContent: React.FC = () => {
 
   if (error) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
+      <div className="flex-1 flex flex-col items-center justify-center p-12 text-center min-h-[50vh]">
         <div className="w-12 h-12 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center justify-center mb-3 text-lg font-bold">
           !
         </div>
@@ -36,7 +38,7 @@ const PortalContent: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 p-6 lg:p-8 max-w-7xl mx-auto w-full">
+    <div className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
       {activeTab === 'overview' && <OverviewDashboardView />}
       {activeTab === 'onboarding' && <OnboardingView />}
       {activeTab === 'contracts' && <ContractsView />}
@@ -44,6 +46,56 @@ const PortalContent: React.FC = () => {
       {activeTab === 'chat' && <ChatView />}
       {activeTab === 'approvals' && <ApprovalsView />}
       {activeTab === 'assets' && <AssetHubView />}
+      {activeTab === 'telemetry' && <LiveTelemetryView />}
+      {activeTab === 'admin' && <AdminDeckView />}
+    </div>
+  )
+}
+
+const PortalInner: React.FC = () => {
+  const { mobileNavOpen, setMobileNavOpen } = usePortal()
+
+  return (
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col md:flex-row antialiased relative">
+      {/* Desktop Sidebar (hidden on small screens) */}
+      <div className="hidden md:flex shrink-0">
+        <PortalSidebar />
+      </div>
+
+      {/* Mobile Slide-Over Navigation Drawer */}
+      {mobileNavOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          {/* Backdrop Blur */}
+          <div
+            onClick={() => setMobileNavOpen(false)}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+          />
+
+          {/* Drawer content */}
+          <div className="relative w-72 max-w-[80vw] bg-zinc-950 h-full flex flex-col shadow-2xl z-10 border-r border-zinc-800">
+            <div className="flex justify-end p-2 border-b border-zinc-800/60">
+              <button
+                onClick={() => setMobileNavOpen(false)}
+                className="p-2 text-zinc-400 hover:text-white"
+                title="Close Navigation"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              <PortalSidebar />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <PortalHeader />
+        <main className="flex-1 overflow-y-auto pb-12">
+          <PortalContent />
+        </main>
+      </div>
     </div>
   )
 }
@@ -51,15 +103,7 @@ const PortalContent: React.FC = () => {
 export const PortalPage: React.FC = () => {
   return (
     <PortalProvider>
-      <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col md:flex-row antialiased">
-        <PortalSidebar />
-        <div className="flex-1 flex flex-col min-w-0">
-          <PortalHeader />
-          <main className="flex-1 overflow-y-auto">
-            <PortalContent />
-          </main>
-        </div>
-      </div>
+      <PortalInner />
     </PortalProvider>
   )
 }

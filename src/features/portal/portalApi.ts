@@ -130,3 +130,74 @@ export async function settleInvoice(clientId: string, invoiceId: string): Promis
   const data = await res.json()
   return data.invoice
 }
+
+
+export async function fetchAgencyAdminData(): Promise<import('./types').AgencyAdminData> {
+  const res = await fetch(`${WORKER_BASE}/api/portal/admin/overview`)
+  if (!res.ok) throw new Error('Failed to load agency admin data')
+  return res.json()
+}
+
+export async function createAdminInvoice(data: {
+  clientId: string
+  invoiceNumber: string
+  description: string
+  amountCents: number
+  dueDate: string
+  stripePaymentUrl?: string
+}): Promise<InvoiceRecord> {
+  const res = await fetch(`${WORKER_BASE}/api/portal/admin/invoice`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) throw new Error('Failed to issue invoice')
+  const json = await res.json()
+  return json.invoice
+}
+
+export async function createAdminDeliverable(data: {
+  clientId: string
+  deliverableName: string
+  deliverableType: string
+  version: string
+  description: string
+  previewUrl?: string
+}): Promise<import('./types').ApprovalRecord> {
+  const res = await fetch(`${WORKER_BASE}/api/portal/admin/deliverable`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) throw new Error('Failed to publish deliverable')
+  const json = await res.json()
+  return json.deliverable
+}
+
+export async function createAdminClient(data: {
+  name: string
+  company: string
+  email: string
+  passkey: string
+  projectName: string
+  tier: string
+}): Promise<ClientRecord> {
+  const res = await fetch(`${WORKER_BASE}/api/portal/admin/client`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) throw new Error('Failed to onboard client')
+  const json = await res.json()
+  return json.client
+}
+
+export async function simulateTestWebhook(payload: Record<string, unknown>) {
+  const res = await fetch(`${WORKER_BASE}/api/portal/webhook/test`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) throw new Error('Webhook simulation failed')
+  return res.json()
+}
