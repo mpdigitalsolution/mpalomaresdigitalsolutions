@@ -9,6 +9,7 @@ export interface ClientRecord {
   tier: string
   status: string
   created_at: string
+  invite_sent_at?: string | null
 }
 
 export interface OnboardingStepRecord {

@@ -13,6 +13,7 @@ import {
   createInvoice,
   createDeliverable,
   createClientWorkspace,
+  recordClientInviteSent,
   getAgencyAdminData,
 } from './db'
 
@@ -760,6 +761,87 @@ export default {
 
         const newClient = await createClientWorkspace(env.DB, body)
         return jsonResponse({ success: true, client: newClient })
+      } catch (err: unknown) {
+        return jsonResponse({ error: String(err) }, 500)
+      }
+    }
+
+    // 12b. Agency Admin: Dispatch 1-Click Onboarding Email via Resend & Record to D1
+    if (url.pathname === '/api/portal/admin/send-invite' && request.method === 'POST') {
+      try {
+        const body = (await request.json()) as { clientId?: string }
+        if (!body.clientId) {
+          return jsonResponse({ error: 'Missing clientId parameter' }, 400)
+        }
+
+        const client = await getClientById(env.DB, body.clientId)
+        if (!client) {
+          return jsonResponse({ error: 'Client workspace not found' }, 404)
+        }
+
+        const oneClickUrl = `https://mpalomaresdigitalsolutions.vercel.app/portal?client=${client.id}&key=${encodeURIComponent(client.passkey)}`
+        const subject = `🚀 Your Dedicated Operations Workspace is Ready - ${client.company}`
+
+        const html = `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 36px 28px; background: #09090b; color: #f4f4f5; border-radius: 18px; border: 1px solid #27272a;">
+            <div style="margin-bottom: 24px;">
+              <span style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-family: monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 9999px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                MP DIGITAL SOLUTIONS • CLIENT OPERATIONS OS
+              </span>
+            </div>
+
+            <h1 style="font-size: 22px; font-weight: 700; color: #ffffff; margin-bottom: 12px; letter-spacing: -0.02em;">
+              Welcome, ${client.name}!
+            </h1>
+
+            <p style="font-size: 14px; color: #a1a1aa; line-height: 1.6; margin-bottom: 24px;">
+              Your dedicated client operations workspace for <strong>${client.company}</strong> is fully provisioned on our edge infrastructure. You can review your onboarding checklist, sign project agreements, inspect live deliverables, and chat directly with our engineering desk.
+            </p>
+
+            <div style="margin-bottom: 28px;">
+              <a href="${oneClickUrl}" style="display: inline-block; background: #10b981; color: #022c22; font-weight: 700; font-size: 14px; text-decoration: none; padding: 14px 32px; border-radius: 12px; box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35);">
+                Launch Private Workspace (1-Click) →
+              </a>
+            </div>
+
+            <div style="background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 18px; margin-bottom: 28px;">
+              <div style="font-size: 11px; font-family: monospace; text-transform: uppercase; color: #71717a; margin-bottom: 6px;">Workspace Passkey</div>
+              <div style="font-size: 20px; font-family: monospace; font-weight: 700; color: #34d399; letter-spacing: 0.05em;">${client.passkey}</div>
+              <div style="font-size: 12px; color: #a1a1aa; margin-top: 6px;">Workspace ID: <code style="color: #e4e4e7;">${client.id}</code></div>
+              <div style="font-size: 11px; color: #71717a; margin-top: 4px;">Tier: ${client.tier}</div>
+            </div>
+
+            <p style="font-size: 12px; color: #71717a; border-top: 1px solid #27272a; padding-top: 20px; margin: 0; line-height: 1.5;">
+              No manual account creation required. Clicking the 1-click launch button above will automatically authenticate you into your isolated workspace.
+              <br><br>
+              <strong>Marlon Palomares</strong><br>
+              Founder & Lead Systems Architect • Marlon Palomares Digital Solutions
+            </p>
+          </div>
+        `
+
+        // 1. Dispatch email via Resend
+        const emailRes = await sendEmailViaResend(env, {
+          to: client.email,
+          subject,
+          html,
+        })
+
+        // 2. Record invite_sent_at in D1 and insert activity log to chat_messages
+        const inviteSentAt = await recordClientInviteSent(env.DB, client.id, client.email)
+
+        // 3. Dispatch Telegram alert to Marlon
+        await dispatchOutboundNotification(
+          env,
+          `🚀 <b>Onboarding Invite Dispatched via Resend</b>\nClient: <b>${client.name}</b> (${client.company})\nEmail: <code>${client.email}</code>\nWorkspace: <code>${client.id}</code>`
+        )
+
+        return jsonResponse({
+          success: true,
+          emailId: emailRes.id || 'simulated',
+          inviteSentAt,
+          message: `Onboarding email with 1-click access link dispatched to ${client.email}.`,
+        })
       } catch (err: unknown) {
         return jsonResponse({ error: String(err) }, 500)
       }

@@ -305,6 +305,30 @@ export async function createClientWorkspace(
   }
 }
 
+export async function recordClientInviteSent(
+  db: D1Database,
+  clientId: string,
+  clientEmail: string
+): Promise<string> {
+  const now = new Date().toISOString()
+  const msgId = `msg_${Date.now().toString(36)}`
+
+  await db.batch([
+    db.prepare('UPDATE clients SET invite_sent_at = ? WHERE id = ?').bind(now, clientId),
+    db.prepare(
+      `INSERT INTO chat_messages (id, client_id, sender_name, role, content, created_at)
+       VALUES (?, ?, 'Marlon Palomares', 'assistant', ?, ?)`
+    ).bind(
+      msgId,
+      clientId,
+      `✉️ Onboarding invitation email with 1-click access link dispatched to ${clientEmail}.`,
+      now
+    ),
+  ])
+
+  return now
+}
+
 export async function getAgencyAdminData(db: D1Database) {
   const [clientsRes, invoicesRes, contractsRes, approvalsRes] = await db.batch([
     db.prepare('SELECT * FROM clients ORDER BY created_at DESC'),

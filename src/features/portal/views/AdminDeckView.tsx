@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { usePortal } from '../PortalContext'
+import { sendClientOnboardingInvite } from '../portalApi'
 
 export const AdminDeckView: React.FC = () => {
   const {
@@ -10,6 +11,7 @@ export const AdminDeckView: React.FC = () => {
     handleCreateClient,
     setClientId,
     setActiveTab,
+    refreshData,
   } = usePortal()
 
   // Modal states
@@ -35,6 +37,28 @@ export const AdminDeckView: React.FC = () => {
     passkey: '',
     clientId: '',
   })
+
+  // 1-Click Invite Email Dispatch states
+  const [sendingInviteEmail, setSendingInviteEmail] = useState(false)
+  const [inviteEmailSuccess, setInviteEmailSuccess] = useState<string | null>(null)
+  const [inviteEmailError, setInviteEmailError] = useState<string | null>(null)
+
+  const handleSendInviteEmail = async () => {
+    if (!activeInvite.clientId) return
+    setSendingInviteEmail(true)
+    setInviteEmailSuccess(null)
+    setInviteEmailError(null)
+
+    try {
+      const res = await sendClientOnboardingInvite(activeInvite.clientId)
+      setInviteEmailSuccess(res.message || `Onboarding email dispatched to ${activeInvite.email}!`)
+      refreshData(true)
+    } catch (err: unknown) {
+      setInviteEmailError(err instanceof Error ? err.message : 'Failed to send onboarding email.')
+    } finally {
+      setSendingInviteEmail(false)
+    }
+  }
 
   // Invoice Form
   const [invForm, setInvForm] = useState({
@@ -109,6 +133,8 @@ export const AdminDeckView: React.FC = () => {
       await handleCreateClient(cliForm)
       setClientModal(false)
       // Open Invite & Email Template modal
+      setInviteEmailSuccess(null)
+      setInviteEmailError(null)
       setActiveInvite({
         name: cliForm.name,
         company: cliForm.company,
@@ -254,11 +280,13 @@ export const AdminDeckView: React.FC = () => {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => {
+                            setInviteEmailSuccess(null)
+                            setInviteEmailError(null)
                             setActiveInvite({
                               name: c.name,
                               company: c.company,
                               email: c.email,
-                              passkey: c.passkey || 'solis2026',
+                              passkey: c.passkey || '',
                               clientId: c.id,
                             })
                             setInviteModal(true)
@@ -639,6 +667,56 @@ export const AdminDeckView: React.FC = () => {
                   {copiedLink ? 'Copied!' : 'Copy Link'}
                 </button>
               </div>
+            </div>
+
+            {/* 1-Click Direct Email Dispatch via Resend */}
+            <div className="mt-4 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div>
+                  <div className="text-xs font-bold text-white flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>Send Onboarding Email via Resend</span>
+                  </div>
+                  <p className="text-[11px] text-zinc-400 mt-0.5">
+                    Dispatches the 1-click login link directly to <code className="text-emerald-300 font-mono">{activeInvite.email || 'client@company.com'}</code> and logs invite timestamp in Cloudflare D1.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleSendInviteEmail}
+                  disabled={sendingInviteEmail || !activeInvite.email}
+                  className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs transition-colors shrink-0 disabled:opacity-50 flex items-center gap-2 shadow-lg shadow-emerald-500/20"
+                >
+                  {sendingInviteEmail ? (
+                    <>
+                      <span className="w-3.5 h-3.5 border-2 border-zinc-950/30 border-t-zinc-950 rounded-full animate-spin" />
+                      <span>Dispatching...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-3.5 h-3.5 text-zinc-950" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                      </svg>
+                      <span>Send Email to Client</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {inviteEmailSuccess && (
+                <div className="mt-3 p-2.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-mono flex items-center gap-2">
+                  <svg className="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>{inviteEmailSuccess}</span>
+                </div>
+              )}
+
+              {inviteEmailError && (
+                <div className="mt-3 p-2.5 rounded-lg bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-mono">
+                  {inviteEmailError}
+                </div>
+              )}
             </div>
 
             {/* Ready-to-Send Email Template Preview */}

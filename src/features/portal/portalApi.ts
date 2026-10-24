@@ -69,6 +69,21 @@ export async function recoverCredentials(
   return res.json()
 }
 
+export async function sendClientOnboardingInvite(
+  clientId: string
+): Promise<{ success: boolean; emailId: string; inviteSentAt: string; message: string }> {
+  const res = await fetch(`${WORKER_BASE}/api/portal/admin/send-invite`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ clientId }),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.error || 'Failed to dispatch onboarding email.')
+  }
+  return res.json()
+}
+
 export async function completeOnboardingStep(
   clientId: string,
   stepId: string,
