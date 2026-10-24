@@ -12,3 +12,7 @@ scripts/out/
 
 .vercel
 bun.lock
+
+# Credentials & Secrets
+Credentials/
+*Secret*.txt
