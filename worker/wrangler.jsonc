@@ -6,5 +6,18 @@
   "account_id": "337676b90c8603acfc4089c065674a50",
   "observability": {
     "enabled": true
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "mpalomares-portal-db",
+      "database_id": "11784229-bed4-4ff5-aae7-968dcca2e833"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "ASSETS_BUCKET",
+      "bucket_name": "my-portfolio-assets"
+    }
+  ]
 }

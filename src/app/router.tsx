@@ -5,6 +5,7 @@ import { HomePage } from '@/features/home/HomePage'
 import { ShowcasePage } from '@/features/showcase/ShowcasePage'
 import { LegalPage } from '@/features/legal/LegalPage'
 import { ProofPage } from '@/features/proof/ProofPage'
+import { PortalPage } from '@/features/portal/PortalPage'
 import { AppShell } from './AppShell'
 import { RouteStage } from './RouteStage'
 import { notFoundTitle, pages, type PageRoute } from './routes'
@@ -41,8 +42,15 @@ function routeFor(page: PageRoute): RouteObject {
 /** Every route comes from the registry in routes.ts. */
 export const router = createBrowserRouter([
   {
+    path: '/portal',
+    element: <PortalPage />,
+  },
+  {
     path: '/',
     element: <AppShell />,
-    children: [...pages.map(routeFor), { path: '*', element: <RouteStage title={notFoundTitle} label="Page not found" /> }],
+    children: [
+      ...pages.filter((p) => p.id !== 'portal').map(routeFor),
+      { path: '*', element: <RouteStage title={notFoundTitle} label="Page not found" /> },
+    ],
   },
 ])

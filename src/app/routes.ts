@@ -64,6 +64,16 @@ export const pages: PageRoute[] = [
   },
   {
     kind: 'page',
+    id: 'portal',
+    path: '/portal',
+    label: 'Client Portal',
+    title: `Client Portal | ${SUFFIX}`,
+    description: 'Private client portal for onboarding, contract e-signing, invoice settlements, deliverable approvals, and 2-way direct messaging.',
+    icon: ShieldCheck,
+    group: 'menu',
+  },
+  {
+    kind: 'page',
     id: 'work',
     draft: true,
     path: '/work',
