@@ -3,6 +3,7 @@ import { Outlet, ScrollRestoration } from 'react-router'
 import { Sidebar } from '@/components/sidebar/Sidebar'
 import { MobileNav } from '@/components/drawer/MobileNav'
 import { SearchPalette } from '@/components/search/SearchPalette'
+import { PortfolioChat } from '@/components/chat/PortfolioChat'
 import { SignalFlowBackground } from '@/components/background/SignalFlowBackground'
 import { SiteFooter } from '@/components/page/SiteFooter'
 import { DESKTOP_QUERY, useMediaQuery } from '@/hooks/use-media-query'
@@ -51,6 +52,7 @@ function Shell() {
         </div>
       </main>
       <SearchPalette />
+      <PortfolioChat />
       <ScrollRestoration />
     </div>
   )
