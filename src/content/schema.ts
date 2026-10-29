@@ -88,6 +88,8 @@ export type AppBuild = {
   summary: string
   status?: BuildStatus
   image: Image
+  /** Optional extra screenshots shown in the detail gallery. */
+  gallery?: Image[]
   href?: string
 }
 

@@ -41,6 +41,18 @@ export const featuredProject = {
 
 export const caseStudies: { id: string; title: string; summary: string; link: LinkRef; image?: Image }[] = [
   {
+    id: 'case-study-outreach-command-center',
+    title: 'AI Cold Outreach Command Center (Google Apps Script + DeepSeek)',
+    summary: 'Built a zero-infrastructure cold email OS entirely inside Google Sheets and Apps Script. DeepSeek API generates a unique AI hook per prospect based on their company growth signal. Gmail sends 4-touch sequences automatically. A live web app dashboard tracks funnel velocity, sequence engagement by touchpoint, and per-prospect status — 20 emails dispatched with 0 errors at 4:21 AM.',
+    image: {
+      src: '/images/app-script/outreach-dashboard.png',
+      alt: 'Outreach Command Center — Live Conversion Funnel Dashboard',
+      width: 1560,
+      height: 900,
+    },
+    link: { label: 'View Apps & Script Builds', href: '/work/apps', external: false },
+  },
+  {
     id: 'case-study-client-portal',
     title: 'Cloudflare Edge Client Operations Portal OS (D1 + R2 + React 19)',
     summary: 'Architected and deployed an edge-native enterprise client operations OS on Cloudflare Workers, D1 distributed SQL, and R2 object storage. Features 1-click passkey authentication, interactive legal signature canvas (ESIGN compliant), Stripe billing webhook auto-settlement, real-time 2-way client chat, deliverable approvals queue, and sub-25ms edge telemetry.',
@@ -390,6 +402,46 @@ export const apps: AppBuild[] = [
       height: 752,
     },
     href: '/demos/extensions/mgems-suite.html',
+  },
+  {
+    id: 'outreach-command-center',
+    name: 'AI Cold Email Outreach Command Center',
+    kind: 'Google Apps Script',
+    tagline: 'DeepSeek-powered personalized cold outreach at scale — inside Google Sheets.',
+    summary: 'Full outreach OS built in Google Apps Script. Scrapes 20 logistics prospects, generates AI-personalized hooks via DeepSeek API per company, sends sequenced cold emails (Initial → Day 7 Follow-up → Day 14 Case Study → Day 21 Breakup) via Gmail, and surfaces a live Google Apps Script web app dashboard with funnel conversion metrics, sequence engagement donut chart, and real-time prospect status tracking — all with zero external services.',
+    status: 'Live',
+    image: {
+      src: '/images/app-script/outreach-dashboard.png',
+      alt: 'Outreach Command Center — Live Conversion Funnel Dashboard',
+      width: 1560,
+      height: 900,
+    },
+    gallery: [
+      {
+        src: '/images/app-script/outreach-dashboard.png',
+        alt: 'Outreach Command Center Dashboard — Lead Conversion Funnel & Sequence Engagement',
+        width: 1560,
+        height: 900,
+      },
+      {
+        src: '/images/app-script/outreach-email-sent.png',
+        alt: 'Live Gmail inbox — AI-personalized cold email sent to Intelligent Logistics',
+        width: 1560,
+        height: 900,
+      },
+      {
+        src: '/images/app-script/outreach-prospect-sheet.png',
+        alt: 'Google Sheets CRM — 20 prospects with DeepSeek hooks and Done Send status',
+        width: 1560,
+        height: 900,
+      },
+      {
+        src: '/images/app-script/outreach-apps-script-editor.png',
+        alt: 'Google Apps Script editor — EMAIL AUTOMATION.gs with live execution log (20 sent, 0 errors)',
+        width: 1560,
+        height: 900,
+      },
+    ],
   },
   {
     id: 'gads-appscript-keyword-extractor',
