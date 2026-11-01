@@ -232,6 +232,7 @@
 }
 
 .pc__close {
+  margin-left: auto;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -212,7 +212,7 @@ export function PortfolioChat() {
               <span className="pc__avatar">
                 <img
                   src="/images/live-chatbot.svg"
-                  alt="Marlon's AI Concierge"
+                  alt="Live Chatbot"
                   width={28}
                   height={28}
                   className="pc__avatar-img"
@@ -221,10 +221,6 @@ export function PortfolioChat() {
                 />
               </span>
               <span className="pc__status-dot" aria-hidden />
-            </div>
-            <div className="pc__title-box">
-              <h3 className="pc__title">Marlon's AI Concierge</h3>
-              <p className="pc__subtitle">Cloudflare Worker · DeepSeek AI</p>
             </div>
             <button
               type="button"
