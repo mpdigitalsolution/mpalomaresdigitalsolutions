@@ -32,6 +32,8 @@ export const site = {
   avatar: { src: '/images/profile/me.png', alt: 'Profile photo', width: 400, height: 400 },
   /** The sidebar picture (112px, 44px on the rail). */
   avatarSmall: '/images/profile/me.png',
+  /** Direct Google Calendar booking link for free audits and strategy sessions. */
+  calendarBookingUrl: 'https://calendar.app.google/c9PpC4ckkX2ZWwJc7',
 } as const
 
 /** A credential shown in About and the sidebar check. Delete the `image` to show it without a badge. */
@@ -56,6 +58,7 @@ export const externalLinks = {
   resource: 'https://github.com/mpdigitalsolution',
   showcase: '/demos/ghl/crm-architecture.html',
   company: 'https://www.linkedin.com/in/marlonpalomares-googleads/',
+  calendarBooking: 'https://calendar.app.google/c9PpC4ckkX2ZWwJc7',
 } as const
 
 export function mailtoHref(): string {

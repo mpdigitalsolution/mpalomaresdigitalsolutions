@@ -1,4 +1,4 @@
-import { CaretDown, EnvelopeSimple } from '@phosphor-icons/react'
+import { CalendarCheck, CaretDown, EnvelopeSimple } from '@phosphor-icons/react'
 import { PageMeta } from '@/app/PageMeta'
 import type { PageRoute } from '@/app/routes'
 import { PageHeader } from '@/components/page/PageHeader'
@@ -35,8 +35,17 @@ function ContactSheet({ nested }: { nested: boolean }) {
           ))}
         </div>
         <div className="ct-direct">
+          <a
+            className="ct-cal"
+            href={site.calendarBookingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <CalendarCheck size={16} weight="fill" aria-hidden="true" />
+            Book a Free Audit
+          </a>
           <a className="ct-mail" href={mailtoHref()}>
-            <EnvelopeSimple size={16} weight="fill" aria-hidden />
+            <EnvelopeSimple size={16} weight="fill" aria-hidden="true" />
             {site.email}
           </a>
           <SocialLinks />

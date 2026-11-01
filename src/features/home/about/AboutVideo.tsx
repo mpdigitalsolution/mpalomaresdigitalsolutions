@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { Pause, Play } from '@phosphor-icons/react'
+import { ArrowUpRight, CalendarCheck, Pause, Play } from '@phosphor-icons/react'
+import { site } from '@/content/site'
 import { useMediaQuery } from '@/hooks/use-media-query'
 import './about-video.css'
 
@@ -103,28 +104,61 @@ export function AboutVideo() {
           onPause={() => setIsPlaying(false)}
         />
 
-        {/* Floating Controls Bar */}
-        <div className="ab-video-controls" role="group" aria-label="Video controls">
-          <button
-            type="button"
-            className="ab-video-btn"
-            onClick={togglePlay}
-            aria-label={isPlaying ? 'Pause video' : 'Play video'}
-            title={isPlaying ? 'Pause' : 'Play'}
+        {/* Floating Controls & Direct CTA Bar */}
+        <div className="ab-video-bottom-bar">
+          <a
+            href={site.calendarBookingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ab-video-pill-cta"
+            aria-label="Book a free Audit on Google Calendar"
           >
-            {isPlaying ? <Pause size={15} weight="fill" aria-hidden /> : <Play size={15} weight="fill" aria-hidden />}
-          </button>
+            <CalendarCheck size={14} weight="fill" aria-hidden="true" />
+            <span>Book Free Audit</span>
+            <ArrowUpRight size={12} weight="bold" aria-hidden="true" />
+          </a>
 
-          <button
-            type="button"
-            className="ab-video-btn"
-            onClick={toggleMute}
-            aria-label={isMuted ? 'Unmute video' : 'Mute video'}
-            title={isMuted ? 'Unmute' : 'Mute'}
-          >
-            {isMuted ? <SoundOffIcon /> : <SoundOnIcon />}
-          </button>
+          <div className="ab-video-controls" role="group" aria-label="Video controls">
+            <button
+              type="button"
+              className="ab-video-btn"
+              onClick={togglePlay}
+              aria-label={isPlaying ? 'Pause video' : 'Play video'}
+              title={isPlaying ? 'Pause' : 'Play'}
+            >
+              {isPlaying ? <Pause size={14} weight="fill" aria-hidden /> : <Play size={14} weight="fill" aria-hidden />}
+            </button>
+
+            <button
+              type="button"
+              className="ab-video-btn"
+              onClick={toggleMute}
+              aria-label={isMuted ? 'Unmute video' : 'Mute video'}
+              title={isMuted ? 'Unmute' : 'Mute'}
+            >
+              {isMuted ? <SoundOffIcon /> : <SoundOnIcon />}
+            </button>
+          </div>
         </div>
+      </div>
+
+      {/* Prominent Booking Action Card Below Video */}
+      <div className="ab-video-action">
+        <a
+          href={site.calendarBookingUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ab-video-book-btn"
+        >
+          <CalendarCheck size={18} weight="fill" aria-hidden="true" />
+          <span>Book a Free Audit</span>
+          <ArrowUpRight size={16} weight="bold" aria-hidden="true" />
+        </a>
+        <p className="ab-video-book-sub">
+          <span>Google Calendar 1-on-1</span>
+          <span className="ab-video-book-sep" aria-hidden="true">•</span>
+          <span>Zero Obligation</span>
+        </p>
       </div>
     </div>
   )
