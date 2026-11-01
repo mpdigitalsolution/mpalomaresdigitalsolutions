@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowUpRight, CalendarCheck, Pause, Play } from '@phosphor-icons/react'
-import { site } from '@/content/site'
+import { Pause, Play } from '@phosphor-icons/react'
 import { useMediaQuery } from '@/hooks/use-media-query'
 import './about-video.css'
 
@@ -82,10 +81,11 @@ export function AboutVideo() {
 
   return (
     <div className="ab-video-wrap" data-reveal>
+      <div className="ab-video-glow" aria-hidden="true" />
       <div className="ab-video-frame">
         {/* Floating Identity Badge */}
         <div className="ab-video-badge">
-          <span className="ab-video-dot" aria-hidden />
+          <span className="ab-video-dot" aria-hidden="true" />
           <span className="ab-video-title">Marlon Palomares</span>
           <span className="ab-video-role">Founder</span>
         </div>
@@ -104,19 +104,12 @@ export function AboutVideo() {
           onPause={() => setIsPlaying(false)}
         />
 
-        {/* Floating Controls & Direct CTA Bar */}
+        {/* Floating Controls Bar at Bottom */}
         <div className="ab-video-bottom-bar">
-          <a
-            href={site.calendarBookingUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ab-video-pill-cta"
-            aria-label="Book a free Audit on Google Calendar"
-          >
-            <CalendarCheck size={14} weight="fill" aria-hidden="true" />
-            <span>Book Free Audit</span>
-            <ArrowUpRight size={12} weight="bold" aria-hidden="true" />
-          </a>
+          <div className="ab-video-tag" aria-hidden="true">
+            <span className="ab-video-tag-wave" />
+            <span>Intro Video</span>
+          </div>
 
           <div className="ab-video-controls" role="group" aria-label="Video controls">
             <button
@@ -126,7 +119,7 @@ export function AboutVideo() {
               aria-label={isPlaying ? 'Pause video' : 'Play video'}
               title={isPlaying ? 'Pause' : 'Play'}
             >
-              {isPlaying ? <Pause size={14} weight="fill" aria-hidden /> : <Play size={14} weight="fill" aria-hidden />}
+              {isPlaying ? <Pause size={15} weight="fill" aria-hidden="true" /> : <Play size={15} weight="fill" aria-hidden="true" />}
             </button>
 
             <button
@@ -140,25 +133,6 @@ export function AboutVideo() {
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Prominent Booking Action Card Below Video */}
-      <div className="ab-video-action">
-        <a
-          href={site.calendarBookingUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="ab-video-book-btn"
-        >
-          <CalendarCheck size={18} weight="fill" aria-hidden="true" />
-          <span>Book a Free Audit</span>
-          <ArrowUpRight size={16} weight="bold" aria-hidden="true" />
-        </a>
-        <p className="ab-video-book-sub">
-          <span>Google Calendar 1-on-1</span>
-          <span className="ab-video-book-sep" aria-hidden="true">•</span>
-          <span>Zero Obligation</span>
-        </p>
       </div>
     </div>
   )

@@ -1,6 +1,6 @@
-import { ArrowUpRight, MapPin } from '@phosphor-icons/react'
+import { ArrowUpRight, CalendarCheck, MapPin } from '@phosphor-icons/react'
 import { aboutSection, capabilities, credentials, type AboutCredential } from '@/content/about'
-import { certification, externalLinks, socials } from '@/content/site'
+import { certification, externalLinks, site, socials } from '@/content/site'
 import { personJsonLd } from '@/lib/seo'
 import { AboutVideo } from './AboutVideo'
 import './about.css'
@@ -58,10 +58,49 @@ export function AboutSection() {
       </header>
 
       <div className="ab__stage">
-        <p className="ab__lead">
-          {s.lead} <span>{s.leadQuiet}</span>
-        </p>
-        <AboutVideo />
+        <div className="ab__narrative">
+          <p className="ab__lead">
+            {s.lead} <span>{s.leadQuiet}</span>
+          </p>
+
+          <div className="ab__chips">
+            <span className="ab__chip">
+              <span className="ab__chip-dot" aria-hidden="true" />
+              Google Ads & Telemetry
+            </span>
+            <span className="ab__chip">
+              <span className="ab__chip-dot" aria-hidden="true" />
+              GoHighLevel & n8n
+            </span>
+            <span className="ab__chip">
+              <span className="ab__chip-dot" aria-hidden="true" />
+              Sub-60s Speed-to-Lead
+            </span>
+          </div>
+
+          <div className="ab__cta-wrap">
+            <a
+              href={site.calendarBookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ab__cta-btn"
+              aria-label="Book a free Audit on Google Calendar"
+            >
+              <CalendarCheck size={18} weight="fill" aria-hidden="true" />
+              <span>Book a Free Audit</span>
+              <ArrowUpRight size={16} weight="bold" aria-hidden="true" />
+            </a>
+            <p className="ab__cta-sub">
+              <span>Google Calendar 1-on-1</span>
+              <span className="ab__cta-sep" aria-hidden="true">•</span>
+              <span>Zero Pitch, 100% Practical Roadmap</span>
+            </p>
+          </div>
+        </div>
+
+        <div className="ab__visual">
+          <AboutVideo />
+        </div>
       </div>
 
       <div className="ab__below">
