@@ -51,6 +51,26 @@ export function PortfolioChat() {
     }
   }, [isOpen])
 
+  // Global open trigger listener & click delegation for any chat triggers
+  useEffect(() => {
+    const handleOpenChat = () => setIsOpen(true)
+    window.addEventListener('open-portfolio-chat', handleOpenChat)
+
+    const handleDocumentClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null
+      if (target?.closest('[data-open-chat]')) {
+        e.preventDefault()
+        setIsOpen(true)
+      }
+    }
+    document.addEventListener('click', handleDocumentClick)
+
+    return () => {
+      window.removeEventListener('open-portfolio-chat', handleOpenChat)
+      document.removeEventListener('click', handleDocumentClick)
+    }
+  }, [])
+
   const sendMessage = async (contentToSend: string) => {
     const trimmed = contentToSend.trim()
     if (!trimmed || isStreaming) return
@@ -155,32 +175,31 @@ export function PortfolioChat() {
 
   return (
     <aside className="pc" aria-label="Portfolio AI Assistant">
-      {/* Floating Launcher Button */}
+      {/* Standalone Floating Live Chatbot Mascot Launcher */}
       {!isOpen && (
         <button
           type="button"
-          className="pc__launch"
+          className="pc__launch pc__launch--mascot"
           onClick={() => setIsOpen(true)}
-          aria-label="Open AI Assistant"
+          aria-label="Open AI Assistant (Live Chatbot)"
+          title="Chat with Marlon's AI"
         >
-          <span className="pc__launch-icon">
+          <div className="pc__mascot-stage">
             <img
               src="/images/live-chatbot.svg"
-              alt=""
-              width={26}
-              height={26}
-              className="pc__launch-bot-img"
+              alt="Live Chatbot"
+              width={76}
+              height={76}
+              className="pc__mascot-img"
               loading="eager"
               decoding="async"
             />
-          </span>
-          <span className="pc__launch-label">
-            <svg className="pc__sparkle" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0l2.5 8.5L23 11l-8.5 2.5L12 22l-2.5-8.5L1 11l8.5-2.5z"/>
-            </svg>
-            <span>Ask AI</span>
-          </span>
-          <span className="pc__launch-ping" aria-hidden />
+            <span className="pc__mascot-dot" aria-hidden />
+            <span className="pc__mascot-dot-ring" aria-hidden />
+          </div>
+          <div className="pc__mascot-tooltip" role="tooltip">
+            <span className="pc__mascot-tooltip-text">Chat with AI</span>
+          </div>
         </button>
       )}
 
