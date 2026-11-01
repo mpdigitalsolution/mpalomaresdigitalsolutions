@@ -27,12 +27,46 @@ export function AboutVideo() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const reduce = useMediaQuery('(prefers-reduced-motion: reduce)')
   const [isPlaying, setIsPlaying] = useState(false)
-  const [isMuted, setIsMuted] = useState(true)
+  const [isMuted, setIsMuted] = useState(false)
   const [hasInteracted, setHasInteracted] = useState(false)
 
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
+
+    // Default to unmuted
+    video.muted = false
+
+    const unmuteAndPlay = () => {
+      video.muted = false
+      setIsMuted(false)
+      video.play().catch(() => {
+        // If unmuted playback is blocked by browser autoplay policy before user gesture,
+        // start muted and unmute immediately on the first user interaction anywhere
+        video.muted = true
+        setIsMuted(true)
+        video.play().catch(() => setIsPlaying(false))
+
+        const enableAudioOnGesture = () => {
+          if (videoRef.current) {
+            videoRef.current.muted = false
+            setIsMuted(false)
+            videoRef.current.play().catch(() => {})
+          }
+          window.removeEventListener('pointerdown', enableAudioOnGesture)
+          window.removeEventListener('click', enableAudioOnGesture)
+          window.removeEventListener('touchstart', enableAudioOnGesture)
+          window.removeEventListener('keydown', enableAudioOnGesture)
+          window.removeEventListener('scroll', enableAudioOnGesture)
+        }
+
+        window.addEventListener('pointerdown', enableAudioOnGesture, { once: true, passive: true })
+        window.addEventListener('click', enableAudioOnGesture, { once: true, passive: true })
+        window.addEventListener('touchstart', enableAudioOnGesture, { once: true, passive: true })
+        window.addEventListener('keydown', enableAudioOnGesture, { once: true, passive: true })
+        window.addEventListener('scroll', enableAudioOnGesture, { once: true, passive: true })
+      })
+    }
 
     // If reduced motion is requested, do not autoplay
     if (reduce && !hasInteracted) {
@@ -43,10 +77,7 @@ export function AboutVideo() {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) {
-          video.play().catch(() => {
-            // Autoplay blocked by browser policy, keep paused
-            setIsPlaying(false)
-          })
+          unmuteAndPlay()
         } else {
           video.pause()
         }
@@ -66,11 +97,14 @@ export function AboutVideo() {
     if (isPlaying) {
       video.pause()
     } else {
+      video.muted = false
+      setIsMuted(false)
       video.play().catch(() => {})
     }
   }
 
   const toggleMute = () => {
+    setHasInteracted(true)
     const video = videoRef.current
     if (!video) return
 
@@ -79,10 +113,26 @@ export function AboutVideo() {
     setIsMuted(nextMuted)
   }
 
+  const handleFrameClick = (e: React.MouseEvent) => {
+    // Only handle if clicking video itself, not the control buttons
+    if ((e.target as HTMLElement).closest('.ab-video-controls')) return
+    const video = videoRef.current
+    if (!video) return
+
+    setHasInteracted(true)
+    if (video.muted) {
+      video.muted = false
+      setIsMuted(false)
+    }
+    if (video.paused) {
+      video.play().catch(() => {})
+    }
+  }
+
   return (
     <div className="ab-video-wrap" data-reveal>
       <div className="ab-video-glow" aria-hidden="true" />
-      <div className="ab-video-frame">
+      <div className="ab-video-frame" onClick={handleFrameClick}>
         {/* Floating Identity Badge */}
         <div className="ab-video-badge">
           <span className="ab-video-dot" aria-hidden="true" />
@@ -98,7 +148,7 @@ export function AboutVideo() {
           playsInline
           muted={isMuted}
           loop
-          preload="metadata"
+          preload="auto"
           aria-label="Marlon Palomares video introduction"
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
