@@ -48,6 +48,14 @@
   color: #38bdf8;
 }
 
+.pc__launch-bot-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 8px rgba(122, 255, 251, 0.45));
+}
+
 .pc__launch-label {
   display: flex;
   align-items: center;
@@ -132,9 +140,18 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(59, 130, 246, 0.35));
-  border: 1px solid rgba(56, 189, 248, 0.4);
+  background: linear-gradient(135deg, rgba(11, 79, 108, 0.45), rgba(122, 255, 251, 0.2));
+  border: 1px solid rgba(122, 255, 251, 0.4);
   color: #38bdf8;
+  overflow: hidden;
+}
+
+.pc__avatar-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 8px rgba(122, 255, 251, 0.5));
 }
 
 .pc__status-dot {
@@ -212,6 +229,27 @@
 
 .pc__msg--bot {
   margin-right: auto;
+  align-items: flex-end;
+}
+
+.pc__msg-bot-icon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(11, 79, 108, 0.45);
+  border: 1px solid rgba(122, 255, 251, 0.35);
+  margin-right: 8px;
+  margin-bottom: 2px;
+}
+
+.pc__msg-bot-icon img {
+  width: 17px;
+  height: 17px;
+  object-fit: contain;
+  display: block;
 }
 
 .pc__bubble {
