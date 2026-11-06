@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import type { Icon } from '@phosphor-icons/react'
 import {
+  ArrowUpRight,
   BellRinging,
   CalendarCheck,
   CaretLeft,
@@ -128,9 +129,22 @@ export function AutomationSection() {
 
           <div className="fl__panel" data-focus={focus ?? undefined}>
             <div className="fl__panel-head">
-              <h3 className="fl__panel-title">
-                {liveAutomation.panel.lead} <span>{liveAutomation.panel.rest}</span>
-              </h3>
+              <div className="fl__panel-head-row">
+                <h3 className="fl__panel-title">
+                  {liveAutomation.panel.lead} <span>{liveAutomation.panel.rest}</span>
+                </h3>
+                <a
+                  href="/demos/credentials/certificates.html#cert-n8n"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="fl__cert-badge"
+                  title="View Verified n8n Academy Certification"
+                >
+                  <span className="fl__cert-dot" aria-hidden="true" />
+                  <span>n8n Certified</span>
+                  <ArrowUpRight size={13} weight="bold" aria-hidden="true" />
+                </a>
+              </div>
               <p className="fl__legend">
                 <span data-plane="auto">{liveAutomation.legend.auto}</span>
                 <span data-plane="lead">{liveAutomation.legend.lead}</span>

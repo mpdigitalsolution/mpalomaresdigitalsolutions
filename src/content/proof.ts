@@ -5,7 +5,7 @@ export const proofPage = {
   titleThin: 'Results you',
   titleBold: 'can check.',
   bands: { videos: 'On camera', quotes: 'Client Feedback', clients: 'Client accounts', certs: 'Certifications' },
-  lede: 'Verified performance metrics, client accounts, and real credentials from Google, Semrush, and client operations.',
+  lede: 'Verified performance metrics, client accounts, and real credentials from n8n Academy, Google, Semrush, and client operations.',
 }
 
 export type VerifiedCert = {
@@ -19,6 +19,15 @@ export type VerifiedCert = {
 }
 
 export const verifiedCertifications: VerifiedCert[] = [
+  {
+    id: 'cert-n8n',
+    title: 'n8n Academy Quickstart Certification',
+    issuer: 'n8n Academy (Education Team)',
+    credentialId: 'Verified Completion',
+    date: 'Awarded Nov 6, 2026',
+    image: '/images/certificates/n8n-quickstart-cert.png',
+    href: '/demos/credentials/certificates.html#cert-n8n',
+  },
   {
     id: 'cert-search',
     title: 'Google Ads Search Certification',

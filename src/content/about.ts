@@ -16,7 +16,7 @@ export const aboutSection = {
   note: {
     company: `${site.brand} is my consultancy`,
     product: { label: 'Verified Certifications Suite', href: '/demos/credentials/certificates.html' },
-    rest: 'showcasing official Google, Semrush, and agency credentials.',
+    rest: 'showcasing official n8n Academy, Google, Semrush, and agency credentials.',
   },
   picture: {
     src: '/images/profile/desk.webp',
@@ -45,6 +45,13 @@ export type AboutCredential = {
 }
 
 export const credentials: AboutCredential[] = [
+  {
+    id: 'cert-n8n',
+    title: 'n8n Academy Certified',
+    detail: 'n8n Quickstart · Nov 2026',
+    href: '/demos/credentials/certificates.html#cert-n8n',
+    image: { src: '/images/certificates/n8n-quickstart-cert.png', alt: 'n8n Academy Quickstart Certification', width: 64, height: 64 },
+  },
   {
     id: 'cert-search',
     title: 'Google Ads Search Certified',

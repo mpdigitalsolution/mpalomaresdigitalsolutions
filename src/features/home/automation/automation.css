@@ -151,6 +151,43 @@
   display: grid;
   gap: 8px;
 }
+.fl__panel-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.fl__cert-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  background: rgba(234, 75, 113, 0.12);
+  border: 1px solid rgba(234, 75, 113, 0.35);
+  border-radius: 999px;
+  color: #ff6d88;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 180ms ease;
+  white-space: nowrap;
+}
+.fl__cert-badge:hover {
+  background: rgba(234, 75, 113, 0.22);
+  border-color: rgba(234, 75, 113, 0.65);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(234, 75, 113, 0.25);
+}
+.fl__cert-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ea4b71;
+  box-shadow: 0 0 8px #ea4b71;
+}
 .fl__panel-title {
   margin: 0;
   font-size: clamp(17px, 1.8cqi, 22px);
