@@ -146,6 +146,47 @@
   font-size: 15px;
   line-height: 1.55;
 }
+
+/* ---------- Visual Project Frames Gallery ---------- */
+
+.sv__gallery {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
+}
+.sv__gallery::-webkit-scrollbar {
+  height: 4px;
+}
+.sv__gallery::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+.sv__gallery::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 4px;
+}
+.sv__frame {
+  flex: 0 0 clamp(200px, 40cqi, 320px);
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px var(--line-strong), var(--shadow-sm);
+  background: var(--surface-2);
+  scroll-snap-align: start;
+}
+.sv__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 400ms var(--ease-spring);
+}
+.sv__card:hover .sv__frame img {
+  transform: scale(1.03);
+}
+
 .sv__explore {
   display: inline-flex;
   align-items: center;
