@@ -3,7 +3,7 @@
  * and the form beside it. Change the words here, never in the components.
  */
 export const contactPage = {
-  eyebrow: 'Contact',
+  eyebrow: 'Contact & Booking',
   titleThin: 'Tell me what',
   titleBold: 'you need built.',
   lede: 'Read the answers first. If your question is still open, write and I will reply with a plan or a straight no.',

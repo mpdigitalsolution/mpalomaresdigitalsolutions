@@ -7,7 +7,7 @@ import { tools } from './tools'
  * space; roles with tool logos as raised keys, credentials below.
  */
 export const aboutSection = {
-  eyebrow: 'About',
+  eyebrow: 'About Me',
   titleThin: "Hi, I'm",
   titleBold: `${site.name}.`,
   lede: 'Google Ads Specialist, Certified Performance Marketer, and Automation Systems Architect.',

@@ -1,7 +1,7 @@
 import type { AiGroup, AppBuild, Demo, Image, LinkRef } from './schema'
 
 export const workPage = {
-  eyebrow: 'Work',
+  eyebrow: 'Projects & Case Studies',
   title: 'Real builds you can open.',
   lede: 'Production-grade n8n automations, conversion-engineered GoHighLevel websites and funnels, and autonomous AI agents.',
 }
