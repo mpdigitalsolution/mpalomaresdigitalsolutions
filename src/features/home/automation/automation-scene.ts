@@ -23,17 +23,22 @@ export const automationScene: ScrollScene = (root, { reduce }) => {
     el,
     ...time(el),
     contour: el.querySelector<SVGPathElement>('.fl__contour')!,
-    parts: Array.from(el.querySelectorAll<SVGElement>('.fl__mark, .fl__title, .fl__icon, .fl__tag')),
+    parts: Array.from(el.querySelectorAll<SVGElement>('.fl__mark, .fl__title, .fl__icon, .fl__tag, .fl__badge, .fl__port')),
   }))
   const leads = q<SVGPathElement>('.fl__signal').map((el) => {
+    const parent = el.parentElement as SVGGElement | null
     const packet = root.querySelector<SVGCircleElement>(`[data-fl-packet="${el.getAttribute('data-fl-link')}"]`)!
-    return { el, ...time(el), packet, x1: Number(packet.getAttribute('data-x1')), x2: Number(packet.getAttribute('data-x2')) }
+    const stream = parent?.querySelector<SVGPathElement>('.fl__stream-wire')
+    return { el, ...time(el), packet, stream, x1: Number(packet.getAttribute('data-x1')), x2: Number(packet.getAttribute('data-x2')) }
   })
   const dashes = q<SVGPathElement>('.fl__dash').map((el) => {
+    const parent = el.parentElement as SVGGElement | null
     const id = el.getAttribute('data-fl-link')
+    const stream = parent?.querySelector<SVGPathElement>('.fl__dash-stream')
     return {
       el,
       ...time(el),
+      stream,
       mask: root.querySelector<SVGPathElement>(`[data-fl-mask="${id}"]`)!,
       label: root.querySelector<SVGTextElement>(`[data-fl-label="${id}"]`),
     }
@@ -61,6 +66,7 @@ export const automationScene: ScrollScene = (root, { reduce }) => {
       l.el.style.strokeDashoffset = String(1 - t)
       l.el.style.opacity = String(t > 0 ? 0.85 : 0)
       l.el.setAttribute('marker-end', t > 0.97 ? 'url(#fl-arrow)' : 'none') // the arrowhead lands with the line
+      if (l.stream) l.stream.style.opacity = String(t > 0.9 ? 0.9 : 0)
       // The packet rides the line while it draws, then once more when the whole system is live.
       const run = replay > 0 && replay < 1 ? clamp01(replay * 1.4 - (i / Math.max(1, leads.length - 1)) * 0.4) : t
       const flying = (t > 0 && t < 1) || (replay > 0 && replay < 1 && run > 0 && run < 1)
@@ -73,6 +79,7 @@ export const automationScene: ScrollScene = (root, { reduce }) => {
       const t = clamp01((p - l.a) / (l.b - l.a))
       l.mask.style.strokeDashoffset = String(1 - t)
       if (l.label) l.label.style.opacity = String(clamp01(t * 2 - 1))
+      if (l.stream) l.stream.style.opacity = String(t > 0.9 ? 0.85 : 0)
     }
 
     let active = 0

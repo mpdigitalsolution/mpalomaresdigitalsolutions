@@ -165,6 +165,13 @@ export function AutomationSection() {
                 <marker id="fl-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
                   <path className="fl__arrow" d="M0 0 L10 5 L0 10 Z" />
                 </marker>
+                <filter id="n8n-glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="2.5" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
                 {placedLinks
                   .filter((l) => l.style === 'dashed')
                   .map((l) => (
@@ -175,13 +182,13 @@ export function AutomationSection() {
               </defs>
 
               <g className="fl__zone" data-fl-zone="booking" data-a={zones.booking.a} data-b={zones.booking.b}>
-                <rect x={zones.booking.x} y={zones.booking.y} width={zones.booking.w} height={zones.booking.h} />
+                <rect x={zones.booking.x} y={zones.booking.y} width={zones.booking.w} height={zones.booking.h} rx={12} />
                 <text x={zones.booking.x + zones.booking.w / 2} y={zones.booking.y - 12}>
                   {liveAutomation.zones.booking}
                 </text>
               </g>
               <g className="fl__zone" data-fl-zone="pipeline" data-a={zones.pipeline.a} data-b={zones.pipeline.b}>
-                <rect x={zones.pipeline.x} y={zones.pipeline.y} width={zones.pipeline.w} height={zones.pipeline.h} />
+                <rect x={zones.pipeline.x} y={zones.pipeline.y} width={zones.pipeline.w} height={zones.pipeline.h} rx={12} />
                 <text x={zones.pipeline.x + zones.pipeline.w / 2} y={zones.pipeline.y + zones.pipeline.h + 22}>
                   {liveAutomation.zones.pipeline}
                 </text>
@@ -192,11 +199,15 @@ export function AutomationSection() {
                 return l.style === 'solid' ? (
                   <g key={l.id} className="fl__link" data-style="solid" data-hi={hi}>
                     <path d={l.d} pathLength={1} className="fl__signal" data-fl-link={l.id} data-a={l.a} data-b={l.b} markerEnd="url(#fl-arrow)" />
+                    {/* Continuous live n8n data stream pulse */}
+                    <path d={l.d} className="fl__stream-wire" aria-hidden="true" />
                     <circle className="fl__packet" r={3.5} cx={l.x1} cy={l.y} data-fl-packet={l.id} data-x1={l.x1} data-x2={l.x2} />
                   </g>
                 ) : (
                   <g key={l.id} className="fl__link" data-style="dashed" data-hi={hi}>
                     <path d={l.d} className="fl__dash" mask={`url(#fl-m-${l.id})`} data-fl-link={l.id} data-a={l.a} data-b={l.b} />
+                    {/* Continuous loopback stream pulse */}
+                    <path d={l.d} className="fl__dash-stream" aria-hidden="true" />
                     {l.label ? (
                       <text className="fl__link-label" x={l.lx} y={l.ly} data-fl-label={l.id}>
                         {l.label}
@@ -230,9 +241,23 @@ export function AutomationSection() {
                     onFocus={() => hover && setFocus(n.id)}
                     onKeyDown={(e) => onKey(e, n.id)}
                   >
-                    <rect className="fl__box" x={n.x} y={n.y} width={n.w} height={n.h} />
+                    <rect className="fl__box" x={n.x} y={n.y} width={n.w} height={n.h} rx={10} />
                     <path className="fl__contour" d={`M${n.x} ${n.y} h${n.w} v${n.h} h${-n.w} Z`} pathLength={1} />
-                    <rect className="fl__mark" x={n.x + 9} y={n.y + 9} width={6} height={6} />
+                    
+                    {/* n8n Input Terminal Port (Left) - for all except initial trigger */}
+                    {n.index > 0 && (
+                      <circle className="fl__port fl__port--in" cx={n.x} cy={n.y + n.h / 2} r={4.5} />
+                    )}
+                    {/* n8n Output Terminal Port (Right) - for all nodes */}
+                    <circle className="fl__port fl__port--out" cx={n.x + n.w} cy={n.y + n.h / 2} r={4.5} />
+
+                    {/* n8n Execution Status Badge (Top-Right: ✓ 1 item) */}
+                    <g className="fl__badge">
+                      <rect x={n.x + n.w - 56} y={n.y + 8} width={48} height={16} rx={8} className="fl__badge-bg" />
+                      <text x={n.x + n.w - 32} y={n.y + 19.5} className="fl__badge-text">✓ 1 item</text>
+                    </g>
+
+                    <rect className="fl__mark" x={n.x + 9} y={n.y + 9} width={6} height={6} rx={2} />
                     <text id={`fl-t-${n.id}`} className="fl__title" x={n.x + n.w / 2} y={n.y + 33}>
                       {n.title}
                     </text>
@@ -240,7 +265,7 @@ export function AutomationSection() {
                       <Glyph size={40} weight="light" />
                     </g>
                     <g className="fl__tag">
-                      <rect x={n.x + 10} y={n.y + n.h - 32} width={n.w - 20} height={20} />
+                      <rect x={n.x + 10} y={n.y + n.h - 32} width={n.w - 20} height={20} rx={4} />
                       <text id={`fl-g-${n.id}`} x={n.x + n.w / 2} y={n.y + n.h - 18.4}>
                         {n.tag}
                       </text>
