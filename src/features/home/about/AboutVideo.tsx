@@ -140,7 +140,7 @@ export function AboutVideo() {
           <span className="ab-video-role">Founder</span>
         </div>
 
-        {/* Video Element */}
+        {/* Video Element with Studio Beauty Smoothing */}
         <video
           ref={videoRef}
           src="/media/about-me.mp4"
@@ -153,6 +153,9 @@ export function AboutVideo() {
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
         />
+
+        {/* Studio Beauty Lighting Overlay */}
+        <div className="ab-video-beauty-overlay" aria-hidden="true" />
 
         {/* Floating Controls Bar at Bottom */}
         <div className="ab-video-bottom-bar">

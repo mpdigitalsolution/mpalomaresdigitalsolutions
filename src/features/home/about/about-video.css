@@ -62,6 +62,24 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  /* Natural Beauty & Skin Smoothing: micro-blur pore diffusion + studio radiance */
+  filter: brightness(1.04) contrast(0.97) saturate(1.06) blur(0.28px);
+  transform: translateZ(0);
+}
+
+/* Studio Beauty Ring-Light Overlay */
+.ab-video-beauty-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: radial-gradient(
+    ellipse 65% 55% at 50% 32%,
+    rgba(255, 240, 230, 0.09) 0%,
+    rgba(255, 220, 205, 0.04) 45%,
+    rgba(0, 0, 0, 0.14) 100%
+  );
+  mix-blend-mode: screen;
 }
 
 /* Floating Identity Badge at top */
